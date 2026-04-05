@@ -13,12 +13,13 @@ from config import (
     SEARCH_QUERIES, MIN_QUALITY_SCORE, PORTFOLIO_LINKS
 )
 from database import (
-    init_db, business_exists, insert_business,
+    init_db, business_exists, insert_business, update_business,
     get_pending_outreach, export_to_excel, get_stats
 )
 from scraper import scrape_businesses, enrich_from_website
 from analyzer import analyze_website
 from pitch_builder import build_whatsapp_pitch, build_full_pitch, build_sales_summary
+from lead_scorer import compute_lead_score, score_tier_hebrew
 
 
 # ════════════════════════════════════════════════════════════════
@@ -101,9 +102,14 @@ def run_scrape_and_analyze():
                 "issues": json.dumps(analysis["issues"], ensure_ascii=False),
             }
             bid = insert_business(row)
+
+            # ── חשב ציון ליד מסחרי ──
+            lead_score, breakdown = compute_lead_score({**row, "id": bid})
+            update_business(bid, {"lead_score": lead_score})
+
+            tier  = score_tier_hebrew(lead_score)
             score = analysis["quality_score"]
-            flag  = "🔥 ליד חם" if score >= 7 else ("👍 ליד טוב" if score >= MIN_QUALITY_SCORE else "➡️  ציון נמוך")
-            print(f"     {flag} | ציון: {score}/10 | id={bid}")
+            print(f"     {tier} | ליד: {lead_score}/100 | אתר: {score}/10 | id={bid}")
             new_count += 1
 
             time.sleep(0.3)   # נימוס כלפי השרת

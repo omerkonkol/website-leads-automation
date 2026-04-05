@@ -95,6 +95,15 @@ def load_businesses(filters: dict) -> pd.DataFrame:
     query = "SELECT * FROM businesses WHERE 1=1"
     params = []
 
+    # Tier filter
+    tier = filters.get("tier_filter", "הכל")
+    if "HOT" in tier:
+        query += " AND lead_score >= 70"
+    elif "WARM" in tier:
+        query += " AND lead_score >= 45 AND lead_score < 70"
+    elif "COLD" in tier:
+        query += " AND lead_score < 45"
+
     if filters.get("sent_filter") == "טרם נשלח":
         query += " AND whatsapp_sent=0 AND email_sent=0"
     elif filters.get("sent_filter") == "נשלח WhatsApp":
@@ -107,8 +116,8 @@ def load_businesses(filters: dict) -> pd.DataFrame:
     elif filters.get("has_website") == "יש אתר":
         query += " AND has_website=1"
 
-    score_min, score_max = filters.get("score_range", (1, 10))
-    query += " AND quality_score BETWEEN ? AND ?"
+    score_min, score_max = filters.get("score_range", (0, 100))
+    query += " AND lead_score BETWEEN ? AND ?"
     params += [score_min, score_max]
 
     if filters.get("search"):
@@ -116,7 +125,7 @@ def load_businesses(filters: dict) -> pd.DataFrame:
         s = f"%{filters['search']}%"
         params += [s, s, s]
 
-    query += " ORDER BY quality_score DESC, id DESC"
+    query += " ORDER BY lead_score DESC, quality_score DESC"
     df = pd.read_sql_query(query, conn, params=params)
     conn.close()
     return df
@@ -129,10 +138,10 @@ def get_stats() -> dict:
     def q(sql): return c.execute(sql).fetchone()[0]
     stats = {
         "total":    q("SELECT COUNT(*) FROM businesses"),
+        "hot":      q("SELECT COUNT(*) FROM businesses WHERE lead_score >= 70"),
+        "warm":     q("SELECT COUNT(*) FROM businesses WHERE lead_score >= 45 AND lead_score < 70"),
         "no_site":  q("SELECT COUNT(*) FROM businesses WHERE has_website=0"),
-        "hot":      q("SELECT COUNT(*) FROM businesses WHERE quality_score >= 7"),
         "wa_sent":  q("SELECT COUNT(*) FROM businesses WHERE whatsapp_sent=1"),
-        "em_sent":  q("SELECT COUNT(*) FROM businesses WHERE email_sent=1"),
         "pending":  q("SELECT COUNT(*) FROM businesses WHERE whatsapp_sent=0 AND email_sent=0"),
     }
     conn.close()
@@ -289,14 +298,20 @@ def sent_badge(wa, em):
 with st.sidebar:
     st.markdown("## 🎛️ פילטרים")
     search        = st.text_input("🔍 חיפוש שם / קטגוריה / עיר", "")
+    tier_filter   = st.selectbox("🎯 רמת ליד", ["הכל", "🔥 HOT (70+)", "⚡ WARM (45-69)", "❄️ COLD (<45)"])
     sent_filter   = st.selectbox("📬 סטטוס שליחה", ["הכל", "טרם נשלח", "נשלח WhatsApp", "נשלח מייל"])
     site_filter   = st.selectbox("🌐 אתר", ["הכל", "אין אתר", "יש אתר"])
-    score_range   = st.slider("ציון ליד (1=גרוע ביותר = הכי חם לנו)", 1, 10, (1, 10))
+    score_range   = st.slider("ציון ליד מסחרי (0-100)", 0, 100, (0, 100))
 
     st.markdown("---")
     st.markdown("### ⚡ פעולות מהירות")
     if st.button("🔄 רענן נתונים"):
         st.cache_data.clear()
+        st.rerun()
+    if st.button("🎯 חשב מחדש דירוגים"):
+        from lead_scorer import rescore_all
+        n = rescore_all()
+        st.success(f"עודכנו {n} עסקים")
         st.rerun()
     if st.button("📊 ייצא Excel"):
         from database import export_to_excel
@@ -316,12 +331,12 @@ st.markdown("---")
 # ── KPI Cards ──
 stats = get_stats()
 c1, c2, c3, c4, c5, c6 = st.columns(6)
-c1.metric("סה\"כ עסקים",   stats["total"])
-c2.metric("🔥 לידים חמים", stats["hot"],    help="ציון 7+")
-c3.metric("🌐 ללא אתר",    stats["no_site"], help="הזדמנות מצוינת")
-c4.metric("⏳ ממתינים",    stats["pending"])
-c5.metric("✅ WA נשלח",    stats["wa_sent"])
-c6.metric("📧 מייל נשלח",  stats["em_sent"])
+c1.metric("סה\"כ עסקים",    stats["total"])
+c2.metric("🔥 HOT לידים",   stats["hot"],    help="ציון ≥ 70 — פנה ראשון")
+c3.metric("⚡ WARM לידים",  stats["warm"],   help="ציון 45-69")
+c4.metric("🌐 ללא אתר",     stats["no_site"], help="הזדמנות מצוינת")
+c5.metric("⏳ ממתינים",     stats["pending"])
+c6.metric("✅ WA נשלח",     stats["wa_sent"])
 
 st.markdown("---")
 
@@ -330,6 +345,7 @@ st.markdown("---")
 # ════════════════════════════════════════════════════════════════
 filters = {
     "search":       search,
+    "tier_filter":  tier_filter,
     "sent_filter":  sent_filter if sent_filter != "הכל" else None,
     "has_website":  site_filter if site_filter != "הכל" else None,
     "score_range":  score_range,
@@ -355,12 +371,13 @@ if df.empty:
 st.markdown(f"### 📋 עסקים ({len(df)} תוצאות)")
 
 # Build display table
+from lead_scorer import compute_lead_score, score_tier_hebrew
+
 display_cols = {
     "name":          "שם עסק",
     "category":      "קטגוריה",
     "phone":         "טלפון",
-    "email":         "מייל",
-    "quality_score": "ציון",
+    "quality_score": "אתר",
     "has_website":   "אתר?",
     "is_responsive": "נייד?",
     "has_ssl":       "SSL?",
@@ -371,14 +388,23 @@ display_cols = {
 disp = df[list(display_cols.keys())].copy()
 disp.rename(columns=display_cols, inplace=True)
 
+# Lead score tier column — computed live (or from DB if available)
+def _tier_label(row):
+    ls = row.get("lead_score") or 0
+    if ls == 0:
+        ls, _ = compute_lead_score(row)
+    return f"{score_tier_hebrew(ls)}  ({ls})"
+
+disp.insert(0, "🎯 דירוג", df.apply(lambda r: _tier_label(r.to_dict()), axis=1))
+
 # Convert booleans to icons
 for col_he, col_icon in [("אתר?","🌐"), ("נייד?","📱"), ("SSL?","🔒"), ("CTA?","📣"),
                           ("WA נשלח","✅"), ("מייל נשלח","📧")]:
     if col_he in disp.columns:
         disp[col_he] = disp[col_he].apply(lambda v: col_icon if v else "❌")
 
-# Color score
-disp["ציון"] = df["quality_score"].apply(score_emoji)
+# Website quality score
+disp["אתר"] = df["quality_score"].apply(score_emoji)
 
 st.dataframe(
     disp,
@@ -403,7 +429,35 @@ biz            = df.loc[selected_idx].to_dict()
 left, right = st.columns([1, 1], gap="large")
 
 with left:
-    st.markdown(f"#### {biz['name']}")
+    # ── Lead Score Header ──
+    from lead_scorer import compute_lead_score, score_tier_hebrew
+    ls = biz.get("lead_score") or 0
+    if ls == 0:
+        ls, breakdown = compute_lead_score(biz)
+    else:
+        _, breakdown = compute_lead_score(biz)
+
+    tier_label = score_tier_hebrew(ls)
+    st.markdown(f"#### {biz['name']}  —  {tier_label} ({ls}/100)")
+
+    # Score bar
+    bar_color = "#DC2626" if ls >= 70 else ("#D97706" if ls >= 45 else "#475569")
+    st.markdown(f"""
+    <div style="background:#1E293B;border-radius:8px;height:10px;margin-bottom:8px;overflow:hidden">
+      <div style="background:{bar_color};width:{ls}%;height:100%;border-radius:8px;transition:width .4s"></div>
+    </div>""", unsafe_allow_html=True)
+
+    with st.expander("📊 פירוט ציון הליד"):
+        for reason, pts in sorted(breakdown.items(), key=lambda x: -x[1]):
+            sign = "+" if pts > 0 else ""
+            color = "#22c55e" if pts > 0 else "#ef4444"
+            st.markdown(
+                f'<span style="color:{color};font-weight:700">{sign}{pts}</span>'
+                f'<span style="color:#94a3b8;margin-right:8px"> {reason}</span>',
+                unsafe_allow_html=True
+            )
+
+    st.markdown("---")
 
     # Status row
     wa_done = bool(biz.get("whatsapp_sent"))

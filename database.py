@@ -62,7 +62,8 @@ def init_db():
             extra_info       TEXT,   -- מידע נוסף חופשי לשימוש בגנרטור
             whatsapp_pitch   TEXT,   -- הודעת WA קצרה ואישית
             full_pitch       TEXT,   -- פנייה מלאה (למייל / עיון)
-            sales_summary    TEXT    -- שורה קצרה: סיכום הבעיות
+            sales_summary    TEXT,   -- שורה קצרה: סיכום הבעיות
+            lead_score       INTEGER DEFAULT 0  -- ציון מסחרי 0-100 (גבוה = כדאי לפנות ראשון)
         );
 
         CREATE TABLE IF NOT EXISTS outreach_log (
@@ -90,6 +91,7 @@ def init_db():
         ("whatsapp_pitch",  "TEXT"),
         ("full_pitch",      "TEXT"),
         ("sales_summary",   "TEXT"),
+        ("lead_score",      "INTEGER DEFAULT 0"),
     ]
     existing = {row[1] for row in c.execute("PRAGMA table_info(businesses)").fetchall()}
     for col, col_type in new_columns:
@@ -199,7 +201,7 @@ def get_pending_outreach(min_score: int = 4, channel: str = "whatsapp") -> list:
     c.execute(f"""
         SELECT * FROM businesses
         WHERE quality_score >= ? AND {sent_col} = 0 AND phone IS NOT NULL AND phone != ''
-        ORDER BY quality_score DESC
+        ORDER BY lead_score DESC, quality_score DESC
     """, (min_score,))
     rows = [dict(r) for r in c.fetchall()]
     conn.close()
@@ -209,7 +211,7 @@ def get_pending_outreach(min_score: int = 4, channel: str = "whatsapp") -> list:
 def get_all_businesses() -> list:
     conn = get_conn()
     c = conn.cursor()
-    c.execute("SELECT * FROM businesses ORDER BY quality_score DESC")
+    c.execute("SELECT * FROM businesses ORDER BY lead_score DESC, quality_score DESC")
     rows = [dict(r) for r in c.fetchall()]
     conn.close()
     return rows
