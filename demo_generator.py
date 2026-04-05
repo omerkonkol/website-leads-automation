@@ -434,28 +434,16 @@ def create_demo_for_business(
     deploy: bool = False,
 ) -> dict:
     """
-    מקבל dict עסק → מוצא תבנית → מייצר HTML → מחזיר:
+    מקבל dict עסק → מייצר HTML מהתבנית המובנית → מחזיר:
     { "html_path": "...", "public_url": "..." }
+    משתמש ב-template_engine (ללא API, מיידי).
     """
-    from config import SERPAPI_KEY
+    from template_engine import create_demo as template_create_demo
 
-    category = business.get("category") or business.get("search_query", "עסק")
+    # הוסף extra_info ל-dict לפני ייצור
+    biz_with_extra = {**business, "extra_info": extra_info}
+    path = template_create_demo(biz_with_extra, open_browser=True)
 
-    # מצא תבנית מאתר עסק דומה
-    template_url, template_html = find_best_template(category, serpapi_key=SERPAPI_KEY)
-
-    html = generate_with_template(
-        business_name=business.get("name", ""),
-        category=category,
-        phone=business.get("phone", ""),
-        address=business.get("address", ""),
-        template_url=template_url,
-        template_html=template_html,
-        extra_info=extra_info,
-        api_key=api_key,
-    )
-
-    path   = save_and_open(html, business.get("name", "business"))
     result = {"html_path": path, "public_url": ""}
 
     if deploy:
