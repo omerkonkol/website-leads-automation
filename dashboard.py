@@ -557,15 +557,24 @@ with demo_col1:
 
 with demo_col2:
     st.markdown("<br><br>", unsafe_allow_html=True)
+    # קדימות: env var → config.py → קלט ידני
     anthropic_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    if not anthropic_key:
+        try:
+            from config import ANTHROPIC_API_KEY
+            anthropic_key = ANTHROPIC_API_KEY
+        except (ImportError, AttributeError):
+            pass
 
     if not anthropic_key:
         anthropic_key = st.text_input(
-            "🔑 Anthropic API Key:",
+            "Anthropic API Key (נדרש רק לגנרטור הדמו):",
             type="password",
             key="anthropic_key_input",
-            help="מפתח מ-console.anthropic.com"
+            help="מפתח מ-console.anthropic.com — אם Claude Code מותקן, כבר קיים ב-env"
         )
+    else:
+        st.success("API Key זוהה אוטומטית")
 
     if st.button("✨ צור אתר דמו עכשיו", use_container_width=True, type="primary"):
         if not anthropic_key:

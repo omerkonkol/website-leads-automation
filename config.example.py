@@ -1,13 +1,14 @@
 """
-config.example.py — העתק קובץ זה ל-config.py ומלא את הפרטים.
-קובץ config.py לא עולה ל-GitHub (נשמר בגיטאיגנור) כדי לשמור על פרטיות.
+config.example.py — העתק קובץ זה ל-config.py ומלא את הפרטים שלך.
+קובץ config.py לא עולה ל-GitHub (gitignore) — הפרטים שלך נשארים אצלך בלבד.
 """
 
 # ════════════════════════════════════════════════
-#  SerpApi — לשליפת עסקים מ-Google Maps
-#  הירשם בחינם (100 חיפושים/חודש) ב: serpapi.com
+#  SerpApi (אופציונלי)
+#  ללא KEY — המערכת עובדת עם Google Search ישיר
+#  עם KEY — תוצאות מדויקות יותר (100 חינם/חודש: serpapi.com)
 # ════════════════════════════════════════════════
-SERPAPI_KEY = "YOUR_SERPAPI_KEY_HERE"
+SERPAPI_KEY = ""
 
 # ════════════════════════════════════════════════
 #  הגדרות חיפוש
@@ -32,9 +33,10 @@ WHATSAPP_PAUSE_BETWEEN = 8
 SESSION_DATA_DIR       = "session_data"
 
 # ════════════════════════════════════════════════
-#  הגדרות מייל (Gmail App Password)
+#  הגדרות מייל
+#  צור App Password ב: myaccount.google.com/apppasswords
 # ════════════════════════════════════════════════
-EMAIL_SENDER        = "your@gmail.com"
+EMAIL_SENDER        = "dev@gmail.com"
 EMAIL_APP_PASSWORD  = "xxxx xxxx xxxx xxxx"
 EMAIL_PAUSE_BETWEEN = 5
 
@@ -48,18 +50,28 @@ PORTFOLIO_LINKS = [
 ]
 
 # ════════════════════════════════════════════════
-#  פרטי המציע
+#  פרטי המציע — מלא את הפרטים שלך
 # ════════════════════════════════════════════════
-YOUR_NAME         = "עומר"
+YOUR_NAME         = "dev"
 YOUR_PHONE        = "05X-XXXXXXX"
 YOUR_WHATSAPP_URL = "https://wa.me/972XXXXXXXXX"
 PRICE_ILS         = 600
-YOUR_BIO          = "סטודנט שנה ב' למדעי המחשב באוניברסיטת תל אביב, בניתי כבר עשרות אתרים לעסקים קטנים"
+YOUR_BIO          = "dev bio here"
 
 # ════════════════════════════════════════════════
-#  Vercel — פרסום אתרי דמו (vercel.com/account/tokens)
+#  Anthropic API — לגנרטור אתר הדמו
+#  (אופציונלי — נדרש רק ליצירת אתר דמו)
+#  מפתח מ: console.anthropic.com
+#  אם מוגדר כ-env var ANTHROPIC_API_KEY — לא צריך למלא כאן
 # ════════════════════════════════════════════════
-VERCEL_TOKEN = "YOUR_VERCEL_TOKEN_HERE"
+ANTHROPIC_API_KEY = ""
+
+# ════════════════════════════════════════════════
+#  GitHub — לפרסום אתרי דמו ל-GitHub Pages
+#  שם המשתמש שלך ב-GitHub
+# ════════════════════════════════════════════════
+GITHUB_USERNAME = "dev"
+GITHUB_REPO     = "website-leads-automation"
 
 # ════════════════════════════════════════════════
 #  מסד הנתונים

@@ -195,7 +195,16 @@ def generate_with_template(
     extra_info: str = "",
     api_key: str = "",
 ) -> str:
-    client = anthropic.Anthropic(api_key=api_key or os.environ.get("ANTHROPIC_API_KEY", ""))
+    # קדימות: ארגומנט → env var → config.py
+    if not api_key:
+        api_key = os.environ.get("ANTHROPIC_API_KEY", "")
+    if not api_key:
+        try:
+            from config import ANTHROPIC_API_KEY
+            api_key = ANTHROPIC_API_KEY
+        except ImportError:
+            pass
+    client = anthropic.Anthropic(api_key=api_key)
 
     # מידע על העסק
     biz_info = "\n".join(filter(None, [
@@ -283,8 +292,12 @@ def save_and_open(html: str, business_name: str) -> str:
 # ════════════════════════════════════════════════════════════════
 #  Deploy ל-GitHub Pages — ללא טוקן נוסף
 # ════════════════════════════════════════════════════════════════
-GITHUB_USER = "omerkonkol"
-GITHUB_REPO = "website-leads-automation"
+def _github_config():
+    try:
+        from config import GITHUB_USERNAME, GITHUB_REPO
+        return GITHUB_USERNAME, GITHUB_REPO
+    except ImportError:
+        return "dev", "website-leads-automation"
 
 
 def _get_github_token() -> str:
@@ -308,7 +321,7 @@ def deploy_to_github_pages(html_path: str, business_name: str = "") -> str:
     """
     מעלה את קובץ ה-HTML ל-GitHub Pages דרך GitHub API.
     לא דורש שום הגדרה נוספת — משתמש ב-token הקיים מ-git credentials.
-    מחזיר URL ציבורי: https://omerkonkol.github.io/website-leads-automation/demos/NAME.html
+    מחזיר URL ציבורי: https://USERNAME.github.io/REPO/demos/NAME.html
     """
     import base64, re as _re
 
@@ -323,6 +336,7 @@ def deploy_to_github_pages(html_path: str, business_name: str = "") -> str:
     html_content  = Path(html_path).read_bytes()
     encoded       = base64.b64encode(html_content).decode()
 
+    GITHUB_USER, GITHUB_REPO = _github_config()
     api_url = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents/{remote_path}"
     headers = {
         "Authorization": f"token {token}",
