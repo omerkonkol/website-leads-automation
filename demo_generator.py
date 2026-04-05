@@ -281,67 +281,86 @@ def save_and_open(html: str, business_name: str) -> str:
 
 
 # ════════════════════════════════════════════════════════════════
-#  Deploy ל-Vercel
+#  Deploy ל-GitHub Pages — ללא טוקן נוסף
 # ════════════════════════════════════════════════════════════════
-def deploy_to_vercel(html_path: str, project_name: str = "") -> str:
-    """
-    מעלה HTML יחיד ל-Vercel ומחזיר URL ציבורי.
-    דורש VERCEL_TOKEN ב-config.py.
-    """
-    try:
-        from config import VERCEL_TOKEN
-    except ImportError:
-        VERCEL_TOKEN = ""
+GITHUB_USER = "omerkonkol"
+GITHUB_REPO = "website-leads-automation"
 
-    if not VERCEL_TOKEN or VERCEL_TOKEN == "YOUR_VERCEL_TOKEN_HERE":
-        print("  [Vercel] אין VERCEL_TOKEN ב-config.py — האתר נשמר מקומית בלבד")
+
+def _get_github_token() -> str:
+    """שולף את ה-token מ-git credential manager (כבר קיים מההתקנה)."""
+    import subprocess
+    try:
+        result = subprocess.run(
+            ["git", "credential", "fill"],
+            input="protocol=https\nhost=github.com\n",
+            capture_output=True, text=True, timeout=5
+        )
+        for line in result.stdout.splitlines():
+            if line.startswith("password="):
+                return line.split("=", 1)[1].strip()
+    except Exception:
+        pass
+    return ""
+
+
+def deploy_to_github_pages(html_path: str, business_name: str = "") -> str:
+    """
+    מעלה את קובץ ה-HTML ל-GitHub Pages דרך GitHub API.
+    לא דורש שום הגדרה נוספת — משתמש ב-token הקיים מ-git credentials.
+    מחזיר URL ציבורי: https://omerkonkol.github.io/website-leads-automation/demos/NAME.html
+    """
+    import base64, re as _re
+
+    token = _get_github_token()
+    if not token:
+        print("  [GitHub Pages] לא נמצא token — האתר נשמר מקומית בלבד")
         return ""
 
-    import re as _re
-    safe_name = _re.sub(r"[^a-z0-9\-]", "-", (project_name or Path(html_path).stem).lower())[:50]
-    safe_name = safe_name.strip("-") or "demo-site"
+    safe_name = _re.sub(r"[^\w\u0590-\u05FF]", "_", business_name or Path(html_path).stem)
+    remote_path = f"demos/demo_{safe_name}.html"
 
-    print(f"  מעלה ל-Vercel: {safe_name}...")
+    html_content  = Path(html_path).read_bytes()
+    encoded       = base64.b64encode(html_content).decode()
+
+    api_url = f"https://api.github.com/repos/{GITHUB_USER}/{GITHUB_REPO}/contents/{remote_path}"
+    headers = {
+        "Authorization": f"token {token}",
+        "Accept":        "application/vnd.github.v3+json",
+        "User-Agent":    "Python",
+    }
+
+    # בדוק אם הקובץ כבר קיים (כדי לעדכן ולא ליצור מחדש)
+    sha = ""
     try:
-        html_content = Path(html_path).read_text(encoding="utf-8")
+        existing = requests.get(api_url, headers=headers, timeout=10)
+        if existing.status_code == 200:
+            sha = existing.json().get("sha", "")
+    except Exception:
+        pass
 
-        payload = {
-            "name": safe_name,
-            "files": [
-                {
-                    "file": "index.html",
-                    "data": html_content,
-                    "encoding": "utf-8",
-                }
-            ],
-            "projectSettings": {
-                "framework": None,
-                "outputDirectory": None,
-            },
-        }
+    payload = {
+        "message": f"Add demo for {business_name}",
+        "content": encoded,
+        "branch":  "main",
+    }
+    if sha:
+        payload["sha"] = sha
 
-        resp = requests.post(
-            "https://api.vercel.com/v13/deployments",
-            headers={
-                "Authorization": f"Bearer {VERCEL_TOKEN}",
-                "Content-Type":  "application/json",
-            },
-            json=payload,
-            timeout=60,
-        )
-
+    print(f"  מעלה ל-GitHub Pages: {remote_path}...")
+    try:
+        resp = requests.put(api_url, json=payload, headers=headers, timeout=30)
         if resp.status_code in (200, 201):
-            data = resp.json()
-            url  = data.get("url", "")
-            if url:
-                full_url = f"https://{url}"
-                print(f"  פורסם: {full_url}")
-                return full_url
+            public_url = (
+                f"https://{GITHUB_USER}.github.io/{GITHUB_REPO}/{remote_path}"
+            )
+            print(f"  פורסם: {public_url}")
+            print(f"  (יכול לקחת עד דקה עד שGitHub Pages מעדכן)")
+            return public_url
         else:
-            print(f"  [Vercel] שגיאה {resp.status_code}: {resp.text[:200]}")
-
+            print(f"  [GitHub Pages] שגיאה {resp.status_code}: {resp.text[:200]}")
     except Exception as e:
-        print(f"  [Vercel] נכשל: {e}")
+        print(f"  [GitHub Pages] נכשל: {e}")
     return ""
 
 
@@ -380,7 +399,7 @@ def create_demo_for_business(
     result = {"html_path": path, "public_url": ""}
 
     if deploy:
-        result["public_url"] = deploy_to_vercel(path, project_name=business.get("name", ""))
+        result["public_url"] = deploy_to_github_pages(path, business_name=business.get("name", ""))
 
     return result
 

@@ -580,21 +580,30 @@ with demo_col2:
                         extra_info=demo_extra,
                         deploy=deploy_netlify,
                     )
-                    st.success(f"✅ האתר נוצר ונפתח בדפדפן!")
+                    st.success("האתר נוצר ונפתח בדפדפן.")
                     st.code(result["html_path"], language=None)
 
                     if result.get("public_url"):
                         pub_url = result["public_url"]
-                        st.markdown(f"### 🌐 URL לשיתוף:\n[{pub_url}]({pub_url})")
-                        # הצע הודעת WhatsApp עם הלינק
-                        wa_with_demo = (
-                            f"שלום {demo_biz['name']} 👋\n\n"
-                            f"הכנתי לך דמו של האתר שאוכל לבנות עבורך — "
-                            f"ראה איך זה ייראה:\n{pub_url}\n\n"
-                            f"מחיר: {600} ₪ בלבד. מעניין אותך?"
+                        st.markdown(f"**URL לשיתוף:** [{pub_url}]({pub_url})")
+
+                        # קח את הודעת ה-WA הקיימת והכנס את ה-URL במקום {DEMO_URL}
+                        base_msg = build_personal_message(demo_biz)
+                        wa_with_demo = base_msg.replace("{DEMO_URL}", pub_url)
+
+                        st.markdown("**הודעת WhatsApp מוכנה לשליחה (כולל הלינק):**")
+                        st.text_area("", value=wa_with_demo, height=180, key="demo_wa_msg")
+
+                        # שמור ב-DB
+                        conn_db = sqlite3.connect(DB_PATH)
+                        conn_db.execute(
+                            "UPDATE businesses SET demo_public_url=?, demo_html_path=? WHERE id=?",
+                            (pub_url, result["html_path"], demo_biz["id"])
                         )
-                        st.markdown("**📋 העתק הודעת WhatsApp עם הלינק:**")
-                        st.text_area("", value=wa_with_demo, height=130, key="demo_wa_msg")
+                        conn_db.commit()
+                        conn_db.close()
+                    else:
+                        st.info("האתר נשמר מקומית. לקבלת URL ציבורי יש להפעיל GitHub Pages על הרפו.")
                 except Exception as e:
                     st.error(f"שגיאה: {e}")
 
