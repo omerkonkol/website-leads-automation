@@ -346,10 +346,19 @@ filters = {
     "has_website":  site_filter if site_filter != "הכל" else None,
     "score_range":  score_range,
 }
+from database import init_db
+init_db()   # וודא שה-DB קיים (ראשונה + migration)
+
 df = load_businesses(filters)
 
 if df.empty:
-    st.warning("לא נמצאו עסקים עם הפילטרים הנוכחיים.")
+    st.info("📭 אין עסקים עדיין — לחץ על **'הפעל סריקה חדשה'** בסרגל השמאלי כדי להתחיל.")
+    st.markdown("""
+    #### איך מתחילים?
+    1. ערוך את **`config.py`** — הוסף את הקטגוריות והערים שאתה רוצה לסרוק
+    2. לחץ **🚀 הפעל סריקה חדשה** בסרגל השמאלי
+    3. המתן כמה דקות — העסקים יופיעו כאן אוטומטית
+    """)
     st.stop()
 
 # ════════════════════════════════════════════════════════════════
