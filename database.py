@@ -16,38 +16,50 @@ def get_conn():
 
 
 def init_db():
-    """יוצר את טבלאות הבסיס אם לא קיימות."""
+    """יוצר את טבלאות הבסיס אם לא קיימות, ומוסיף עמודות חסרות ל-DB קיים."""
     conn = get_conn()
     c = conn.cursor()
     c.executescript("""
         CREATE TABLE IF NOT EXISTS businesses (
-            id              INTEGER PRIMARY KEY AUTOINCREMENT,
-            name            TEXT NOT NULL,
-            phone           TEXT,
-            email           TEXT,
-            website         TEXT,
-            address         TEXT,
-            category        TEXT,
-            search_query    TEXT,
+            id               INTEGER PRIMARY KEY AUTOINCREMENT,
+            name             TEXT NOT NULL,
+            -- קשר ישיר
+            phone            TEXT,
+            phone2           TEXT,
+            email            TEXT,
+            website          TEXT,
+            address          TEXT,
+            city             TEXT,
+            -- מקור
+            category         TEXT,
+            search_query     TEXT,
+            source           TEXT,   -- 'google_maps' / 'dapei_zahav' / 'facebook' / 'wolt' וכו'
+            -- רשתות חברתיות (לשימוש בגנרטור האתר)
+            facebook_url     TEXT,
+            instagram_url    TEXT,
             -- ניתוח אתר
-            has_website     INTEGER DEFAULT 0,
-            has_ssl         INTEGER DEFAULT 0,
-            is_responsive   INTEGER DEFAULT 0,
-            has_cta         INTEGER DEFAULT 0,
-            has_form        INTEGER DEFAULT 0,
-            has_fb_pixel    INTEGER DEFAULT 0,
-            has_analytics   INTEGER DEFAULT 0,
-            load_time_ms    INTEGER,
-            quality_score   INTEGER DEFAULT 0,
-            issues          TEXT,
+            has_website      INTEGER DEFAULT 0,
+            has_ssl          INTEGER DEFAULT 0,
+            is_responsive    INTEGER DEFAULT 0,
+            has_cta          INTEGER DEFAULT 0,
+            has_form         INTEGER DEFAULT 0,
+            has_fb_pixel     INTEGER DEFAULT 0,
+            has_analytics    INTEGER DEFAULT 0,
+            load_time_ms     INTEGER,
+            quality_score    INTEGER DEFAULT 0,
+            issues           TEXT,
+            -- אתר דמו שנוצר
+            demo_html_path   TEXT,
+            demo_public_url  TEXT,
             -- שליחות
-            whatsapp_sent   INTEGER DEFAULT 0,
+            whatsapp_sent    INTEGER DEFAULT 0,
             whatsapp_sent_at TEXT,
-            email_sent      INTEGER DEFAULT 0,
-            email_sent_at   TEXT,
+            email_sent       INTEGER DEFAULT 0,
+            email_sent_at    TEXT,
             -- מטא
-            created_at      TEXT DEFAULT (datetime('now','localtime')),
-            notes           TEXT
+            created_at       TEXT DEFAULT (datetime('now','localtime')),
+            notes            TEXT,
+            extra_info       TEXT    -- מידע נוסף חופשי לשימוש בגנרטור
         );
 
         CREATE TABLE IF NOT EXISTS outreach_log (
@@ -60,6 +72,23 @@ def init_db():
             FOREIGN KEY (business_id) REFERENCES businesses(id)
         );
     """)
+    conn.commit()
+
+    # ── Migration: הוסף עמודות חסרות ל-DB קיים ──
+    new_columns = [
+        ("phone2",          "TEXT"),
+        ("city",            "TEXT"),
+        ("source",          "TEXT"),
+        ("facebook_url",    "TEXT"),
+        ("instagram_url",   "TEXT"),
+        ("demo_html_path",  "TEXT"),
+        ("demo_public_url", "TEXT"),
+        ("extra_info",      "TEXT"),
+    ]
+    existing = {row[1] for row in c.execute("PRAGMA table_info(businesses)").fetchall()}
+    for col, col_type in new_columns:
+        if col not in existing:
+            c.execute(f"ALTER TABLE businesses ADD COLUMN {col} {col_type}")
     conn.commit()
     conn.close()
     print(f"[DB] מסד נתונים מוכן: {DB_PATH}")
@@ -82,16 +111,32 @@ def insert_business(data: dict) -> int:
     """מוסיף עסק חדש ומחזיר את ה-id שנוצר."""
     conn = get_conn()
     c = conn.cursor()
+    # ערכי ברירת מחדל לשדות שאולי חסרים
+    row = {
+        "name": "", "phone": "", "phone2": "", "email": "",
+        "website": "", "address": "", "city": "",
+        "category": "", "search_query": "", "source": "",
+        "facebook_url": "", "instagram_url": "",
+        "has_website": 0, "has_ssl": 0, "is_responsive": 0,
+        "has_cta": 0, "has_form": 0, "has_fb_pixel": 0, "has_analytics": 0,
+        "load_time_ms": None, "quality_score": 0, "issues": "[]",
+        "extra_info": "",
+    }
+    row.update(data)
     c.execute("""
         INSERT INTO businesses
-            (name, phone, email, website, address, category, search_query,
+            (name, phone, phone2, email, website, address, city,
+             category, search_query, source, facebook_url, instagram_url,
              has_website, has_ssl, is_responsive, has_cta, has_form,
-             has_fb_pixel, has_analytics, load_time_ms, quality_score, issues)
+             has_fb_pixel, has_analytics, load_time_ms, quality_score, issues,
+             extra_info)
         VALUES
-            (:name, :phone, :email, :website, :address, :category, :search_query,
+            (:name, :phone, :phone2, :email, :website, :address, :city,
+             :category, :search_query, :source, :facebook_url, :instagram_url,
              :has_website, :has_ssl, :is_responsive, :has_cta, :has_form,
-             :has_fb_pixel, :has_analytics, :load_time_ms, :quality_score, :issues)
-    """, data)
+             :has_fb_pixel, :has_analytics, :load_time_ms, :quality_score, :issues,
+             :extra_info)
+    """, row)
     new_id = c.lastrowid
     conn.commit()
     conn.close()

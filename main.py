@@ -16,7 +16,7 @@ from database import (
     init_db, business_exists, insert_business,
     get_pending_outreach, export_to_excel, get_stats
 )
-from scraper import scrape_businesses, extract_email_from_website
+from scraper import scrape_businesses, extract_email_from_website, enrich_from_website
 from analyzer import analyze_website
 
 
@@ -52,22 +52,31 @@ def run_scrape_and_analyze():
             print(f"  🔎 מנתח: {name} | {website or 'אין אתר'}")
             analysis = analyze_website(website)
 
-            # ── ניסיון חילוץ מייל מהאתר ──
-            email = biz.get("email", "")
-            if not email and website:
-                email = extract_email_from_website(website)
-                if email:
-                    print(f"     📧 נמצא מייל: {email}")
+            # ── העשרת נתונים מהאתר: מייל, פייסבוק, אינסטגרם ──
+            enriched = enrich_from_website(website) if website else {}
+            email    = biz.get("email") or enriched.get("email", "")
+            fb_url   = enriched.get("facebook_url", "")
+            ig_url   = enriched.get("instagram_url", "")
+            city     = enriched.get("city") or biz.get("address", "").split()[-1] if biz.get("address") else ""
+
+            if email:   print(f"     📧 מייל: {email}")
+            if fb_url:  print(f"     👍 פייסבוק: {fb_url}")
+            if ig_url:  print(f"     📸 אינסטגרם: {ig_url}")
 
             # ── הכנסה למסד הנתונים ──
             row = {
-                "name":         name,
-                "phone":        phone,
-                "email":        email,
-                "website":      website,
-                "address":      biz.get("address", ""),
-                "category":     biz.get("category", ""),
-                "search_query": biz.get("search_query", ""),
+                "name":          name,
+                "phone":         phone,
+                "phone2":        biz.get("phone2", ""),
+                "email":         email,
+                "website":       website,
+                "address":       biz.get("address", ""),
+                "city":          city,
+                "category":      biz.get("category", ""),
+                "search_query":  biz.get("search_query", ""),
+                "source":        biz.get("source", ""),
+                "facebook_url":  fb_url,
+                "instagram_url": ig_url,
                 **{k: analysis[k] for k in [
                     "has_website", "has_ssl", "is_responsive",
                     "has_cta", "has_form", "has_fb_pixel",
