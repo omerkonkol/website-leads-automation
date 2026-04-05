@@ -1,0 +1,24 @@
+# סביבת Python
+__pycache__/
+*.py[cod]
+*.pyo
+.venv/
+venv/
+env/
+
+# נתונים רגישים — לעולם לא לgit
+config.py
+leads.db
+leads_export.xlsx
+session_data/
+sent_log.json
+credentials.json
+*.env
+.env
+
+# Windows
+Thumbs.db
+desktop.ini
+
+# VS Code
+.vscode/
