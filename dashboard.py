@@ -260,23 +260,11 @@ def send_email_now(to: str, business_name: str, issue: str) -> bool:
 #  Build personalized message
 # ════════════════════════════════════════════════════════════════
 def build_personal_message(biz: dict) -> str:
-    from config import YOUR_NAME, PRICE_ILS
-    issues_raw = biz.get("issues", "[]")
-    issues = json.loads(issues_raw) if isinstance(issues_raw, str) else (issues_raw or [])
-
-    if not biz.get("has_website"):
-        problem = "אין לכם אתר אינטרנט — כך לקוחות לא מוצאים אתכם בגוגל"
-    elif issues and issues[0] != "האתר נראה תקין":
-        problem = issues[0]
-    else:
-        problem = "האתר הקיים ניתן לשיפור משמעותי"
-
-    return (
-        f"שלום, אני פונה אליך בנוגע לעסק *{biz['name']}* 👋\n\n"
-        f"שמתי לב ש{problem}.\n\n"
-        f"אני בונה אתרים מודרניים ומותאמים לנייד במחיר מיוחד של *{PRICE_ILS} ₪* בלבד.\n"
-        f"תיק העבודות שלי 👇"
-    )
+    saved = biz.get("whatsapp_pitch", "")
+    if saved and len(saved) > 20:
+        return saved
+    from pitch_builder import build_whatsapp_pitch
+    return build_whatsapp_pitch(biz)
 
 
 # ════════════════════════════════════════════════════════════════
@@ -456,13 +444,21 @@ with left:
     # Issues
     issues_raw = biz.get("issues", "[]")
     issues = json.loads(issues_raw) if isinstance(issues_raw, str) else (issues_raw or [])
-    if issues and issues[0] != "האתר נראה תקין":
-        st.markdown("**⚠️ בעיות שנמצאו:**")
+    sales_summary = biz.get("sales_summary", "")
+    if sales_summary:
+        st.markdown(f"**סיכום:** {sales_summary}")
+    elif issues and issues[0] != "האתר נראה תקין":
         for issue in issues:
-            st.markdown(f"<span class='chip'>⚠️ {issue}</span>", unsafe_allow_html=True)
+            st.markdown(f"<span class='chip'>{issue}</span>", unsafe_allow_html=True)
+
+    # Full pitch (expandable)
+    full_pitch = biz.get("full_pitch", "")
+    if full_pitch:
+        with st.expander("פנייה מלאה (למייל / לעיון לפני שיחה)"):
+            st.text(full_pitch)
 
 with right:
-    st.markdown("#### ✏️ הודעה אישית")
+    st.markdown("#### הודעת WhatsApp")
 
     default_msg = build_personal_message(biz)
     message_text = st.text_area(
@@ -557,7 +553,7 @@ with demo_col1:
         key="demo_extra",
         placeholder="לדוגמה: פתוח א-ה 9:00-18:00, מתמחים בטיפולי פנים, מחיר טיפול 150 ₪..."
     )
-    deploy_netlify = st.checkbox("📤 פרסם ל-Netlify (URL ציבורי לשיתוף עם לקוח)", value=True)
+    deploy_netlify = st.checkbox("פרסם ל-Vercel (URL ציבורי לשיתוף עם לקוח)", value=True)
 
 with demo_col2:
     st.markdown("<br><br>", unsafe_allow_html=True)

@@ -59,7 +59,10 @@ def init_db():
             -- מטא
             created_at       TEXT DEFAULT (datetime('now','localtime')),
             notes            TEXT,
-            extra_info       TEXT    -- מידע נוסף חופשי לשימוש בגנרטור
+            extra_info       TEXT,   -- מידע נוסף חופשי לשימוש בגנרטור
+            whatsapp_pitch   TEXT,   -- הודעת WA קצרה ואישית
+            full_pitch       TEXT,   -- פנייה מלאה (למייל / עיון)
+            sales_summary    TEXT    -- שורה קצרה: סיכום הבעיות
         );
 
         CREATE TABLE IF NOT EXISTS outreach_log (
@@ -84,6 +87,9 @@ def init_db():
         ("demo_html_path",  "TEXT"),
         ("demo_public_url", "TEXT"),
         ("extra_info",      "TEXT"),
+        ("whatsapp_pitch",  "TEXT"),
+        ("full_pitch",      "TEXT"),
+        ("sales_summary",   "TEXT"),
     ]
     existing = {row[1] for row in c.execute("PRAGMA table_info(businesses)").fetchall()}
     for col, col_type in new_columns:

@@ -281,49 +281,67 @@ def save_and_open(html: str, business_name: str) -> str:
 
 
 # ════════════════════════════════════════════════════════════════
-#  Deploy ל-Netlify (ללא חשבון — ZIP upload)
+#  Deploy ל-Vercel
 # ════════════════════════════════════════════════════════════════
-def deploy_to_netlify(html_path: str) -> str:
-    """מעלה HTML יחיד ל-Netlify Drop ומחזיר URL ציבורי."""
-    import io, zipfile
-    print("  📤 מעלה ל-Netlify...")
+def deploy_to_vercel(html_path: str, project_name: str = "") -> str:
+    """
+    מעלה HTML יחיד ל-Vercel ומחזיר URL ציבורי.
+    דורש VERCEL_TOKEN ב-config.py.
+    """
     try:
-        # צור ZIP בזיכרון
-        buf = io.BytesIO()
-        with zipfile.ZipFile(buf, "w", zipfile.ZIP_DEFLATED) as zf:
-            zf.write(html_path, "index.html")
-        buf.seek(0)
+        from config import VERCEL_TOKEN
+    except ImportError:
+        VERCEL_TOKEN = ""
+
+    if not VERCEL_TOKEN or VERCEL_TOKEN == "YOUR_VERCEL_TOKEN_HERE":
+        print("  [Vercel] אין VERCEL_TOKEN ב-config.py — האתר נשמר מקומית בלבד")
+        return ""
+
+    import re as _re
+    safe_name = _re.sub(r"[^a-z0-9\-]", "-", (project_name or Path(html_path).stem).lower())[:50]
+    safe_name = safe_name.strip("-") or "demo-site"
+
+    print(f"  מעלה ל-Vercel: {safe_name}...")
+    try:
+        html_content = Path(html_path).read_text(encoding="utf-8")
+
+        payload = {
+            "name": safe_name,
+            "files": [
+                {
+                    "file": "index.html",
+                    "data": html_content,
+                    "encoding": "utf-8",
+                }
+            ],
+            "projectSettings": {
+                "framework": None,
+                "outputDirectory": None,
+            },
+        }
 
         resp = requests.post(
-            "https://api.netlify.com/api/v1/sites",
-            headers={"Content-Type": "application/zip"},
-            data=buf.read(),
-            timeout=40,
+            "https://api.vercel.com/v13/deployments",
+            headers={
+                "Authorization": f"Bearer {VERCEL_TOKEN}",
+                "Content-Type":  "application/json",
+            },
+            json=payload,
+            timeout=60,
         )
+
         if resp.status_code in (200, 201):
-            data    = resp.json()
-            site_id = data.get("id", "")
-            ssl_url = data.get("ssl_url") or data.get("url", "")
+            data = resp.json()
+            url  = data.get("url", "")
+            if url:
+                full_url = f"https://{url}"
+                print(f"  פורסם: {full_url}")
+                return full_url
+        else:
+            print(f"  [Vercel] שגיאה {resp.status_code}: {resp.text[:200]}")
 
-            # deploy the zip to the site
-            buf.seek(0)
-            buf2 = io.BytesIO()
-            with zipfile.ZipFile(buf2, "w", zipfile.ZIP_DEFLATED) as zf:
-                zf.write(html_path, "index.html")
-            buf2.seek(0)
-
-            dep = requests.post(
-                f"https://api.netlify.com/api/v1/sites/{site_id}/deploys",
-                headers={"Content-Type": "application/zip"},
-                data=buf2.read(),
-                timeout=40,
-            )
-            deploy_url = dep.json().get("ssl_url") or ssl_url
-            if deploy_url:
-                print(f"  🌐 פורסם: {deploy_url}")
-                return deploy_url
     except Exception as e:
-        print(f"  ⚠️  Netlify נכשל: {e}")
+        print(f"  [Vercel] נכשל: {e}")
     return ""
 
 
@@ -362,7 +380,7 @@ def create_demo_for_business(
     result = {"html_path": path, "public_url": ""}
 
     if deploy:
-        result["public_url"] = deploy_to_netlify(path)
+        result["public_url"] = deploy_to_vercel(path, project_name=business.get("name", ""))
 
     return result
 

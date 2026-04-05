@@ -16,8 +16,9 @@ from database import (
     init_db, business_exists, insert_business,
     get_pending_outreach, export_to_excel, get_stats
 )
-from scraper import scrape_businesses, extract_email_from_website, enrich_from_website
+from scraper import scrape_businesses, enrich_from_website
 from analyzer import analyze_website
+from pitch_builder import build_whatsapp_pitch, build_full_pitch, build_sales_summary
 
 
 # ════════════════════════════════════════════════════════════════
@@ -64,19 +65,34 @@ def run_scrape_and_analyze():
             if ig_url:  print(f"     📸 אינסטגרם: {ig_url}")
 
             # ── הכנסה למסד הנתונים ──
+            # ── בנה הודעות מכירה אישיות ──
+            partial_biz = {
+                "name": name, "website": website,
+                **{k: analysis[k] for k in [
+                    "has_website", "has_ssl", "is_responsive", "has_cta",
+                    "has_form", "has_fb_pixel", "has_analytics", "load_time_ms",
+                ]},
+            }
+            wa_pitch      = build_whatsapp_pitch(partial_biz)
+            fp            = build_full_pitch(partial_biz)
+            sales_summary = build_sales_summary(partial_biz)
+
             row = {
-                "name":          name,
-                "phone":         phone,
-                "phone2":        biz.get("phone2", ""),
-                "email":         email,
-                "website":       website,
-                "address":       biz.get("address", ""),
-                "city":          city,
-                "category":      biz.get("category", ""),
-                "search_query":  biz.get("search_query", ""),
-                "source":        biz.get("source", ""),
-                "facebook_url":  fb_url,
-                "instagram_url": ig_url,
+                "name":           name,
+                "phone":          phone,
+                "phone2":         biz.get("phone2", ""),
+                "email":          email,
+                "website":        website,
+                "address":        biz.get("address", ""),
+                "city":           city,
+                "category":       biz.get("category", ""),
+                "search_query":   biz.get("search_query", ""),
+                "source":         biz.get("source", ""),
+                "facebook_url":   fb_url,
+                "instagram_url":  ig_url,
+                "whatsapp_pitch": wa_pitch,
+                "full_pitch":     fp,
+                "sales_summary":  sales_summary,
                 **{k: analysis[k] for k in [
                     "has_website", "has_ssl", "is_responsive",
                     "has_cta", "has_form", "has_fb_pixel",
