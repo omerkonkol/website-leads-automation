@@ -39,13 +39,15 @@ def _clean_phone(raw: str) -> str:
     if not raw:
         return ""
     digits = re.sub(r"[^\d]", "", str(raw))
+    # מספר ישראלי תקין: 9-10 ספרות
     if len(digits) == 10 and digits.startswith("0"):
         return digits
-    if len(digits) == 9:
+    if len(digits) == 9 and not digits.startswith("0"):
         return "0" + digits
-    if len(digits) == 7:
-        return "0" + digits  # local number
-    return digits if digits else ""
+    # מספר קצר מדי = חלקי / לא תקין — פוסל
+    if len(digits) < 9:
+        return ""
+    return digits if len(digits) <= 11 else ""
 
 
 def _clean_url(url: str) -> str:

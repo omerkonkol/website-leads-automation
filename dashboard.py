@@ -32,8 +32,30 @@ st.set_page_config(
 # ── Global CSS ────────────────────────────────────────────────────
 st.markdown("""
 <style>
-  html, body, [class*="css"] { direction: rtl; font-family: 'Segoe UI', sans-serif; }
+  /* RTL base */
+  html, body, [class*="css"] {
+    direction: rtl;
+    font-family: 'Segoe UI', sans-serif;
+  }
   .stApp { background: #0F172A; }
+
+  /* RTL for text elements */
+  h1, h2, h3, h4, p, li, label, span,
+  [data-testid="stMarkdownContainer"],
+  [data-testid="stMetricLabel"],
+  .stSelectbox label, .stTextInput label, .stTextArea label {
+    direction: rtl !important;
+    text-align: right !important;
+  }
+
+  /* Inputs RTL */
+  textarea, input[type="text"], input[type="number"],
+  [data-baseweb="select"] { direction: rtl !important; text-align: right !important; }
+
+  /* Dataframe — DO NOT reverse, just align text */
+  [data-testid="stDataFrame"] { direction: ltr !important; }
+  [data-testid="stDataFrame"] th { text-align: right !important; }
+  [data-testid="stDataFrame"] td { text-align: right !important; }
 
   /* Tabs */
   [data-baseweb="tab-list"] {
@@ -454,7 +476,22 @@ with tab_leads:
                 "מקור":      r.get("source") or "—",
             })
         disp = pd.DataFrame(rows)
-        st.dataframe(disp, use_container_width=True, height=480, hide_index=True)
+        col_config = {
+            "דירוג":   st.column_config.TextColumn("דירוג", width="small"),
+            "שם עסק":  st.column_config.TextColumn("שם עסק", width="medium"),
+            "קטגוריה": st.column_config.TextColumn("קטגוריה", width="small"),
+            "עיר":     st.column_config.TextColumn("עיר", width="small"),
+            "טלפון":   st.column_config.TextColumn("טלפון", width="medium"),
+            "מייל":    st.column_config.TextColumn("מייל", width="small"),
+            "אתר?":    st.column_config.TextColumn("אתר?", width="small"),
+            "CMS":     st.column_config.TextColumn("CMS", width="small"),
+            "SEO":     st.column_config.TextColumn("SEO", width="small"),
+            "פעילות":  st.column_config.TextColumn("פעילות", width="small"),
+            "נשלח":    st.column_config.TextColumn("נשלח", width="small"),
+            "מקור":    st.column_config.TextColumn("מקור", width="small"),
+        }
+        st.dataframe(disp, use_container_width=True, height=480, hide_index=True,
+                     column_config=col_config)
 
         # ── Lead detail expander ──
         st.markdown("---")

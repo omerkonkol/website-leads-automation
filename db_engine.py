@@ -22,10 +22,13 @@ from config import SUPABASE_URL, SUPABASE_KEY, DB_PATH
 # ── בדוק חיבור Supabase ──
 _USE_SUPABASE = bool(SUPABASE_URL and SUPABASE_KEY)
 
-if _USE_SUPABASE:
-    print("[DB] ☁️  Supabase מוגדר — כל הצוות מחובר לאותו מסד נתונים")
-else:
-    print("[DB] 💾 SQLite מקומי (הגדר SUPABASE_URL ב-.env לעבודת צוות)")
+try:
+    if _USE_SUPABASE:
+        print("[DB] Supabase connected - team database")
+    else:
+        print("[DB] SQLite local mode")
+except Exception:
+    pass
 
 
 # ════════════════════════════════════════════════════════════════
