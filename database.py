@@ -33,11 +33,12 @@ def init_db():
             -- מקור
             category         TEXT,
             search_query     TEXT,
-            source           TEXT,   -- 'google_maps' / 'dapei_zahav' / 'facebook' / 'wolt' וכו'
-            -- רשתות חברתיות (לשימוש בגנרטור האתר)
+            source           TEXT,   -- 'google_maps' / 'dapei_zahav' / 'facebook' / 'gov_il' וכו'
+            -- רשתות חברתיות
             facebook_url     TEXT,
             instagram_url    TEXT,
-            -- ניתוח אתר
+            linkedin_url     TEXT,
+            -- ניתוח אתר — בסיסי
             has_website      INTEGER DEFAULT 0,
             has_ssl          INTEGER DEFAULT 0,
             is_responsive    INTEGER DEFAULT 0,
@@ -48,56 +49,172 @@ def init_db():
             load_time_ms     INTEGER,
             quality_score    INTEGER DEFAULT 0,
             issues           TEXT,
+            -- ניתוח אתר — מתקדם (SEO, CMS, PageSpeed)
+            cms_platform     TEXT,       -- 'wix' / 'wordpress' / 'webflow' / 'custom' / 'unknown'
+            seo_score        INTEGER,    -- 0-100 ציון SEO
+            has_title_tag    INTEGER DEFAULT 0,
+            has_meta_desc    INTEGER DEFAULT 0,
+            has_h1           INTEGER DEFAULT 0,
+            has_robots_txt   INTEGER DEFAULT 0,
+            has_sitemap      INTEGER DEFAULT 0,
+            pagespeed_score  INTEGER,    -- 0-100 מ-PageSpeed Insights
+            core_web_vitals  TEXT,       -- JSON: {lcp, fid, cls}
+            copyright_year   INTEGER,    -- שנת copyright — אתר ישן = הזדמנות
+            last_updated     TEXT,       -- תאריך עדכון אחרון משוער
+            google_reviews   INTEGER,    -- מספר ביקורות Google
+            google_rating    REAL,       -- דירוג Google (1-5)
+            competitor_count INTEGER,    -- מספר מתחרים בתחום באזור
             -- אתר דמו שנוצר
             demo_html_path   TEXT,
             demo_public_url  TEXT,
+            -- Pipeline / CRM
+            pipeline_stage   TEXT DEFAULT 'new',  -- new/contacted/interested/demo_sent/negotiating/closed_won/closed_lost
+            deal_value       REAL DEFAULT 0,      -- סכום העסקה ב-₪
+            next_followup    TEXT,                 -- תאריך follow-up הבא
+            assigned_to      TEXT,                 -- מי אחראי על הליד
             -- שליחות
             whatsapp_sent    INTEGER DEFAULT 0,
             whatsapp_sent_at TEXT,
             email_sent       INTEGER DEFAULT 0,
             email_sent_at    TEXT,
+            followup_count   INTEGER DEFAULT 0,    -- מספר follow-ups שנשלחו
+            last_response    TEXT,                  -- תגובה אחרונה מהלקוח
+            response_date    TEXT,
+            -- A/B Testing
+            pitch_variant    TEXT DEFAULT 'A',     -- 'A' / 'B' — איזו גרסה נשלחה
+            -- Blacklist
+            blacklisted      INTEGER DEFAULT 0,    -- 1 = לא לשלוח יותר
+            blacklist_reason TEXT,
             -- מטא
             created_at       TEXT DEFAULT (datetime('now','localtime')),
+            updated_at       TEXT DEFAULT (datetime('now','localtime')),
             notes            TEXT,
-            extra_info       TEXT,   -- מידע נוסף חופשי לשימוש בגנרטור
-            whatsapp_pitch   TEXT,   -- הודעת WA קצרה ואישית
-            full_pitch       TEXT,   -- פנייה מלאה (למייל / עיון)
-            sales_summary    TEXT,   -- שורה קצרה: סיכום הבעיות
-            lead_score       INTEGER DEFAULT 0  -- ציון מסחרי 0-100 (גבוה = כדאי לפנות ראשון)
+            extra_info       TEXT,
+            whatsapp_pitch   TEXT,
+            full_pitch       TEXT,
+            sales_summary    TEXT,
+            lead_score       INTEGER DEFAULT 0
         );
 
         CREATE TABLE IF NOT EXISTS outreach_log (
             id          INTEGER PRIMARY KEY AUTOINCREMENT,
             business_id INTEGER,
-            channel     TEXT,   -- 'whatsapp' / 'email'
-            status      TEXT,   -- 'sent' / 'failed'
+            channel     TEXT,   -- 'whatsapp' / 'email' / 'phone_call'
+            status      TEXT,   -- 'sent' / 'failed' / 'replied' / 'interested' / 'not_interested'
             message     TEXT,
+            variant     TEXT,   -- A/B variant
             sent_at     TEXT DEFAULT (datetime('now','localtime')),
             FOREIGN KEY (business_id) REFERENCES businesses(id)
         );
+
+        -- טבלת drip campaigns — follow-ups אוטומטיים
+        CREATE TABLE IF NOT EXISTS drip_campaigns (
+            id            INTEGER PRIMARY KEY AUTOINCREMENT,
+            business_id   INTEGER,
+            step          INTEGER DEFAULT 1,   -- שלב: 1=WA, 2=email, 3=followup
+            channel       TEXT,                 -- 'whatsapp' / 'email'
+            scheduled_at  TEXT,                 -- מתי לשלוח
+            sent_at       TEXT,                 -- מתי נשלח בפועל
+            status        TEXT DEFAULT 'pending', -- pending/sent/cancelled/skipped
+            message       TEXT,
+            FOREIGN KEY (business_id) REFERENCES businesses(id)
+        );
+
+        -- טבלת A/B test results
+        CREATE TABLE IF NOT EXISTS ab_tests (
+            id           INTEGER PRIMARY KEY AUTOINCREMENT,
+            test_name    TEXT,
+            variant      TEXT,     -- 'A' / 'B'
+            sent_count   INTEGER DEFAULT 0,
+            reply_count  INTEGER DEFAULT 0,
+            close_count  INTEGER DEFAULT 0,
+            created_at   TEXT DEFAULT (datetime('now','localtime'))
+        );
+
+        -- טבלת deals — מעקב עסקאות
+        CREATE TABLE IF NOT EXISTS deals (
+            id            INTEGER PRIMARY KEY AUTOINCREMENT,
+            business_id   INTEGER,
+            amount        REAL,
+            status        TEXT DEFAULT 'open',  -- open/won/lost
+            closed_at     TEXT,
+            notes         TEXT,
+            created_at    TEXT DEFAULT (datetime('now','localtime')),
+            FOREIGN KEY (business_id) REFERENCES businesses(id)
+        );
+
     """)
     conn.commit()
 
     # ── Migration: הוסף עמודות חסרות ל-DB קיים ──
     new_columns = [
-        ("phone2",          "TEXT"),
-        ("city",            "TEXT"),
-        ("source",          "TEXT"),
-        ("facebook_url",    "TEXT"),
-        ("instagram_url",   "TEXT"),
-        ("demo_html_path",  "TEXT"),
-        ("demo_public_url", "TEXT"),
-        ("extra_info",      "TEXT"),
-        ("whatsapp_pitch",  "TEXT"),
-        ("full_pitch",      "TEXT"),
-        ("sales_summary",   "TEXT"),
-        ("lead_score",      "INTEGER DEFAULT 0"),
+        ("phone2",           "TEXT"),
+        ("city",             "TEXT"),
+        ("source",           "TEXT"),
+        ("facebook_url",     "TEXT"),
+        ("instagram_url",    "TEXT"),
+        ("linkedin_url",     "TEXT"),
+        ("demo_html_path",   "TEXT"),
+        ("demo_public_url",  "TEXT"),
+        ("extra_info",       "TEXT"),
+        ("whatsapp_pitch",   "TEXT"),
+        ("full_pitch",       "TEXT"),
+        ("sales_summary",    "TEXT"),
+        ("lead_score",       "INTEGER DEFAULT 0"),
+        # ניתוח מתקדם
+        ("cms_platform",     "TEXT"),
+        ("seo_score",        "INTEGER"),
+        ("has_title_tag",    "INTEGER DEFAULT 0"),
+        ("has_meta_desc",    "INTEGER DEFAULT 0"),
+        ("has_h1",           "INTEGER DEFAULT 0"),
+        ("has_robots_txt",   "INTEGER DEFAULT 0"),
+        ("has_sitemap",      "INTEGER DEFAULT 0"),
+        ("pagespeed_score",  "INTEGER"),
+        ("core_web_vitals",  "TEXT"),
+        ("copyright_year",   "INTEGER"),
+        ("last_updated",     "TEXT"),
+        ("google_reviews",   "INTEGER"),
+        ("google_rating",    "REAL"),
+        ("competitor_count", "INTEGER"),
+        # Pipeline / CRM
+        ("pipeline_stage",   "TEXT DEFAULT 'new'"),
+        ("deal_value",       "REAL DEFAULT 0"),
+        ("next_followup",    "TEXT"),
+        ("assigned_to",      "TEXT"),
+        ("followup_count",   "INTEGER DEFAULT 0"),
+        ("last_response",    "TEXT"),
+        ("response_date",    "TEXT"),
+        # A/B + Blacklist
+        ("pitch_variant",    "TEXT DEFAULT 'A'"),
+        ("blacklisted",      "INTEGER DEFAULT 0"),
+        ("blacklist_reason", "TEXT"),
+        ("updated_at",       "TEXT"),
+        # אימות פעילות
+        ("activity_score",    "INTEGER"),
+        ("activity_details",  "TEXT"),
+        ("is_likely_active",  "INTEGER DEFAULT 1"),
+        ("verified_at",       "TEXT"),
     ]
     existing = {row[1] for row in c.execute("PRAGMA table_info(businesses)").fetchall()}
     for col, col_type in new_columns:
         if col not in existing:
             c.execute(f"ALTER TABLE businesses ADD COLUMN {col} {col_type}")
     conn.commit()
+
+    # ── אינדקסים — אחרי שכל העמודות קיימות ──
+    try:
+        c.executescript("""
+            CREATE INDEX IF NOT EXISTS idx_biz_lead_score ON businesses(lead_score DESC);
+            CREATE INDEX IF NOT EXISTS idx_biz_pipeline ON businesses(pipeline_stage);
+            CREATE INDEX IF NOT EXISTS idx_biz_followup ON businesses(next_followup);
+            CREATE INDEX IF NOT EXISTS idx_biz_blacklist ON businesses(blacklisted);
+            CREATE INDEX IF NOT EXISTS idx_drip_scheduled ON drip_campaigns(scheduled_at, status);
+            CREATE INDEX IF NOT EXISTS idx_outreach_biz ON outreach_log(business_id);
+        """)
+        conn.commit()
+    except Exception:
+        pass  # אינדקסים כבר קיימים
+
     conn.close()
     print(f"[DB] מסד נתונים מוכן: {DB_PATH}")
 
@@ -249,6 +366,20 @@ def export_to_excel():
         "email_sent_at": "תאריך מייל",
         "created_at": "נוסף בתאריך",
         "notes": "הערות",
+        "lead_score": "ציון ליד",
+        "pipeline_stage": "שלב בצינור",
+        "cms_platform": "פלטפורמה",
+        "seo_score": "ציון SEO",
+        "copyright_year": "שנת Copyright",
+        "source": "מקור",
+        "city": "עיר",
+        "facebook_url": "פייסבוק",
+        "instagram_url": "אינסטגרם",
+        "activity_score": "ציון פעילות",
+        "is_likely_active": "עסק פעיל",
+        "activity_details": "פרטי אימות",
+        "verified_at": "תאריך אימות",
+        "sales_summary": "סיכום מכירה",
     }
     df.rename(columns=rename_map, inplace=True)
     df.to_excel(EXCEL_PATH, index=False)
@@ -276,3 +407,287 @@ def get_stats() -> dict:
         "WhatsApp נשלח": wa_sent,
         "מייל נשלח": em_sent,
     }
+
+
+# ════════════════════════════════════════════════════════════════
+#  Pipeline & CRM
+# ════════════════════════════════════════════════════════════════
+PIPELINE_STAGES = [
+    "new",           # ליד חדש
+    "contacted",     # נשלח פנייה ראשונה
+    "interested",    # הלקוח הביע עניין
+    "demo_sent",     # נשלח אתר דמו
+    "negotiating",   # במשא ומתן
+    "closed_won",    # עסקה נסגרה
+    "closed_lost",   # הלקוח סירב
+]
+
+PIPELINE_LABELS = {
+    "new":         "חדש",
+    "contacted":   "נשלח פנייה",
+    "interested":  "מעוניין",
+    "demo_sent":   "דמו נשלח",
+    "negotiating": "במו\"מ",
+    "closed_won":  "נסגר ✅",
+    "closed_lost": "הפסד ❌",
+}
+
+
+def update_pipeline_stage(business_id: int, stage: str):
+    """מעדכן את שלב ה-pipeline של ליד."""
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    conn = get_conn()
+    conn.execute(
+        "UPDATE businesses SET pipeline_stage=?, updated_at=? WHERE id=?",
+        (stage, now, business_id)
+    )
+    conn.commit()
+    conn.close()
+
+
+def set_next_followup(business_id: int, followup_date: str):
+    """קובע תאריך follow-up הבא."""
+    conn = get_conn()
+    conn.execute(
+        "UPDATE businesses SET next_followup=? WHERE id=?",
+        (followup_date, business_id)
+    )
+    conn.commit()
+    conn.close()
+
+
+def get_followups_due(date: str = None) -> list:
+    """מחזיר לידים שצריך לעשות להם follow-up היום (או בתאריך נתון)."""
+    if not date:
+        date = datetime.now().strftime("%Y-%m-%d")
+    conn = get_conn()
+    rows = conn.execute(
+        """SELECT * FROM businesses
+           WHERE next_followup <= ? AND blacklisted = 0
+             AND pipeline_stage NOT IN ('closed_won','closed_lost')
+           ORDER BY lead_score DESC""",
+        (date,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def blacklist_business(business_id: int, reason: str = ""):
+    """מוסיף עסק ל-blacklist — לא ישלחו אליו יותר."""
+    conn = get_conn()
+    conn.execute(
+        "UPDATE businesses SET blacklisted=1, blacklist_reason=? WHERE id=?",
+        (reason, business_id)
+    )
+    conn.commit()
+    conn.close()
+
+
+# ════════════════════════════════════════════════════════════════
+#  Deals — מעקב עסקאות
+# ════════════════════════════════════════════════════════════════
+def create_deal(business_id: int, amount: float, notes: str = "") -> int:
+    conn = get_conn()
+    c = conn.cursor()
+    c.execute(
+        "INSERT INTO deals (business_id, amount, notes) VALUES (?,?,?)",
+        (business_id, amount, notes)
+    )
+    conn.execute(
+        "UPDATE businesses SET pipeline_stage='closed_won', deal_value=? WHERE id=?",
+        (amount, business_id)
+    )
+    deal_id = c.lastrowid
+    conn.commit()
+    conn.close()
+    return deal_id
+
+
+def get_revenue_stats() -> dict:
+    """מחזיר סטטיסטיקות הכנסות."""
+    conn = get_conn()
+    c = conn.cursor()
+    c.execute("SELECT COUNT(*), COALESCE(SUM(amount),0) FROM deals WHERE status='won'")
+    won_count, total_revenue = c.fetchone()
+    c.execute("SELECT COUNT(*) FROM deals WHERE status='open'")
+    open_deals = c.fetchone()[0]
+    c.execute("SELECT COALESCE(SUM(amount),0) FROM deals WHERE status='open'")
+    pipeline_value = c.fetchone()[0]
+    conn.close()
+    return {
+        "won_count": won_count,
+        "total_revenue": total_revenue,
+        "open_deals": open_deals,
+        "pipeline_value": pipeline_value,
+    }
+
+
+# ════════════════════════════════════════════════════════════════
+#  Drip Campaigns
+# ════════════════════════════════════════════════════════════════
+def schedule_drip(business_id: int, steps: list[dict]):
+    """
+    יוצר drip campaign לעסק.
+    steps = [{"step": 1, "channel": "whatsapp", "delay_days": 0, "message": "..."},
+             {"step": 2, "channel": "email",    "delay_days": 3, "message": "..."},
+             {"step": 3, "channel": "whatsapp", "delay_days": 7, "message": "..."}]
+    """
+    from datetime import timedelta
+    now = datetime.now()
+    conn = get_conn()
+    for s in steps:
+        scheduled = now + timedelta(days=s.get("delay_days", 0))
+        conn.execute(
+            """INSERT INTO drip_campaigns (business_id, step, channel, scheduled_at, message)
+               VALUES (?,?,?,?,?)""",
+            (business_id, s["step"], s["channel"],
+             scheduled.strftime("%Y-%m-%d %H:%M:%S"), s.get("message", ""))
+        )
+    conn.commit()
+    conn.close()
+
+
+def get_pending_drips(date: str = None) -> list:
+    """מחזיר drip messages שצריך לשלוח עכשיו."""
+    if not date:
+        date = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    conn = get_conn()
+    rows = conn.execute(
+        """SELECT dc.*, b.name, b.phone, b.email, b.blacklisted
+           FROM drip_campaigns dc
+           JOIN businesses b ON dc.business_id = b.id
+           WHERE dc.status = 'pending' AND dc.scheduled_at <= ?
+             AND b.blacklisted = 0
+           ORDER BY dc.scheduled_at""",
+        (date,)
+    ).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def mark_drip_sent(drip_id: int):
+    now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+    conn = get_conn()
+    conn.execute(
+        "UPDATE drip_campaigns SET status='sent', sent_at=? WHERE id=?",
+        (now, drip_id)
+    )
+    conn.commit()
+    conn.close()
+
+
+# ════════════════════════════════════════════════════════════════
+#  A/B Testing
+# ════════════════════════════════════════════════════════════════
+def get_ab_stats(test_name: str = "default") -> dict:
+    """מחזיר סטטיסטיקות A/B test."""
+    conn = get_conn()
+    c = conn.cursor()
+    stats = {}
+    for variant in ("A", "B"):
+        c.execute(
+            "SELECT sent_count, reply_count, close_count FROM ab_tests WHERE test_name=? AND variant=?",
+            (test_name, variant)
+        )
+        row = c.fetchone()
+        if row:
+            sent, replies, closes = row
+            stats[variant] = {
+                "sent": sent, "replies": replies, "closes": closes,
+                "reply_rate": round(replies / sent * 100, 1) if sent > 0 else 0,
+                "close_rate": round(closes / sent * 100, 1) if sent > 0 else 0,
+            }
+        else:
+            stats[variant] = {"sent": 0, "replies": 0, "closes": 0, "reply_rate": 0, "close_rate": 0}
+    conn.close()
+    return stats
+
+
+def increment_ab(test_name: str, variant: str, field: str = "sent_count"):
+    """מעדכן מונה ב-A/B test (sent_count / reply_count / close_count)."""
+    conn = get_conn()
+    c = conn.cursor()
+    c.execute("SELECT id FROM ab_tests WHERE test_name=? AND variant=?", (test_name, variant))
+    if c.fetchone():
+        conn.execute(f"UPDATE ab_tests SET {field} = {field} + 1 WHERE test_name=? AND variant=?",
+                     (test_name, variant))
+    else:
+        conn.execute(
+            f"INSERT INTO ab_tests (test_name, variant, {field}) VALUES (?,?,1)",
+            (test_name, variant)
+        )
+    conn.commit()
+    conn.close()
+
+
+# ════════════════════════════════════════════════════════════════
+#  Analytics helpers
+# ════════════════════════════════════════════════════════════════
+def get_pipeline_counts() -> dict:
+    """מחזיר מספר לידים בכל שלב pipeline."""
+    conn = get_conn()
+    rows = conn.execute(
+        "SELECT COALESCE(pipeline_stage,'new') AS stage, COUNT(*) AS cnt FROM businesses GROUP BY pipeline_stage"
+    ).fetchall()
+    conn.close()
+    return {r["stage"]: r["cnt"] for r in rows}
+
+
+def get_source_stats() -> list:
+    """מחזיר סטטיסטיקות לפי מקור."""
+    conn = get_conn()
+    rows = conn.execute("""
+        SELECT COALESCE(source,'unknown') AS source,
+               COUNT(*) AS total,
+               SUM(CASE WHEN lead_score >= 70 THEN 1 ELSE 0 END) AS hot,
+               AVG(lead_score) AS avg_score
+        FROM businesses GROUP BY source ORDER BY total DESC
+    """).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def get_category_stats() -> list:
+    """מחזיר סטטיסטיקות לפי קטגוריה."""
+    conn = get_conn()
+    rows = conn.execute("""
+        SELECT COALESCE(category,'unknown') AS category,
+               COUNT(*) AS total,
+               SUM(CASE WHEN lead_score >= 70 THEN 1 ELSE 0 END) AS hot,
+               AVG(lead_score) AS avg_score
+        FROM businesses GROUP BY category ORDER BY total DESC LIMIT 20
+    """).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def get_city_stats() -> list:
+    """מחזיר סטטיסטיקות לפי עיר."""
+    conn = get_conn()
+    rows = conn.execute("""
+        SELECT COALESCE(city,'לא ידוע') AS city,
+               COUNT(*) AS total,
+               SUM(CASE WHEN lead_score >= 70 THEN 1 ELSE 0 END) AS hot,
+               AVG(lead_score) AS avg_score
+        FROM businesses WHERE city IS NOT NULL AND city != ''
+        GROUP BY city ORDER BY total DESC LIMIT 20
+    """).fetchall()
+    conn.close()
+    return [dict(r) for r in rows]
+
+
+def get_conversion_stats() -> dict:
+    """מחזיר Conversion funnel stats."""
+    conn = get_conn()
+    c = conn.cursor()
+    def q(sql): return c.execute(sql).fetchone()[0]
+    stats = {
+        "total_leads":   q("SELECT COUNT(*) FROM businesses"),
+        "contacted":     q("SELECT COUNT(*) FROM businesses WHERE whatsapp_sent=1 OR email_sent=1"),
+        "replied":       q("SELECT COUNT(*) FROM businesses WHERE last_response IS NOT NULL"),
+        "demo_sent":     q("SELECT COUNT(*) FROM businesses WHERE demo_public_url IS NOT NULL AND demo_public_url != ''"),
+        "deals_won":     q("SELECT COUNT(*) FROM deals WHERE status='won'"),
+        "total_revenue": q("SELECT COALESCE(SUM(amount),0) FROM deals WHERE status='won'"),
+    }
+    conn.close()
+    return stats
