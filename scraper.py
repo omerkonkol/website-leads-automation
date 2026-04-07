@@ -519,63 +519,194 @@ def scrape_gov_companies(query: str) -> list[dict]:
 
 
 # ════════════════════════════════════════════════════════════════
-#  מקור 9: Facebook Pages — חיפוש דפי עסקים
+#  מקור 9: Facebook Pages — חיפוש דפי עסקים (משופר)
 # ════════════════════════════════════════════════════════════════
+
+def _extract_fb_page_data(fb_url: str) -> dict:
+    """
+    מנסה לשלוף מידע בסיסי מדף פייסבוק ישירות (ללא API).
+    מחזיר: website, phone, followers, has_website
+    """
+    out = {"fb_website": "", "fb_phone": "", "fb_followers": 0, "fb_has_website": False}
+    if not fb_url or "facebook.com" not in fb_url:
+        return out
+    try:
+        resp = _safe_request(fb_url, timeout=10)
+        if not resp:
+            return out
+        html = resp.text
+
+        # אתר מוטמע ב-JSON של הדף
+        for pat in [r'"website"\s*:\s*"(https?://[^"]{5,200})"',
+                     r'"WebPage"\s*[^}]*"url"\s*:\s*"(https?://(?!.*facebook)[^"]{5,200})"']:
+            m = re.search(pat, html)
+            if m:
+                site = m.group(1)
+                if "facebook" not in site and "instagram" not in site:
+                    out["fb_website"] = site
+                    out["fb_has_website"] = True
+                    break
+
+        # כמות עוקבים
+        for pat in [r'"fan_count"\s*:\s*(\d+)', r'"follower_count"\s*:\s*(\d+)',
+                     r'([\d,]+)\s*(?:עוקבים|followers|likes|אוהדים)']:
+            m = re.search(pat, html, re.IGNORECASE)
+            if m:
+                try:
+                    out["fb_followers"] = int(m.group(1).replace(",", ""))
+                    break
+                except ValueError:
+                    pass
+
+        # טלפון
+        for pat in [r'"phone"\s*:\s*"([^"]{7,20})"',
+                     r'(?:tel:|phone:|טלפון:?)\s*(0\d[\d\-]{7,9})']:
+            m = re.search(pat, html, re.IGNORECASE)
+            if m:
+                cleaned = _clean_phone(m.group(1))
+                if cleaned:
+                    out["fb_phone"] = cleaned
+                    break
+
+    except Exception:
+        pass
+    return out
+
+
 def scrape_facebook_pages(query: str) -> list[dict]:
     """
-    מחפש דפי פייסבוק עסקיים דרך Google.
-    עסקים שפעילים רק בפייסבוק = אין להם אתר = ליד.
+    מחפש דפי פייסבוק עסקיים דרך Google (3 תבניות שונות).
+    מנתח snippets כדי לזהות:
+      • אם יש לעסק אתר (fb_snippet_has_website)
+      • טלפון, עוקבים מה-snippet
+    עסקים שפעילים רק בפייסבוק = אין להם אתר = ליד חם.
     """
-    results = []
-    sq = f'site:facebook.com "{query}" ישראל -groups -events -marketplace'
-    url = f"https://www.google.com/search?q={quote(sq)}&num=15&hl=he&gl=il"
+    results: list[dict] = []
+    seen_names: set[str] = set()
 
-    resp = _safe_request(url)
-    if not resp:
-        return results
-    html = resp.text
-    if "detected unusual traffic" in html:
-        print("    [Facebook] Google חסם — דולג")
-        return results
+    # 3 תבניות dork שונות ← יותר כיסוי
+    dork_patterns = [
+        f'site:facebook.com "{query}" ישראל -groups -events -marketplace',
+        f'site:facebook.com/pages/ {query} ישראל',
+        f'site:facebook.com {query} ישראל "התקשרו" OR "טלפון" OR "לפרטים"',
+    ]
 
-    soup = BeautifulSoup(html, "html.parser")
-    for el in soup.select("h3"):
-        text = el.get_text(strip=True)
-        if not text or len(text) < 3:
+    for sq in dork_patterns:
+        if len(results) >= MAX_RESULTS_PER_QUERY:
+            break
+
+        url = f"https://www.google.com/search?q={quote(sq)}&num=15&hl=he&gl=il"
+        resp = _safe_request(url)
+        if not resp:
             continue
-        # סנן כותרות של Facebook עצמו
-        if text.lower() in ("facebook", "log in", "meta"):
-            continue
+        html = resp.text
+        if "detected unusual traffic" in html:
+            print("    [Facebook] Google חסם — דולג")
+            break
 
-        # חלץ URL של דף הפייסבוק
-        parent_a = el.find_parent("a")
-        fb_url = ""
-        if parent_a and parent_a.get("href"):
-            fb_match = re.search(r'https?://(?:www\.)?facebook\.com/[^&"?]+', parent_a["href"])
-            if fb_match:
-                fb_url = fb_match.group(0)
+        soup = BeautifulSoup(html, "html.parser")
 
-        # חלץ שם עסק מהכותרת (הסר " | Facebook" וכו')
-        name = re.sub(r"\s*[-|–].*(?:facebook|פייסבוק|meta).*$", "", text, flags=re.IGNORECASE)
-        name = name.strip()
-        if len(name) < 3:
-            continue
+        # נסה לחפש בלוקי תוצאות
+        result_blocks = soup.select("div.g") or soup.select("div[data-hveid]") or []
+        if not result_blocks:
+            # fallback: רק כותרות h3
+            result_blocks = [el.find_parent("div") or el for el in soup.select("h3")]
 
-        # חלץ טלפון מה-snippet
-        phones = re.findall(r"0\d[\d\-]{7,9}", html)
-        phone = _clean_phone(phones[0]) if phones else ""
+        for block in result_blocks:
+            if not block:
+                continue
 
-        results.append(_make_biz(
-            name=name,
-            phone=phone,
-            query=query,
-            source="facebook",
-            category=query,
-            facebook_url=fb_url,
-        ))
+            h3 = block.find("h3")
+            if not h3:
+                continue
+            text = h3.get_text(strip=True)
+            if not text or len(text) < 3:
+                continue
+            if text.lower() in ("facebook", "log in", "meta", "log into facebook"):
+                continue
+
+            # חלץ URL של דף הפייסבוק
+            a_tag = block.find("a", href=True) or h3.find_parent("a")
+            fb_url = ""
+            if a_tag:
+                href = a_tag.get("href", "")
+                fb_match = re.search(r'https?://(?:www\.)?facebook\.com/(?!groups|events|marketplace|login|sharer)[^&"?]+', href)
+                if fb_match:
+                    fb_url = fb_match.group(0).rstrip("/")
+
+            # נסה לחלץ שם עסק מהכותרת
+            name = re.sub(r"\s*[-|–|·].*(?:facebook|פייסבוק|meta).*$", "", text, flags=re.IGNORECASE)
+            name = re.sub(r"\s*\|\s*פייסבוק$", "", name, flags=re.IGNORECASE)
+            name = name.strip()
+            if len(name) < 3:
+                continue
+
+            name_key = name.lower()
+            if name_key in seen_names:
+                continue
+            seen_names.add(name_key)
+
+            # ניתוח ה-snippet
+            snippet_el = (
+                block.select_one(".VwiC3b") or
+                block.select_one("span[data-sncf]") or
+                block.select_one(".lEBKkf") or
+                block.select_one("div[style*='webkit-line-clamp']")
+            )
+            snippet = snippet_el.get_text(" ", strip=True) if snippet_el else ""
+
+            # זיהוי: האם ה-snippet מזכיר אתר? (= יש להם אתר)
+            has_website_signal = bool(re.search(
+                r'(?:website|אתר|www\.|\.co\.il|\.com[/\s])',
+                snippet, re.IGNORECASE
+            ))
+
+            # חלץ טלפון מה-snippet
+            phones_found = re.findall(r"0\d[\d\-]{7,9}", snippet)
+            phone = _clean_phone(phones_found[0]) if phones_found else ""
+
+            # חלץ עוקבים מה-snippet (לפעמים Google מציג "X עוקבים")
+            fb_followers = 0
+            followers_m = re.search(
+                r'([\d,]+)\s*(?:עוקבים|followers|likes|אוהדים|אנשים אוהבים)',
+                snippet, re.IGNORECASE
+            )
+            if followers_m:
+                try:
+                    fb_followers = int(followers_m.group(1).replace(",", ""))
+                except ValueError:
+                    pass
+
+            biz = _make_biz(
+                name=name,
+                phone=phone,
+                query=query,
+                source="facebook",
+                category=query,
+                facebook_url=fb_url,
+            )
+            biz["fb_snippet_has_website"] = has_website_signal
+            biz["fb_followers"] = fb_followers
+            results.append(biz)
+
+        time.sleep(1.5)  # עיכוב בין dorks למניעת חסימה
 
     print(f"    [Facebook] '{query}' → {len(results)} דפי עסקים")
     return results[:MAX_RESULTS_PER_QUERY]
+
+
+def scrape_facebook_no_website(category: str, city: str) -> list[dict]:
+    """
+    חיפוש ממוקד לעסקי פייסבוק ללא אתר — הלידים הכי חמים.
+    מחפש עסקים בפייסבוק שה-snippet שלהם לא מזכיר אתר.
+    """
+    query = f"{category} {city}"
+    all_results = scrape_facebook_pages(query)
+
+    # מחזיר קודם את אלה שה-snippet שלהם לא מזכיר אתר
+    no_website = [b for b in all_results if not b.get("fb_snippet_has_website")]
+    with_website = [b for b in all_results if b.get("fb_snippet_has_website")]
+    return no_website + with_website
 
 
 # ════════════════════════════════════════════════════════════════

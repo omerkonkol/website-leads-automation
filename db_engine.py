@@ -168,8 +168,18 @@ CREATE TABLE IF NOT EXISTS businesses (
     whatsapp_pitch   TEXT,
     full_pitch       TEXT,
     sales_summary    TEXT,
-    lead_score       INTEGER DEFAULT 0
+    lead_score       INTEGER DEFAULT 0,
+    -- פייסבוק
+    fb_followers          INTEGER DEFAULT 0,
+    fb_snippet_has_website INTEGER DEFAULT 0
 );
+
+-- הוסף עמודות פייסבוק אם הטבלה כבר קיימת
+DO $$ BEGIN
+    ALTER TABLE businesses ADD COLUMN IF NOT EXISTS fb_followers INTEGER DEFAULT 0;
+    ALTER TABLE businesses ADD COLUMN IF NOT EXISTS fb_snippet_has_website INTEGER DEFAULT 0;
+EXCEPTION WHEN OTHERS THEN NULL;
+END $$;
 
 CREATE TABLE IF NOT EXISTS outreach_log (
     id          SERIAL PRIMARY KEY,

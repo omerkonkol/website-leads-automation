@@ -10,13 +10,13 @@ import time
 sys.stdout.reconfigure(encoding="utf-8")
 
 from config import (
-    SEARCH_QUERIES, MIN_QUALITY_SCORE, PORTFOLIO_LINKS
+    SEARCH_QUERIES, FACEBOOK_FOCUSED_QUERIES, MIN_QUALITY_SCORE, PORTFOLIO_LINKS
 )
 from database import (
     init_db, business_exists, insert_business, update_business,
-    get_pending_outreach, export_to_excel, get_stats
+    get_pending_outreach, export_to_excel, get_stats, sync_all_to_supabase
 )
-from scraper import scrape_businesses, enrich_from_website, find_website_and_email
+from scraper import scrape_businesses, scrape_facebook_no_website, enrich_from_website, find_website_and_email
 from analyzer import analyze_website
 from pitch_builder import build_whatsapp_pitch, build_full_pitch, build_sales_summary
 from lead_scorer import compute_lead_score, score_tier_hebrew
@@ -152,6 +152,8 @@ def run_scrape_and_analyze():
                 "source":         biz.get("source", ""),
                 "facebook_url":   fb_url,
                 "instagram_url":  ig_url,
+                "fb_followers":   biz.get("fb_followers", 0),
+                "fb_snippet_has_website": 1 if biz.get("fb_snippet_has_website") else 0,
                 "whatsapp_pitch": wa_pitch,
                 "full_pitch":     fp,
                 "sales_summary":  sales_summary,
@@ -197,6 +199,130 @@ def run_scrape_and_analyze():
             time.sleep(0.3)
 
     print(f"\n✅ סריקה הסתיימה: {new_count} חדשים | {skip_count} דולגו | {error_count} שגיאות")
+
+
+# ════════════════════════════════════════════════════════════════
+#  מצב מהיר — סריקת פייסבוק ממוקדת (לידים חמים)
+# ════════════════════════════════════════════════════════════════
+def run_facebook_focused():
+    """
+    סריקה ממוקדת לעסקי פייסבוק ללא אתר — הלידים הכי חמים.
+    מהיר יותר: דולג ניתוח אתר מפורט לעסקים ללא אתר.
+    """
+    print("\n" + "="*60)
+    print("  🎯 מצב פייסבוק ממוקד — לידים חמים בלבד")
+    print("  מחפש עסקים שפעילים בפייסבוק ואין להם אתר")
+    print("="*60)
+
+    new_count = 0
+    skip_count = 0
+
+    for category, city in FACEBOOK_FOCUSED_QUERIES:
+        print(f"\n🔍 פייסבוק: {category} ב{city}")
+        try:
+            businesses = scrape_facebook_no_website(category, city)
+        except Exception as e:
+            print(f"  ❌ שגיאה: {e}")
+            continue
+
+        for biz in businesses:
+            name  = biz.get("name", "").strip()
+            phone = biz.get("phone", "").strip()
+
+            if not name:
+                continue
+            if business_exists(phone, name):
+                skip_count += 1
+                continue
+
+            # עבור עסקי פייסבוק ללא אתר — אין צורך בניתוח כבד
+            fb_has_website = biz.get("fb_snippet_has_website", False)
+            website = biz.get("website", "")
+
+            analysis = {
+                "has_website": 1 if website else 0,
+                "has_ssl": 0, "is_responsive": 0, "has_cta": 0,
+                "has_form": 0, "has_fb_pixel": 0, "has_analytics": 0,
+                "load_time_ms": None, "quality_score": 0,
+                "issues": ["עסק פייסבוק — לא נותח"],
+                "has_title_tag": 0, "has_meta_desc": 0, "has_h1": 0,
+                "has_robots_txt": 0, "has_sitemap": 0, "seo_score": None,
+                "cms_platform": None, "copyright_year": None,
+                "pagespeed_score": None, "core_web_vitals": None,
+            }
+
+            # אם יש אתר — נתח אותו
+            if website and fb_has_website:
+                print(f"  🔎 {name} — יש אתר, מנתח...")
+                try:
+                    analysis = analyze_website(website)
+                except Exception:
+                    pass
+
+            fb_url = biz.get("facebook_url", "")
+            city_biz = biz.get("city") or city
+
+            partial_biz = {
+                "name": name, "website": website,
+                **{k: analysis[k] for k in [
+                    "has_website", "has_ssl", "is_responsive", "has_cta",
+                    "has_form", "has_fb_pixel", "has_analytics", "load_time_ms",
+                ]},
+            }
+            wa_pitch      = build_whatsapp_pitch(partial_biz)
+            fp            = build_full_pitch(partial_biz)
+            sales_summary = build_sales_summary(partial_biz)
+
+            row = {
+                "name":           name,
+                "phone":          phone,
+                "phone2":         "",
+                "email":          "",
+                "website":        website,
+                "address":        "",
+                "city":           city_biz,
+                "category":       category,
+                "search_query":   f"{category} {city}",
+                "source":         "facebook",
+                "facebook_url":   fb_url,
+                "instagram_url":  "",
+                "fb_followers":   biz.get("fb_followers", 0),
+                "fb_snippet_has_website": 1 if fb_has_website else 0,
+                "whatsapp_pitch": wa_pitch,
+                "full_pitch":     fp,
+                "sales_summary":  sales_summary,
+                **{k: analysis[k] for k in [
+                    "has_website", "has_ssl", "is_responsive",
+                    "has_cta", "has_form", "has_fb_pixel",
+                    "has_analytics", "load_time_ms", "quality_score"
+                ]},
+                "issues": json.dumps(analysis["issues"], ensure_ascii=False),
+                "cms_platform":    analysis.get("cms_platform"),
+                "seo_score":       analysis.get("seo_score"),
+                "has_title_tag":   analysis.get("has_title_tag", 0),
+                "has_meta_desc":   analysis.get("has_meta_desc", 0),
+                "has_h1":          analysis.get("has_h1", 0),
+                "has_robots_txt":  analysis.get("has_robots_txt", 0),
+                "has_sitemap":     analysis.get("has_sitemap", 0),
+                "copyright_year":  analysis.get("copyright_year"),
+                "pagespeed_score": analysis.get("pagespeed_score"),
+                "core_web_vitals": analysis.get("core_web_vitals"),
+                "activity_score":  60,  # פעיל בפייסבוק = מינימום 60
+                "is_likely_active": 1,
+                "activity_details": json.dumps(["נמצא בפייסבוק"], ensure_ascii=False),
+            }
+            bid = insert_business(row)
+            lead_score, _ = compute_lead_score({**row, "id": bid})
+            update_business(bid, {"lead_score": lead_score})
+
+            tier = score_tier_hebrew(lead_score)
+            no_site = "ללא אתר" if not fb_has_website else "יש אתר"
+            followers = biz.get("fb_followers", 0)
+            print(f"     {tier} | ליד: {lead_score}/100 | {no_site} | עוקבים: {followers} | id={bid}")
+            new_count += 1
+            time.sleep(0.2)
+
+    print(f"\n✅ פייסבוק ממוקד: {new_count} לידים חדשים | {skip_count} דולגו")
 
 
 # ════════════════════════════════════════════════════════════════
@@ -258,6 +384,7 @@ def main_menu():
         print("  מערכת לידים — בניית אתרים (מתקדם)")
         print("═"*60)
         print("  1. סרוק עסקים חדשים (10 מקורות) + נתח אתרים")
+        print("  🎯 F. סריקת פייסבוק ממוקדת — לידים חמים (מהיר!)")
         print("  2. ייצא ל-Excel")
         print("  3. שלח WhatsApp לעסקים ממתינים")
         print("  4. שלח מיילים לעסקים ממתינים")
@@ -266,12 +393,16 @@ def main_menu():
         print("  7. ניתוח מחדש לכל הלידים הישנים")
         print("  8. עדכן ציוני לידים")
         print("  9. הפעל scheduler (רקע)")
+        print("  ☁️  S. סנכרן הכל ל-Supabase (דשבורד משותף)")
         print("  0. יציאה")
         print("─"*60)
 
         choice = input("בחר אפשרות: ").strip()
 
-        if choice == "1":
+        if choice in ("f", "F", "פ"):
+            run_facebook_focused()
+            run_export()
+        elif choice == "1":
             run_scrape_and_analyze()
             run_export()
         elif choice == "2":
@@ -301,6 +432,11 @@ def main_menu():
         elif choice == "9":
             from scheduler import run_daemon
             run_daemon()
+        elif choice in ("s", "S", "ס"):
+            print("\n☁️  מסנכרן את כל הלידים ל-Supabase...")
+            n = sync_all_to_supabase()
+            if n:
+                print(f"  ✅ {n} לידים סונכרנו — הדשבורד המשותף מעודכן")
         elif choice == "0":
             print("להתראות!")
             break

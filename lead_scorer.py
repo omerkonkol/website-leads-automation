@@ -203,6 +203,24 @@ def compute_lead_score(biz: dict) -> tuple[int, dict]:
     if data_pts:
         breakdown["עשירות מידע"] = data_pts
 
+    # ── 10b. בונוס עסק פייסבוק ללא אתר (עד 20 נקודות) ──────────
+    # עסקים שנמצאו דרך פייסבוק ואין להם אתר = הלידים הכי חמים
+    source = biz.get("source", "")
+    if source == "facebook" and not has_website:
+        # אין אתר בכלל — ליד מושלם
+        breakdown["עסק פייסבוק ללא אתר — ליד מושלם"] = 20
+    elif source == "facebook" and not biz.get("fb_snippet_has_website") and not has_website:
+        breakdown["עסק פייסבוק — ככל הנראה ללא אתר"] = 15
+
+    # בונוס עוקבים בפייסבוק (עסק פעיל + ללא אתר = ממש חם)
+    fb_followers = biz.get("fb_followers") or 0
+    if fb_followers > 2000 and not has_website:
+        breakdown["דף פייסבוק פופולרי מאוד ללא אתר"] = 12
+    elif fb_followers > 500 and not has_website:
+        breakdown["דף פייסבוק פעיל ללא אתר"] = 7
+    elif fb_followers > 200 and not has_website:
+        breakdown["דף פייסבוק בינוני ללא אתר"] = 4
+
     # ── 10. PageSpeed bonus ──────────────────────────────────────
     ps_score = biz.get("pagespeed_score")
     if ps_score is not None and ps_score < 40:

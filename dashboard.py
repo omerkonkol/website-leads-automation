@@ -142,11 +142,20 @@ st.markdown("""
 # ════════════════════════════════════════════════════════════════
 from config import SUPABASE_URL, SUPABASE_KEY, DB_PATH
 
-_USE_SUPABASE = bool(SUPABASE_URL and SUPABASE_KEY)
+# תמיכה ב-Streamlit Cloud secrets (כשמפורסם בענן)
+_CLOUD_SB_URL = SUPABASE_URL
+_CLOUD_SB_KEY = SUPABASE_KEY
+if not _CLOUD_SB_URL:
+    try:
+        _CLOUD_SB_URL = st.secrets.get("SUPABASE_URL", "")
+        _CLOUD_SB_KEY = st.secrets.get("SUPABASE_KEY", "")
+    except Exception:
+        pass
+_USE_SUPABASE = bool(_CLOUD_SB_URL and _CLOUD_SB_KEY)
 
 def _sb():
     from db_engine import SupabaseREST
-    return SupabaseREST(SUPABASE_URL, SUPABASE_KEY)
+    return SupabaseREST(_CLOUD_SB_URL, _CLOUD_SB_KEY)
 
 def _db():
     conn = sqlite3.connect(DB_PATH)

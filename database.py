@@ -1,12 +1,53 @@
 """
-database.py — ניהול SQLite לכל הלידים.
+database.py — ניהול SQLite לכל הלידים + סנכרון ל-Supabase.
 מונע שליחה כפולה ושומר היסטוריה מלאה.
+אם Supabase מוגדר — כל insert/update עולה גם לענן (לדשבורד משותף).
 """
 
 import sqlite3
 import pandas as pd
 from datetime import datetime
-from config import DB_PATH, EXCEL_PATH
+from config import DB_PATH, EXCEL_PATH, SUPABASE_URL, SUPABASE_KEY
+
+# ── Supabase sync ──
+_USE_SUPABASE = bool(SUPABASE_URL and SUPABASE_KEY)
+_sb_client = None
+
+
+def _sb():
+    """מחזיר חיבור Supabase (singleton)."""
+    global _sb_client
+    if _sb_client is None and _USE_SUPABASE:
+        from db_engine import SupabaseREST
+        _sb_client = SupabaseREST(SUPABASE_URL, SUPABASE_KEY)
+    return _sb_client
+
+
+def _sync_to_supabase(data: dict, local_id: int | None = None):
+    """מסנכרן שורה ל-Supabase (ברקע, לא חוסם)."""
+    if not _USE_SUPABASE:
+        return
+    try:
+        sb = _sb()
+        if not sb:
+            return
+        # נקה שדות שלא קיימים ב-Supabase
+        clean = {k: v for k, v in data.items() if v is not None}
+        clean.pop("id", None)  # id ב-Supabase הוא SERIAL
+        # בדוק אם כבר קיים (לפי phone+name)
+        phone = clean.get("phone", "")
+        name = clean.get("name", "")
+        existing = []
+        if phone:
+            existing = sb.select("businesses", filters=f"phone=eq.{phone}", limit=1)
+        if not existing and name:
+            existing = sb.select("businesses", filters=f"name=eq.{name}", limit=1)
+        if existing:
+            sb.update("businesses", f"id=eq.{existing[0]['id']}", clean)
+        else:
+            sb.insert("businesses", clean)
+    except Exception as e:
+        print(f"    [Supabase sync] {e}")
 
 
 def get_conn():
@@ -194,6 +235,9 @@ def init_db():
         ("activity_details",  "TEXT"),
         ("is_likely_active",  "INTEGER DEFAULT 1"),
         ("verified_at",       "TEXT"),
+        # פייסבוק
+        ("fb_followers",          "INTEGER DEFAULT 0"),
+        ("fb_snippet_has_website","INTEGER DEFAULT 0"),
     ]
     existing = {row[1] for row in c.execute("PRAGMA table_info(businesses)").fetchall()}
     for col, col_type in new_columns:
@@ -265,6 +309,8 @@ def insert_business(data: dict) -> int:
     new_id = c.lastrowid
     conn.commit()
     conn.close()
+    # סנכרון ל-Supabase
+    _sync_to_supabase(row, new_id)
     return new_id
 
 
@@ -277,7 +323,33 @@ def update_business(business_id: int, updates: dict):
     conn = get_conn()
     conn.execute(f"UPDATE businesses SET {fields} WHERE id=?", values)
     conn.commit()
+    # סנכרון ל-Supabase (שלוף שם לזיהוי)
+    row = conn.execute("SELECT name, phone FROM businesses WHERE id=?", (business_id,)).fetchone()
     conn.close()
+    if row and _USE_SUPABASE:
+        _sync_to_supabase({**updates, "name": row["name"], "phone": row["phone"]}, business_id)
+
+
+def sync_all_to_supabase() -> int:
+    """מעלה את כל ה-SQLite הקיים ל-Supabase (bulk sync)."""
+    if not _USE_SUPABASE:
+        print("[Sync] Supabase לא מוגדר — דולג")
+        return 0
+    conn = get_conn()
+    rows = conn.execute("SELECT * FROM businesses ORDER BY id").fetchall()
+    conn.close()
+    synced = 0
+    for row in rows:
+        data = dict(row)
+        try:
+            _sync_to_supabase(data, data.get("id"))
+            synced += 1
+            if synced % 20 == 0:
+                print(f"    [Sync] {synced}/{len(rows)}...")
+        except Exception as e:
+            print(f"    [Sync] שגיאה בשורה {data.get('id')}: {e}")
+    print(f"✅ [Sync] הועלו {synced}/{len(rows)} לידים ל-Supabase")
+    return synced
 
 
 def mark_sent(business_id: int, channel: str, message: str = "", status: str = "sent"):
