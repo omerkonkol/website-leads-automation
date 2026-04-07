@@ -393,6 +393,7 @@ def main_menu():
         print("  7. ניתוח מחדש לכל הלידים הישנים")
         print("  8. עדכן ציוני לידים")
         print("  9. הפעל scheduler (רקע)")
+        print("  🔵 FB. סריקת פייסבוק ישירה (Selenium — הלידים הכי טובים)")
         print("  ☁️  S. סנכרן הכל ל-Supabase (דשבורד משותף)")
         print("  0. יציאה")
         print("─"*60)
@@ -432,6 +433,9 @@ def main_menu():
         elif choice == "9":
             from scheduler import run_daemon
             run_daemon()
+        elif choice in ("fb", "FB"):
+            from facebook_scraper import run_facebook_scan
+            run_facebook_scan(FACEBOOK_FOCUSED_QUERIES)
         elif choice in ("s", "S", "ס"):
             print("\n☁️  מסנכרן את כל הלידים ל-Supabase...")
             n = sync_all_to_supabase()
