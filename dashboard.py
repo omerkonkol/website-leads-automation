@@ -52,6 +52,12 @@ st.markdown("""
   textarea, input[type="text"], input[type="number"],
   [data-baseweb="select"] { direction: rtl !important; text-align: right !important; }
 
+  /* Slider — keep LTR so 0 is left, 100 is right */
+  [data-testid="stSlider"],
+  [data-baseweb="slider"] {
+    direction: ltr !important;
+  }
+
   /* Dataframe — DO NOT reverse, just align text */
   [data-testid="stDataFrame"] { direction: ltr !important; }
   [data-testid="stDataFrame"] th { text-align: right !important; }
