@@ -566,55 +566,23 @@ with tab_leads:
             })
         disp = pd.DataFrame(rows)
 
-        # AgGrid — טבלה עם סינון בכל עמודה (לחיצה על כותרת → פילטר)
-        try:
-            from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
-
-            gb = GridOptionsBuilder.from_dataframe(disp)
-            gb.configure_default_column(
-                filterable=True, sortable=True, resizable=True,
-                filter="agTextColumnFilter",
-            )
-            # Enable set filter (dropdown) on key columns
-            for col in ("מקור", "קטגוריה", "עיר", "CMS", "נשלח", "אתר?", "מייל"):
-                gb.configure_column(col, filter="agSetColumnFilter")
-            gb.configure_column("דירוג", sort="desc", width=90)
-            gb.configure_column("שם עסק", width=160)
-            gb.configure_column("טלפון", width=130)
-            gb.configure_grid_options(
-                enableRtl=True,
-                domLayout="normal",
-                suppressMenuHide=False,
-            )
-            grid_opts = gb.build()
-
-            AgGrid(
-                disp,
-                gridOptions=grid_opts,
-                height=500,
-                update_mode=GridUpdateMode.FILTERING_CHANGED,
-                fit_columns_on_grid_load=True,
-                enable_enterprise_modules=False,
-                theme="streamlit",
-            )
-        except ImportError:
-            # Fallback: st.dataframe (ללא סינון בעמודות)
-            col_config = {
-                "דירוג":   st.column_config.TextColumn("דירוג", width="small"),
-                "שם עסק":  st.column_config.TextColumn("שם עסק", width="medium"),
-                "קטגוריה": st.column_config.TextColumn("קטגוריה", width="small"),
-                "עיר":     st.column_config.TextColumn("עיר", width="small"),
-                "טלפון":   st.column_config.TextColumn("טלפון", width="medium"),
-                "מייל":    st.column_config.TextColumn("מייל", width="small"),
-                "אתר?":    st.column_config.TextColumn("אתר?", width="small"),
-                "CMS":     st.column_config.TextColumn("CMS", width="small"),
-                "SEO":     st.column_config.TextColumn("SEO", width="small"),
-                "פעילות":  st.column_config.TextColumn("פעילות", width="small"),
-                "נשלח":    st.column_config.TextColumn("נשלח", width="small"),
-                "מקור":    st.column_config.TextColumn("מקור", width="small"),
-            }
-            st.dataframe(disp, use_container_width=True, height=480, hide_index=True,
-                         column_config=col_config)
+        # Display table
+        _col_config = {
+            "דירוג":   st.column_config.TextColumn("דירוג", width="small"),
+            "שם עסק":  st.column_config.TextColumn("שם עסק", width="medium"),
+            "קטגוריה": st.column_config.TextColumn("קטגוריה", width="small"),
+            "עיר":     st.column_config.TextColumn("עיר", width="small"),
+            "טלפון":   st.column_config.TextColumn("טלפון", width="medium"),
+            "מייל":    st.column_config.TextColumn("מייל", width="small"),
+            "אתר?":    st.column_config.TextColumn("אתר?", width="small"),
+            "CMS":     st.column_config.TextColumn("CMS", width="small"),
+            "SEO":     st.column_config.TextColumn("SEO", width="small"),
+            "פעילות":  st.column_config.TextColumn("פעילות", width="small"),
+            "נשלח":    st.column_config.TextColumn("נשלח", width="small"),
+            "מקור":    st.column_config.TextColumn("מקור", width="small"),
+        }
+        st.dataframe(disp, use_container_width=True, height=500, hide_index=True,
+                     column_config=_col_config)
 
         # ── Lead detail expander ──
         st.markdown("---")
