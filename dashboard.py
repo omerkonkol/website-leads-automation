@@ -171,13 +171,15 @@ def _db():
 
 @st.cache_data(ttl=30)
 def load_df(tier="הכל", sent="הכל", site="הכל", score_range=(0,100), search="",
-            pipeline_stage=None) -> pd.DataFrame:
+            pipeline_stage=None, source_filter: tuple | None = None) -> pd.DataFrame:
+    """source_filter: tuple of source names, or None for all."""
+    sf = list(source_filter) if source_filter else None
     if _USE_SUPABASE:
-        return _load_df_supabase(tier, sent, site, score_range, search, pipeline_stage)
-    return _load_df_sqlite(tier, sent, site, score_range, search, pipeline_stage)
+        return _load_df_supabase(tier, sent, site, score_range, search, pipeline_stage, sf)
+    return _load_df_sqlite(tier, sent, site, score_range, search, pipeline_stage, sf)
 
 
-def _load_df_supabase(tier, sent, site, score_range, search, pipeline_stage) -> pd.DataFrame:
+def _load_df_supabase(tier, sent, site, score_range, search, pipeline_stage, source_filter=None) -> pd.DataFrame:
     sb = _sb()
     filters = "blacklisted=eq.0"
     if "HOT" in tier:    filters += "&lead_score=gte.70"
@@ -190,6 +192,11 @@ def _load_df_supabase(tier, sent, site, score_range, search, pipeline_stage) -> 
     elif site == "יש אתר": filters += "&has_website=eq.1"
     if pipeline_stage and pipeline_stage != "הכל":
         filters += f"&pipeline_stage=eq.{pipeline_stage}"
+    if source_filter:
+        if len(source_filter) == 1:
+            filters += f"&source=eq.{source_filter[0]}"
+        else:
+            filters += f"&source=in.({','.join(source_filter)})"
     filters += f"&lead_score=gte.{score_range[0]}&lead_score=lte.{score_range[1]}"
     if search:
         filters += f"&name=ilike.*{search}*"
@@ -197,7 +204,7 @@ def _load_df_supabase(tier, sent, site, score_range, search, pipeline_stage) -> 
     return pd.DataFrame(rows) if rows else pd.DataFrame()
 
 
-def _load_df_sqlite(tier, sent, site, score_range, search, pipeline_stage) -> pd.DataFrame:
+def _load_df_sqlite(tier, sent, site, score_range, search, pipeline_stage, source_filter=None) -> pd.DataFrame:
     conn = sqlite3.connect(DB_PATH)
     q = "SELECT * FROM businesses WHERE blacklisted = 0"
     p = []
@@ -212,6 +219,10 @@ def _load_df_sqlite(tier, sent, site, score_range, search, pipeline_stage) -> pd
     if pipeline_stage and pipeline_stage != "הכל":
         q += " AND pipeline_stage=?"
         p.append(pipeline_stage)
+    if source_filter:
+        placeholders = ",".join("?" for _ in source_filter)
+        q += f" AND source IN ({placeholders})"
+        p += source_filter
     q += " AND lead_score BETWEEN ? AND ?"
     p += list(score_range)
     if search:
@@ -423,16 +434,31 @@ tab_leads, tab_actions, tab_pipeline, tab_analytics, tab_calendar = st.tabs([
 #  TAB 1 — LEADS TABLE
 # ════════════════════════════════════════════════════════════════
 with tab_leads:
-    f1, f2, f3, f4, f5 = st.columns([3, 2, 2, 2, 2])
-    search      = f1.text_input("🔍 חיפוש", "", placeholder="שם / קטגוריה / עיר")
-    tier_filter = f2.selectbox("🎯 רמה", ["הכל", "🔥 HOT (70+)", "⚡ WARM (45–69)", "❄️ COLD (<45)"])
-    sent_filter = f3.selectbox("📬 נשלח?", ["הכל", "טרם נשלח", "נשלח WhatsApp", "נשלח מייל"])
-    site_filter = f4.selectbox("🌐 אתר?",  ["הכל", "אין אתר", "יש אתר"])
-    score_range = f5.slider("ציון", 0, 100, (0, 100))
+    _ALL_SOURCES = [
+        "midrag", "google_maps", "b144", "facebook",
+        "easy", "igal", "freesearch", "2all", "directory_search",
+        "dapei_zahav", "yad2", "zap", "wix_search", "old_site_search",
+        "gov_registry", "google_search",
+    ]
+    row1_f1, row1_f2, row1_f3, row1_f4, row1_f5 = st.columns([3, 2, 2, 2, 2])
+    search      = row1_f1.text_input("🔍 חיפוש", "", placeholder="שם / קטגוריה / עיר")
+    tier_filter = row1_f2.selectbox("🎯 רמה", ["הכל", "🔥 HOT (70+)", "⚡ WARM (45–69)", "❄️ COLD (<45)"])
+    sent_filter = row1_f3.selectbox("📬 נשלח?", ["הכל", "טרם נשלח", "נשלח WhatsApp", "נשלח מייל"])
+    site_filter = row1_f4.selectbox("🌐 אתר?",  ["הכל", "אין אתר", "יש אתר"])
+    source_single = row1_f5.selectbox("📡 מקור", ["הכל"] + _ALL_SOURCES)
 
-    df = load_df(tier_filter, sent_filter, site_filter, score_range, search)
+    score_range = st.slider("ציון ליד", 0, 100, (0, 100))
 
-    btn1, btn2, btn3, btn4, _ = st.columns([1,1,1,1,3])
+    # Convert single source to tuple for cache
+    if source_single != "הכל":
+        _src_tuple = (source_single,)
+    else:
+        _src_tuple = None
+
+    df = load_df(tier_filter, sent_filter, site_filter, score_range, search,
+                 source_filter=_src_tuple)
+
+    btn1, btn2, btn3, btn4 = st.columns([1, 1, 2, 1])
     if btn1.button("🔄 רענן"):
         st.cache_data.clear(); st.rerun()
     if btn2.button("🎯 עדכן דירוגים"):
@@ -440,9 +466,45 @@ with tab_leads:
         n = rescore_all()
         st.cache_data.clear()
         st.success(f"עודכנו {n} עסקים"); time.sleep(1); st.rerun()
-    if btn3.button("📊 ייצא Excel"):
-        from database import export_to_excel
-        export_to_excel(); st.success("יוצא!")
+
+    # ── Excel export — all leads (downloadable) ──
+    import io
+    from database import get_all_businesses
+    all_biz = [b for b in get_all_businesses() if not b.get("blacklisted")]
+    if all_biz:
+        _rename = {
+            "name": "שם עסק", "phone": "טלפון", "email": "מייל", "website": "אתר",
+            "address": "כתובת", "city": "עיר", "category": "קטגוריה",
+            "source": "מקור", "lead_score": "ציון ליד", "quality_score": "ציון אתר",
+            "has_website": "יש אתר", "cms_platform": "פלטפורמה", "seo_score": "SEO",
+            "google_reviews": "ביקורות", "google_rating": "דירוג",
+            "activity_score": "פעילות", "pipeline_stage": "שלב",
+            "whatsapp_sent": "WA נשלח", "email_sent": "מייל נשלח",
+            "search_query": "שאילתת חיפוש", "created_at": "תאריך",
+        }
+        all_df = pd.DataFrame(all_biz)
+        all_df.rename(columns=_rename, inplace=True)
+        buf_all = io.BytesIO()
+        all_df.to_excel(buf_all, index=False, engine="openpyxl")
+        btn3.download_button(
+            f"📊 הורד הכל — Excel ({len(all_biz)})",
+            data=buf_all.getvalue(),
+            file_name="leads_all.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+
+    # ── Excel export — filtered view ──
+    if not df.empty:
+        filtered_df = df.rename(columns=_rename if all_biz else {})
+        buf_filt = io.BytesIO()
+        filtered_df.to_excel(buf_filt, index=False, engine="openpyxl")
+        btn3.download_button(
+            f"📥 הורד מסוננים — Excel ({len(df)})",
+            data=buf_filt.getvalue(),
+            file_name="leads_filtered.xlsx",
+            mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
+        )
+
     if btn4.button("🚀 סריקה חדשה"):
         subprocess.Popen(
             [sys.executable, "main.py"],
@@ -491,22 +553,56 @@ with tab_leads:
                 "מקור":      r.get("source") or "—",
             })
         disp = pd.DataFrame(rows)
-        col_config = {
-            "דירוג":   st.column_config.TextColumn("דירוג", width="small"),
-            "שם עסק":  st.column_config.TextColumn("שם עסק", width="medium"),
-            "קטגוריה": st.column_config.TextColumn("קטגוריה", width="small"),
-            "עיר":     st.column_config.TextColumn("עיר", width="small"),
-            "טלפון":   st.column_config.TextColumn("טלפון", width="medium"),
-            "מייל":    st.column_config.TextColumn("מייל", width="small"),
-            "אתר?":    st.column_config.TextColumn("אתר?", width="small"),
-            "CMS":     st.column_config.TextColumn("CMS", width="small"),
-            "SEO":     st.column_config.TextColumn("SEO", width="small"),
-            "פעילות":  st.column_config.TextColumn("פעילות", width="small"),
-            "נשלח":    st.column_config.TextColumn("נשלח", width="small"),
-            "מקור":    st.column_config.TextColumn("מקור", width="small"),
-        }
-        st.dataframe(disp, use_container_width=True, height=480, hide_index=True,
-                     column_config=col_config)
+
+        # AgGrid — טבלה עם סינון בכל עמודה (לחיצה על כותרת → פילטר)
+        try:
+            from st_aggrid import AgGrid, GridOptionsBuilder, GridUpdateMode
+
+            gb = GridOptionsBuilder.from_dataframe(disp)
+            gb.configure_default_column(
+                filterable=True, sortable=True, resizable=True,
+                filter="agTextColumnFilter",
+            )
+            # Enable set filter (dropdown) on key columns
+            for col in ("מקור", "קטגוריה", "עיר", "CMS", "נשלח", "אתר?", "מייל"):
+                gb.configure_column(col, filter="agSetColumnFilter")
+            gb.configure_column("דירוג", sort="desc", width=90)
+            gb.configure_column("שם עסק", width=160)
+            gb.configure_column("טלפון", width=130)
+            gb.configure_grid_options(
+                enableRtl=True,
+                domLayout="normal",
+                suppressMenuHide=False,
+            )
+            grid_opts = gb.build()
+
+            AgGrid(
+                disp,
+                gridOptions=grid_opts,
+                height=500,
+                update_mode=GridUpdateMode.FILTERING_CHANGED,
+                fit_columns_on_grid_load=True,
+                enable_enterprise_modules=False,
+                theme="streamlit",
+            )
+        except ImportError:
+            # Fallback: st.dataframe (ללא סינון בעמודות)
+            col_config = {
+                "דירוג":   st.column_config.TextColumn("דירוג", width="small"),
+                "שם עסק":  st.column_config.TextColumn("שם עסק", width="medium"),
+                "קטגוריה": st.column_config.TextColumn("קטגוריה", width="small"),
+                "עיר":     st.column_config.TextColumn("עיר", width="small"),
+                "טלפון":   st.column_config.TextColumn("טלפון", width="medium"),
+                "מייל":    st.column_config.TextColumn("מייל", width="small"),
+                "אתר?":    st.column_config.TextColumn("אתר?", width="small"),
+                "CMS":     st.column_config.TextColumn("CMS", width="small"),
+                "SEO":     st.column_config.TextColumn("SEO", width="small"),
+                "פעילות":  st.column_config.TextColumn("פעילות", width="small"),
+                "נשלח":    st.column_config.TextColumn("נשלח", width="small"),
+                "מקור":    st.column_config.TextColumn("מקור", width="small"),
+            }
+            st.dataframe(disp, use_container_width=True, height=480, hide_index=True,
+                         column_config=col_config)
 
         # ── Lead detail expander ──
         st.markdown("---")

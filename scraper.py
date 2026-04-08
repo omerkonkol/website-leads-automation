@@ -763,8 +763,10 @@ def scrape_midrag(query: str) -> list[dict]:
             html = resp.text
 
             # שלוף קישורים לדפי עסקים: /SpCard/Sp/{id}?...
+            # HTML encodes & as &amp; so we handle both
+            cleaned_html = html.replace("&amp;", "&")
             for m in re.finditer(
-                r'/SpCard/Sp/(\d+)\?([^"\'>\s]+)', html
+                r'/SpCard/Sp/(\d+)\?([^"\'>\s]+)', cleaned_html
             ):
                 sp_id = m.group(1)
                 params = m.group(2)
@@ -790,16 +792,40 @@ def scrape_midrag(query: str) -> list[dict]:
             html = resp.text
             soup = BeautifulSoup(html, "html.parser")
 
-            # שם העסק — h1 או title
+            # שם העסק — title tag (אמין ביותר, פורמט: "שם - תיאור | מדרג")
             name = ""
-            h1 = soup.select_one("h1")
-            if h1:
-                name = h1.get_text(strip=True)
-            if not name:
-                title = soup.select_one("title")
-                if title:
-                    name = title.get_text(strip=True).split("|")[0].split("-")[0].strip()
+            title_tag = soup.select_one("title")
+            if title_tag:
+                title_text = title_tag.get_text(strip=True)
+                # "עמרן - שיפוצניק מומלץ באזור חיפה | ..."
+                name = title_text.split("-")[0].split("|")[0].strip()
+
+            # fallback: breadcrumbs (שם בסוף: "חיפה > שיפוצניק מומלץ - עמרן")
+            if not name or len(name) < 2 or "חוות דעת" in name or "מדרג" in name:
+                breadcrumb = soup.select_one(".breadcrumb, [class*='breadcrumb']")
+                if breadcrumb:
+                    crumb_text = breadcrumb.get_text(" > ", strip=True)
+                    parts = [p.strip() for p in crumb_text.split(">")]
+                    if parts:
+                        last = parts[-1].strip()
+                        # "שיפוצניק מומלץ - עמרן" → "עמרן"
+                        if " - " in last:
+                            name = last.split(" - ")[-1].strip()
+                        elif len(last) >= 2:
+                            name = last
+
+            # fallback: h1 (רק אם לא מכיל "חוות דעת")
+            if not name or len(name) < 2 or "חוות דעת" in name:
+                h1 = soup.select_one("h1")
+                if h1:
+                    h1_text = h1.get_text(strip=True)
+                    if "חוות דעת" not in h1_text and len(h1_text) >= 2:
+                        name = h1_text
+
             if not name or len(name) < 2 or name.lower() in seen:
+                continue
+            # Skip generic/navigation names
+            if any(skip in name for skip in ("מדרג", "חוות דעת", "דף הבית", "חיפוש")):
                 continue
             seen.add(name.lower())
 

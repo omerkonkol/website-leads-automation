@@ -452,6 +452,15 @@ def export_to_excel():
         "activity_details": "פרטי אימות",
         "verified_at": "תאריך אימות",
         "sales_summary": "סיכום מכירה",
+        "google_reviews": "ביקורות Google",
+        "google_rating": "דירוג Google",
+        "pagespeed_score": "ציון PageSpeed",
+        "deal_value": "שווי עסקה",
+        "next_followup": "פולואפ הבא",
+        "search_query": "שאילתת חיפוש",
+        "fb_followers": "עוקבים בפייסבוק",
+        "phone2": "טלפון 2",
+        "linkedin_url": "לינקדאין",
     }
     df.rename(columns=rename_map, inplace=True)
     df.to_excel(EXCEL_PATH, index=False)

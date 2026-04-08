@@ -15,6 +15,8 @@ lead_scorer.py — דירוג מסחרי מתקדם של לידים (0-100).
   - CMS platform (Wix/ישן = שדרוג)
   - Copyright year (אתר ישן = ליד חם)
   - Category value (high-ticket industries)
+  - בונוס מקור: מדרג (עד 12), SerpApi/Google Maps (עד 8),
+    מדריכי עסקים (3), B144 (2), פייסבוק ללא אתר (עד 20)
 """
 
 from __future__ import annotations
@@ -180,10 +182,16 @@ def compute_lead_score(biz: dict) -> tuple[int, dict]:
 
     # ── 6. ניתן ליצור קשר (עד 15 נקודות) ────────────────────────
     contact_pts = 0
-    if biz.get("phone"):  contact_pts += 10
+    phone = biz.get("phone") or ""
+    if phone:
+        # נייד (05X) שווה יותר — אפשר WA
+        if phone.startswith("05"):
+            contact_pts += 12
+        else:
+            contact_pts += 7
     if biz.get("email"):  contact_pts += 5
     if contact_pts:
-        breakdown["ניתן ליצור קשר"] = contact_pts
+        breakdown["ניתן ליצור קשר"] = min(contact_pts, 15)
 
     # ── 7. קטגוריה (עד 15 נקודות) ────────────────────────────────
     cat_pts, cat_reason = _category_score(biz)
@@ -193,7 +201,7 @@ def compute_lead_score(biz: dict) -> tuple[int, dict]:
     if _is_high_ticket(biz):
         breakdown["תחום high-ticket"] = 5
 
-    # ── 9. עשירות מידע (עד 5 נקודות) ────────────────────────────
+    # ── 9. עשירות מידע (עד 5 נקודות) / עונש חוסר מידע ────────────
     data_pts = 0
     if biz.get("address"):       data_pts += 1
     if biz.get("city"):          data_pts += 1
@@ -203,9 +211,54 @@ def compute_lead_score(biz: dict) -> tuple[int, dict]:
     if data_pts:
         breakdown["עשירות מידע"] = data_pts
 
+    # עונש: חוסר מידע בסיסי — ליד עם שם+טלפון בלבד שווה פחות
+    missing_penalty = 0
+    if not biz.get("city") and not biz.get("address"):
+        missing_penalty += 5
+    if not biz.get("email"):
+        missing_penalty += 3
+    if not biz.get("category"):
+        missing_penalty += 3
+    if missing_penalty:
+        breakdown["חוסר מידע (עיר/מייל/קטגוריה)"] = -missing_penalty
+
+    # ── 10a. בונוס מקור איכותי (עד 12 נקודות) ─────────────────────
+    # מקורות שמספקים לידים עם סיכוי סגירה גבוה יותר
+    source = biz.get("source", "")
+
+    # מדרג — אתר חוות דעת; דירוג גבוה = עסק פעיל ופופולרי
+    if source == "midrag":
+        midrag_rating = biz.get("google_rating") or 0
+        midrag_reviews = biz.get("google_reviews") or 0
+        if midrag_rating >= 9.0 and midrag_reviews >= 50:
+            breakdown["מדרג — עסק מדורג גבוה עם הרבה חוות דעת"] = 12
+        elif midrag_rating >= 8.0 and midrag_reviews >= 20:
+            breakdown["מדרג — עסק מדורג טוב"] = 8
+        elif midrag_reviews >= 10:
+            breakdown["מדרג — עסק עם חוות דעת"] = 5
+        else:
+            breakdown["מדרג — עסק רשום"] = 3
+
+    # Google Maps / SerpApi — מידע אמין ועשיר
+    elif source == "google_maps":
+        gm_reviews = biz.get("google_reviews") or 0
+        if gm_reviews >= 50:
+            breakdown["Google Maps — עסק פופולרי (SerpApi)"] = 8
+        elif gm_reviews >= 10:
+            breakdown["Google Maps — עסק עם ביקורות (SerpApi)"] = 5
+        else:
+            breakdown["Google Maps — ליד SerpApi"] = 3
+
+    # מדריכי עסקים ישראליים — רשומים = פעילים
+    elif source in ("easy", "igal", "freesearch", "2all", "directory_search"):
+        breakdown["מדריך עסקים ישראלי — עסק רשום"] = 3
+
+    # B144 — מאגר גדול ואמין
+    elif source == "b144":
+        breakdown["B144 — מקור אמין"] = 2
+
     # ── 10b. בונוס עסק פייסבוק ללא אתר (עד 20 נקודות) ──────────
     # עסקים שנמצאו דרך פייסבוק ואין להם אתר = הלידים הכי חמים
-    source = biz.get("source", "")
     if source == "facebook" and not has_website:
         # אין אתר בכלל — ליד מושלם
         breakdown["עסק פייסבוק ללא אתר — ליד מושלם"] = 20
@@ -229,7 +282,7 @@ def compute_lead_score(biz: dict) -> tuple[int, dict]:
     # ── 11. אימות פעילות (עד 20 נקודות / עונש עד -40) ───────────
     activity_score = biz.get("activity_score")
     is_active = biz.get("is_likely_active")
-    if is_active is False:
+    if is_active == 0 or is_active is False:
         # עסק שזוהה כלא פעיל — עונש חמור
         breakdown["עסק כנראה לא פעיל"] = -40
     elif activity_score is not None:
@@ -241,6 +294,9 @@ def compute_lead_score(biz: dict) -> tuple[int, dict]:
             breakdown["לא ברור אם פעיל — לבדוק ידנית"] = -15
         else:
             breakdown["חשש — עסק לא פעיל"] = -35
+    else:
+        # לא נבדק כלל — לא מאומת, מוריד קצת
+        breakdown["פעילות לא נבדקה"] = -5
 
     # ── עונשים ────────────────────────────────────────────────────
     if biz.get("whatsapp_sent"):
