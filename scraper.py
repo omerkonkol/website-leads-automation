@@ -67,17 +67,42 @@ def _clean_url(url: str) -> str:
     return url
 
 
+_ISRAELI_CITIES = (
+    "תל אביב|Tel Aviv|ירושלים|Jerusalem|חיפה|Haifa|באר שבע|ראשון לציון|"
+    "פתח תקווה|אשדוד|נתניה|חולון|בני ברק|רמת גן|אשקלון|הרצליה|כפר סבא|"
+    "בת ים|רחובות|מודיעין|נצרת|עפולה|טבריה|אילת|רעננה|הוד השרון|גבעתיים|"
+    "כרמיאל|עכו|נהריה|צפת|רמלה|לוד|נס ציונה|יבנה|גבעת שמואל|"
+    "Yafo|Rishon|Petah Tikva|Netanya|Ashdod"
+)
+
+
+def _extract_city(address: str, query: str = "") -> str:
+    """חילוץ עיר מכתובת או שאילתת חיפוש."""
+    for text in [address, query]:
+        if not text:
+            continue
+        m = re.search(f"({_ISRAELI_CITIES})", text, re.IGNORECASE)
+        if m:
+            return m.group()
+    return ""
+
+
 def _make_biz(name, phone="", email="", website="", address="", city="",
               category="", query="", source="", **extra) -> dict:
+    clean_city = city.strip() if city else ""
+    # Auto-extract city from address or query if missing
+    if not clean_city:
+        clean_city = _extract_city(address, query)
     biz = {
         "name":         name.strip(),
         "phone":        _clean_phone(phone),
         "email":        email.strip().lower() if email else "",
         "website":      _clean_url(website),
         "address":      address.strip(),
-        "city":         city.strip() if city else "",
+        "city":         clean_city,
         "category":     category.strip(),
         "search_query": query,
+        "has_website":  1 if website else 0,
         "source":       source,
     }
     biz.update(extra)

@@ -109,11 +109,15 @@ def compute_lead_score(biz: dict) -> tuple[int, dict]:
     breakdown: dict[str, int] = {}
 
     # ── 1. הזדמנות האתר (עד 40 נקודות) ──────────────────────────
-    has_website = bool(biz.get("has_website"))
+    has_website = bool(biz.get("has_website")) or bool(biz.get("website"))
     quality     = int(biz.get("quality_score") or 0)
+    website_analyzed = quality > 0  # 0 = not analyzed, not "bad"
 
     if not has_website:
         breakdown["אין אתר כלל"] = 40
+    elif not website_analyzed:
+        # יש אתר אבל לא נותח — לא יודעים אם טוב או גרוע
+        breakdown["יש אתר — לא נותח"] = 12
     elif quality <= 2:
         breakdown["אתר גרוע מאוד"] = 32
     elif quality <= 4:
@@ -125,8 +129,8 @@ def compute_lead_score(biz: dict) -> tuple[int, dict]:
     else:
         breakdown["אתר טוב"] = 0
 
-    # ── 2. בעיות ספציפיות (עד 15 נקודות, רק אם יש אתר) ──────
-    if has_website:
+    # ── 2. בעיות ספציפיות (עד 15 נקודות, רק אם אתר נותח) ──────
+    if has_website and website_analyzed:
         issue_pts = 0
         if not biz.get("has_ssl"):        issue_pts += 4
         if not biz.get("is_responsive"):  issue_pts += 5
@@ -168,13 +172,14 @@ def compute_lead_score(biz: dict) -> tuple[int, dict]:
         breakdown[f"אתר ישן ({copyright_year})"] = pts
 
     # ── 5. Google Reviews (עד 10 נקודות) ─────────────────────────
-    # הרבה ביקורות + אתר גרוע = עסק פופולרי שצריך אתר טוב = HOT
     reviews = biz.get("google_reviews") or 0
     rating = biz.get("google_rating") or 0
-    if reviews > 50 and quality <= 5:
-        breakdown["עסק פופולרי עם אתר גרוע"] = 10
-    elif reviews > 20 and quality <= 6:
-        breakdown["עסק מוכר עם אתר בינוני"] = 7
+    if reviews > 50 and not has_website:
+        breakdown["עסק פופולרי ללא אתר"] = 10
+    elif reviews > 50 and has_website and quality <= 5:
+        breakdown["עסק פופולרי עם אתר גרוע"] = 8
+    elif reviews > 20:
+        breakdown["עסק מוכר עם ביקורות"] = 5
     elif reviews > 10:
         breakdown["יש ביקורות Google"] = 3
     elif reviews == 0 and has_website:

@@ -288,9 +288,20 @@ def business_exists(phone: str, name: str) -> bool:
 
 
 def insert_business(data: dict) -> int:
-    """מוסיף עסק חדש ומחזיר את ה-id שנוצר."""
+    """מוסיף עסק חדש ומחזיר את ה-id שנוצר. מונע כפילויות לפי טלפון."""
+    # Prevent duplicates
+    phone = data.get("phone", "")
+    name = data.get("name", "")
+    if phone or name:
+        if business_exists(phone, name):
+            return -1
+
     conn = get_conn()
     c = conn.cursor()
+    # Auto-set has_website if website URL exists
+    if data.get("website") and not data.get("has_website"):
+        data["has_website"] = 1
+
     # ערכי ברירת מחדל לשדות שאולי חסרים
     row = {
         "name": "", "phone": "", "phone2": "", "email": "",
