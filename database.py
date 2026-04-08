@@ -238,6 +238,8 @@ def init_db():
         # פייסבוק
         ("fb_followers",          "INTEGER DEFAULT 0"),
         ("fb_snippet_has_website","INTEGER DEFAULT 0"),
+        # מתחרים
+        ("competitors",           "TEXT"),   # JSON: [{name, website, rating, reviews}]
     ]
     existing = {row[1] for row in c.execute("PRAGMA table_info(businesses)").fetchall()}
     for col, col_type in new_columns:

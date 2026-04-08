@@ -22,12 +22,8 @@ fb_session_data/
 # ═══ Generated files ═══
 demos/
 
-# ═══ Images (not part of the system) ═══
-Gemini_Generated_Image_*.png
-nova-icon.png
-logo.svg
-logo-horizontal.svg
-favicon.svg
+# ═══ Assets (images, exports — not code) ═══
+assets/
 
 # ═══ Other projects ═══
 portfolio-site/

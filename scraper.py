@@ -1243,6 +1243,90 @@ def scrape_zap(query: str) -> list[dict]:
 
 
 # ════════════════════════════════════════════════════════════════
+#  מציאת מתחרים — לפי קטגוריה + עיר דרך SerpApi / Google
+# ════════════════════════════════════════════════════════════════
+def find_competitors(biz: dict, max_results: int = 5) -> list[dict]:
+    """
+    מוצא מתחרים לעסק — עסקים באותה קטגוריה ועיר שיש להם אתר טוב.
+    מחזיר רשימת dicts: [{name, website, rating, reviews, phone}]
+    """
+    category = biz.get("category") or biz.get("search_query") or ""
+    city = biz.get("city") or ""
+    biz_name = (biz.get("name") or "").strip().lower()
+
+    if not category:
+        return []
+
+    query = category
+    if city:
+        query += f" {city}"
+
+    competitors = []
+    seen = set()
+
+    # Method 1: SerpApi Google Maps (best data — name, website, rating, reviews)
+    if SERPAPI_KEY and SERPAPI_KEY != "YOUR_SERPAPI_KEY_HERE":
+        try:
+            params = {
+                "engine": "google_maps",
+                "q": query,
+                "gl": "il",
+                "type": "search",
+                "api_key": SERPAPI_KEY,
+            }
+            resp = requests.get("https://serpapi.com/search", params=params, timeout=20)
+            if resp.status_code == 200:
+                data = resp.json()
+                for p in data.get("local_results", []):
+                    name = p.get("title", "").strip()
+                    if not name or name.lower() == biz_name:
+                        continue
+                    if name.lower() in seen:
+                        continue
+                    seen.add(name.lower())
+                    website = p.get("website", "")
+                    if not website:
+                        continue  # מתחרה בלי אתר לא מעניין אותנו
+                    competitors.append({
+                        "name": name,
+                        "website": website,
+                        "rating": p.get("rating"),
+                        "reviews": p.get("reviews"),
+                        "phone": p.get("phone", ""),
+                    })
+                    if len(competitors) >= max_results:
+                        break
+        except Exception:
+            pass
+
+    # Method 2: B144 fallback (if SerpApi didn't return enough)
+    if len(competitors) < max_results:
+        try:
+            b144_results = scrape_b144(query)
+            for b in b144_results:
+                name = b.get("name", "").strip()
+                if not name or name.lower() == biz_name or name.lower() in seen:
+                    continue
+                seen.add(name.lower())
+                website = b.get("website", "")
+                if not website:
+                    continue
+                competitors.append({
+                    "name": name,
+                    "website": website,
+                    "rating": b.get("google_rating"),
+                    "reviews": b.get("google_reviews"),
+                    "phone": b.get("phone", ""),
+                })
+                if len(competitors) >= max_results:
+                    break
+        except Exception:
+            pass
+
+    return competitors[:max_results]
+
+
+# ════════════════════════════════════════════════════════════════
 #  העשרת נתונים מהאתר — מייל, רשתות חברתיות, עיר
 # ════════════════════════════════════════════════════════════════
 EMAIL_SKIP = ["example.com", "sentry.io", "googleapis", "w3.org", "schema.org",

@@ -139,6 +139,16 @@ st.markdown("""
   /* Score bar background */
   .score-bar-bg { background:#1E293B; border-radius:6px; height:8px; overflow:hidden; margin:4px 0 12px; }
   .score-bar-fill { height:100%; border-radius:6px; }
+
+  /* Mobile responsive */
+  @media (max-width: 768px) {
+    [data-testid="stHorizontalBlock"] { flex-wrap: wrap !important; gap: 4px !important; }
+    [data-testid="stHorizontalBlock"] > div { flex: 1 1 100% !important; min-width: 100% !important; }
+    [data-testid="stDataFrame"] { font-size: 12px !important; }
+    .stSelectbox, .stTextInput { min-width: 100% !important; }
+    h1 { font-size: 1.3rem !important; }
+    [data-testid="stMetricValue"] { font-size: 1.2rem !important; }
+  }
 </style>
 """, unsafe_allow_html=True)
 
@@ -650,6 +660,30 @@ with tab_leads:
                                     unsafe_allow_html=True)
                 except Exception:
                     pass
+
+        # ── מתחרים ──
+        comp_raw = sel_biz.get("competitors")
+        if comp_raw:
+            try:
+                comps = json.loads(comp_raw) if isinstance(comp_raw, str) else comp_raw
+                if comps:
+                    st.markdown("---")
+                    st.markdown("#### 🏆 מתחרים (עם אתר)")
+                    for c in (comps or []):
+                        name = c.get("name", "?")
+                        web = c.get("website", "")
+                        rating = c.get("rating")
+                        reviews = c.get("reviews")
+                        info = f"**{name}**"
+                        if web:
+                            info += f" — [{web}]({web})"
+                        if rating:
+                            info += f" | ⭐ {rating}"
+                        if reviews:
+                            info += f" ({reviews} ביקורות)"
+                        st.markdown(info)
+            except Exception:
+                pass
 
         # ── הודעה אישית (WhatsApp pitch) ──
         st.markdown("---")
