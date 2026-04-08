@@ -553,15 +553,44 @@ def get_followups_due(date: str = None) -> list:
     return [dict(r) for r in rows]
 
 
+def _delete_from_supabase(phone: str = "", name: str = ""):
+    """מוחק עסק מ-Supabase לפי טלפון או שם."""
+    if not _USE_SUPABASE:
+        return
+    try:
+        import requests
+        headers = {
+            "apikey": SUPABASE_KEY,
+            "Authorization": f"Bearer {SUPABASE_KEY}",
+        }
+        if phone:
+            requests.delete(
+                f"{SUPABASE_URL}/rest/v1/businesses?phone=eq.{phone}",
+                headers=headers,
+            )
+        elif name:
+            requests.delete(
+                f"{SUPABASE_URL}/rest/v1/businesses?name=eq.{name}",
+                headers=headers,
+            )
+    except Exception as e:
+        print(f"    [Supabase delete] {e}")
+
+
 def blacklist_business(business_id: int, reason: str = ""):
-    """מוסיף עסק ל-blacklist — לא ישלחו אליו יותר."""
+    """מוסיף עסק ל-blacklist — לא ישלחו אליו יותר. מוחק מ-Supabase."""
     conn = get_conn()
+    # Get phone/name before blacklisting for Supabase sync
+    row = conn.execute("SELECT phone, name FROM businesses WHERE id=?", (business_id,)).fetchone()
     conn.execute(
         "UPDATE businesses SET blacklisted=1, blacklist_reason=? WHERE id=?",
         (reason, business_id)
     )
     conn.commit()
     conn.close()
+    # Delete from Supabase
+    if row:
+        _delete_from_supabase(phone=row[0] or "", name=row[1] or "")
 
 
 # ════════════════════════════════════════════════════════════════
