@@ -467,21 +467,30 @@ with tab_leads:
         st.cache_data.clear()
         st.success(f"עודכנו {n} עסקים"); time.sleep(1); st.rerun()
 
-    # ── Excel export — all leads (downloadable) ──
+    # ── Excel export ──
     import io
-    from database import get_all_businesses
-    all_biz = [b for b in get_all_businesses() if not b.get("blacklisted")]
+    _rename = {
+        "name": "שם עסק", "phone": "טלפון", "email": "מייל", "website": "אתר",
+        "address": "כתובת", "city": "עיר", "category": "קטגוריה",
+        "source": "מקור", "lead_score": "ציון ליד", "quality_score": "ציון אתר",
+        "has_website": "יש אתר", "cms_platform": "פלטפורמה", "seo_score": "SEO",
+        "google_reviews": "ביקורות", "google_rating": "דירוג",
+        "activity_score": "פעילות", "pipeline_stage": "שלב",
+        "whatsapp_sent": "WA נשלח", "email_sent": "מייל נשלח",
+        "search_query": "שאילתת חיפוש", "created_at": "תאריך",
+    }
+
+    # All leads (from Supabase if cloud, SQLite if local)
+    try:
+        if _USE_SUPABASE:
+            all_biz = _sb().select("businesses", filters="blacklisted=eq.0", order="lead_score.desc")
+        else:
+            from database import get_all_businesses
+            all_biz = [b for b in get_all_businesses() if not b.get("blacklisted")]
+    except Exception:
+        all_biz = []
+
     if all_biz:
-        _rename = {
-            "name": "שם עסק", "phone": "טלפון", "email": "מייל", "website": "אתר",
-            "address": "כתובת", "city": "עיר", "category": "קטגוריה",
-            "source": "מקור", "lead_score": "ציון ליד", "quality_score": "ציון אתר",
-            "has_website": "יש אתר", "cms_platform": "פלטפורמה", "seo_score": "SEO",
-            "google_reviews": "ביקורות", "google_rating": "דירוג",
-            "activity_score": "פעילות", "pipeline_stage": "שלב",
-            "whatsapp_sent": "WA נשלח", "email_sent": "מייל נשלח",
-            "search_query": "שאילתת חיפוש", "created_at": "תאריך",
-        }
         all_df = pd.DataFrame(all_biz)
         all_df.rename(columns=_rename, inplace=True)
         buf_all = io.BytesIO()
@@ -493,9 +502,9 @@ with tab_leads:
             mime="application/vnd.openxmlformats-officedocument.spreadsheetml.sheet",
         )
 
-    # ── Excel export — filtered view ──
+    # Filtered view
     if not df.empty:
-        filtered_df = df.rename(columns=_rename if all_biz else {})
+        filtered_df = df.rename(columns=_rename)
         buf_filt = io.BytesIO()
         filtered_df.to_excel(buf_filt, index=False, engine="openpyxl")
         btn3.download_button(
@@ -506,11 +515,14 @@ with tab_leads:
         )
 
     if btn4.button("🚀 סריקה חדשה"):
-        subprocess.Popen(
-            [sys.executable, "main.py"],
-            creationflags=subprocess.CREATE_NEW_CONSOLE, cwd="e:/system"
-        )
-        st.info("סריקה רצה בחלון נפרד...")
+        try:
+            kwargs = {"cwd": os.path.dirname(os.path.abspath(__file__))}
+            if sys.platform == "win32":
+                kwargs["creationflags"] = subprocess.CREATE_NEW_CONSOLE
+            subprocess.Popen([sys.executable, "main.py"], **kwargs)
+            st.info("סריקה רצה בחלון נפרד...")
+        except Exception as e:
+            st.warning(f"סריקה זמינה רק בהרצה מקומית. ({e})")
 
     st.markdown(f"**{len(df)} עסקים** — ממוינים לפי ציון ליד ↓")
 
