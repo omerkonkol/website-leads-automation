@@ -240,6 +240,15 @@ def init_db():
         ("fb_snippet_has_website","INTEGER DEFAULT 0"),
         # מתחרים
         ("competitors",           "TEXT"),   # JSON: [{name, website, rating, reviews}]
+        # נתוני עסק מורחבים — לבניית אתר
+        ("logo_url",              "TEXT"),   # URL ללוגו העסק
+        ("photos",                "TEXT"),   # JSON: [url1, url2, ...] — תמונות העסק
+        ("owner_name",            "TEXT"),   # שם בעל העסק
+        ("description",           "TEXT"),   # תיאור העסק (מ-Google / Facebook / אתר)
+        ("opening_hours",         "TEXT"),   # JSON: {sun:"9:00-18:00", ...}
+        ("top_reviews",           "TEXT"),   # JSON: [{text, rating, author, date}]
+        ("services",              "TEXT"),   # JSON: ["שירות 1", "שירות 2"]
+        ("price_range",           "TEXT"),   # "$$" / "₪₪" / טווח מחירים
     ]
     existing = {row[1] for row in c.execute("PRAGMA table_info(businesses)").fetchall()}
     for col, col_type in new_columns:
@@ -463,6 +472,15 @@ def export_to_excel():
         "fb_followers": "עוקבים בפייסבוק",
         "phone2": "טלפון 2",
         "linkedin_url": "לינקדאין",
+        "logo_url": "לוגו",
+        "photos": "תמונות",
+        "owner_name": "בעל העסק",
+        "description": "תיאור",
+        "opening_hours": "שעות פעילות",
+        "top_reviews": "ביקורות מובילות",
+        "services": "שירותים",
+        "price_range": "טווח מחירים",
+        "competitors": "מתחרים",
     }
     df.rename(columns=rename_map, inplace=True)
     df.to_excel(EXCEL_PATH, index=False)

@@ -305,6 +305,31 @@ def scrape_google_maps(query: str) -> list[dict]:
             if p.get("reviews"):   extra["google_reviews"] = int(p["reviews"])
             if p.get("rating"):    extra["google_rating"] = float(p["rating"])
 
+            # תמונות, תיאור, שעות, מחיר — ישירות מ-SerpApi
+            thumb = p.get("thumbnail")
+            if thumb:
+                extra["logo_url"] = thumb
+            photos = p.get("photos")
+            if photos:
+                extra["photos"] = json.dumps(
+                    [ph.get("image") or ph.get("thumbnail", "") for ph in photos[:10]]
+                )
+            desc = p.get("description") or p.get("snippet") or ""
+            if desc:
+                extra["description"] = desc
+            hours = p.get("operating_hours") or p.get("hours")
+            if hours:
+                extra["opening_hours"] = json.dumps(hours, ensure_ascii=False)
+            price = p.get("price")
+            if price:
+                extra["price_range"] = price
+            ptype = p.get("type") or p.get("types")
+            if ptype:
+                if isinstance(ptype, list):
+                    extra["services"] = json.dumps(ptype, ensure_ascii=False)
+                else:
+                    extra["services"] = json.dumps([ptype], ensure_ascii=False)
+
             b = _make_biz(
                 name=p.get("title", ""),
                 phone=p.get("phone", ""),
@@ -1240,6 +1265,161 @@ def scrape_zap(query: str) -> list[dict]:
 
     print(f"    [Zap] '{query}' → {len(results)} עסקים")
     return results[:MAX_RESULTS_PER_QUERY]
+
+
+# ════════════════════════════════════════════════════════════════
+#  העשרת נתוני עסק — תמונות, לוגו, תיאור, שעות, ביקורות
+# ════════════════════════════════════════════════════════════════
+def enrich_business_profile(biz: dict) -> dict:
+    """
+    שולף נתונים מורחבים על העסק מ-Google Maps (SerpApi) ומהאתר שלו.
+    מחזיר dict עם: logo_url, photos, owner_name, description,
+    opening_hours, top_reviews, services, price_range.
+    """
+    result = {}
+    name = biz.get("name", "")
+    city = biz.get("city", "")
+    website = biz.get("website", "")
+
+    # ── SerpApi — Google Maps place details ──
+    if SERPAPI_KEY and SERPAPI_KEY != "YOUR_SERPAPI_KEY_HERE" and name:
+        try:
+            query = name
+            if city:
+                query += f" {city}"
+            params = {
+                "engine": "google_maps",
+                "q": query,
+                "gl": "il",
+                "type": "search",
+                "api_key": SERPAPI_KEY,
+            }
+            resp = requests.get("https://serpapi.com/search", params=params, timeout=20)
+            if resp.status_code == 200:
+                data = resp.json()
+                places = data.get("local_results", [])
+                # Find the matching place
+                place = None
+                for p in places:
+                    if name.lower() in (p.get("title", "")).lower():
+                        place = p
+                        break
+                if not place and places:
+                    place = places[0]  # Best match
+
+                if place:
+                    # Photos
+                    thumb = place.get("thumbnail")
+                    if thumb:
+                        result["logo_url"] = thumb
+                    photos = place.get("photos", [])
+                    if photos:
+                        result["photos"] = json.dumps(
+                            [ph.get("image") or ph.get("thumbnail", "") for ph in photos[:10]]
+                        )
+
+                    # Description
+                    desc = place.get("description") or place.get("snippet") or ""
+                    if desc:
+                        result["description"] = desc
+
+                    # Opening hours
+                    hours = place.get("operating_hours") or place.get("hours")
+                    if hours:
+                        result["opening_hours"] = json.dumps(hours, ensure_ascii=False)
+
+                    # Price range
+                    price = place.get("price")
+                    if price:
+                        result["price_range"] = price
+
+                    # Services / types
+                    ptype = place.get("type") or place.get("types")
+                    if ptype:
+                        if isinstance(ptype, list):
+                            result["services"] = json.dumps(ptype, ensure_ascii=False)
+                        else:
+                            result["services"] = json.dumps([ptype], ensure_ascii=False)
+
+                    # Reviews
+                    if place.get("reviews"):
+                        result["google_reviews"] = int(place["reviews"])
+                    if place.get("rating"):
+                        result["google_rating"] = float(place["rating"])
+
+        except Exception:
+            pass
+
+    # ── Website scraping — logo, description, owner name ──
+    if website:
+        try:
+            resp = requests.get(website, headers=HEADERS, timeout=10, allow_redirects=True)
+            html = resp.text
+            soup = BeautifulSoup(html, "html.parser")
+
+            # Logo
+            if not result.get("logo_url"):
+                logo_el = soup.select_one(
+                    "img[class*='logo'], img[alt*='logo'], img[src*='logo'], "
+                    "link[rel='icon'], link[rel='shortcut icon']"
+                )
+                if logo_el:
+                    logo_src = logo_el.get("src") or logo_el.get("href", "")
+                    if logo_src:
+                        if logo_src.startswith("/"):
+                            from urllib.parse import urljoin
+                            logo_src = urljoin(website, logo_src)
+                        result["logo_url"] = logo_src
+
+            # Description from meta tags
+            if not result.get("description"):
+                meta_desc = soup.select_one('meta[name="description"], meta[property="og:description"]')
+                if meta_desc:
+                    result["description"] = meta_desc.get("content", "")[:500]
+
+            # Owner name from structured data
+            for script in soup.select('script[type="application/ld+json"]'):
+                try:
+                    ld = json.loads(script.string or "")
+                    items = ld if isinstance(ld, list) else [ld]
+                    for item in items:
+                        if item.get("founder"):
+                            founder = item["founder"]
+                            if isinstance(founder, dict):
+                                result["owner_name"] = founder.get("name", "")
+                            elif isinstance(founder, str):
+                                result["owner_name"] = founder
+                        if item.get("openingHoursSpecification") and not result.get("opening_hours"):
+                            result["opening_hours"] = json.dumps(
+                                item["openingHoursSpecification"], ensure_ascii=False
+                            )
+                except (json.JSONDecodeError, TypeError):
+                    continue
+
+            # Photos from og:image and other images
+            if not result.get("photos"):
+                photo_urls = []
+                og_img = soup.select_one('meta[property="og:image"]')
+                if og_img and og_img.get("content"):
+                    photo_urls.append(og_img["content"])
+                for img in soup.select("img[src]")[:20]:
+                    src = img.get("src", "")
+                    if src and not any(skip in src.lower() for skip in
+                                       ["logo", "icon", "pixel", "tracking", "avatar",
+                                        "1x1", "spacer", "blank"]):
+                        if src.startswith("/"):
+                            src = urljoin(website, src)
+                        if src.startswith("http") and len(src) > 20:
+                            photo_urls.append(src)
+                    if len(photo_urls) >= 8:
+                        break
+                if photo_urls:
+                    result["photos"] = json.dumps(photo_urls[:8])
+
+        except Exception:
+            pass
+
+    return result
 
 
 # ════════════════════════════════════════════════════════════════
