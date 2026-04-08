@@ -1,0 +1,49 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 512 512" fill="none">
+  <defs>
+    <linearGradient id="bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4338CA"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <linearGradient id="star" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#a5f3fc"/>
+    </linearGradient>
+    <linearGradient id="n-grad" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#e0e7ff"/>
+    </linearGradient>
+    <filter id="glow">
+      <feGaussianBlur stdDeviation="8" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+    <filter id="star-glow">
+      <feGaussianBlur stdDeviation="4" result="blur"/>
+      <feMerge>
+        <feMergeNode in="blur"/>
+        <feMergeNode in="SourceGraphic"/>
+      </feMerge>
+    </filter>
+  </defs>
+
+  <!-- Background rounded square -->
+  <rect x="32" y="32" width="448" height="448" rx="96" fill="url(#bg)"/>
+
+  <!-- Subtle inner shadow -->
+  <rect x="32" y="32" width="448" height="448" rx="96" fill="url(#bg)" opacity="0.3"/>
+
+  <!-- Letter N -->
+  <path d="M168 370V142h10l166 175V142h36v228h-10L204 195v175z" fill="url(#n-grad)" opacity="0.95"/>
+
+  <!-- Nova star burst - top right -->
+  <g filter="star-glow">
+    <!-- Main 4-point star -->
+    <path d="M380 108 L388 88 L396 108 L416 116 L396 124 L388 144 L380 124 L360 116 Z" fill="url(#star)" opacity="0.95"/>
+    <!-- Small accent star -->
+    <path d="M340 80 L344 70 L348 80 L358 84 L348 88 L344 98 L340 88 L330 84 Z" fill="white" opacity="0.7"/>
+    <!-- Tiny dot star -->
+    <circle cx="410" cy="82" r="4" fill="white" opacity="0.5"/>
+  </g>
+</svg>

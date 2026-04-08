@@ -1,0 +1,28 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 300 60" fill="none">
+  <defs>
+    <linearGradient id="h-bg" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#4338CA"/>
+      <stop offset="100%" stop-color="#06B6D4"/>
+    </linearGradient>
+    <linearGradient id="h-star" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" stop-color="#ffffff"/>
+      <stop offset="100%" stop-color="#a5f3fc"/>
+    </linearGradient>
+  </defs>
+
+  <!-- Icon -->
+  <rect x="2" y="2" width="56" height="56" rx="14" fill="url(#h-bg)"/>
+
+  <!-- N letter -->
+  <path d="M17 44V16h2l22 22V16h5v28h-2L22 22v22z" fill="white" opacity="0.95"/>
+
+  <!-- Star -->
+  <path d="M46 13 L48 8 L50 13 L55 15 L50 17 L48 22 L46 17 L41 15 Z" fill="url(#h-star)" opacity="0.9"/>
+  <circle cx="53" cy="9" r="1.5" fill="white" opacity="0.5"/>
+
+  <!-- Text: Nova -->
+  <text x="72" y="32" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="26" fill="white" letter-spacing="-0.5">Nova</text>
+
+  <!-- Text: Digital -->
+  <text x="148" y="32" font-family="system-ui, -apple-system, sans-serif" font-weight="800" font-size="26" fill="#06B6D4" letter-spacing="-0.5">Digital</text>
+</svg>
