@@ -431,12 +431,13 @@ st.markdown("---")
 # ════════════════════════════════════════════════════════════════
 #  TABS
 # ════════════════════════════════════════════════════════════════
-tab_leads, tab_actions, tab_pipeline, tab_analytics, tab_calendar = st.tabs([
+tab_leads, tab_actions, tab_pipeline, tab_analytics, tab_calendar, tab_contacts = st.tabs([
     "📋  לידים",
     "🚀  פעולות",
     "📊  Pipeline",
     "📈  Analytics",
     "📅  Calendar",
+    "📩  פניות מהאתר",
 ])
 
 
@@ -1251,3 +1252,32 @@ with tab_calendar:
             set_next_followup(fu_opts[fu_sel], fu_date.strftime("%Y-%m-%d"))
             st.success(f"Follow-up נקבע ל-{fu_date}")
             st.cache_data.clear()
+
+
+# ════════════════════════════════════════════════════════════════
+#  TAB 6 — CONTACT LEADS (פניות מהאתר)
+# ════════════════════════════════════════════════════════════════
+with tab_contacts:
+    st.markdown("### 📩 פניות שנשלחו מאתר הפורטפוליו")
+    st.markdown("כל פנייה מטופס יצירת קשר באתר נשמרת כאן אוטומטית.")
+
+    try:
+        if _USE_SUPABASE:
+            contacts = _sb().select("contact_leads", order="created_at.desc", limit=100)
+        else:
+            contacts = []
+
+        if contacts:
+            contacts_df = pd.DataFrame(contacts)
+            rename_contacts = {
+                "name": "שם", "phone": "טלפון", "message": "הודעה",
+                "source": "מקור", "created_at": "תאריך",
+            }
+            contacts_df.rename(columns=rename_contacts, inplace=True)
+            display_cols = [c for c in ["שם", "טלפון", "הודעה", "מקור", "תאריך"] if c in contacts_df.columns]
+            st.dataframe(contacts_df[display_cols], use_container_width=True, hide_index=True)
+            st.markdown(f"**סה\"כ: {len(contacts)} פניות**")
+        else:
+            st.info("אין פניות עדיין — ברגע שמישהו ישלח טופס מהאתר, זה יופיע כאן.")
+    except Exception as e:
+        st.warning(f"לא ניתן לטעון פניות: {e}")

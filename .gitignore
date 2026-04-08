@@ -25,8 +25,8 @@ demos/
 # ═══ Assets (images, exports — not code) ═══
 assets/
 
-# ═══ Other projects ═══
-portfolio-site/
+# ═══ Other projects (uncomment if separate repo) ═══
+# portfolio-site/
 
 # ═══ Windows ═══
 Thumbs.db
