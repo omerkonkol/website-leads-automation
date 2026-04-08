@@ -292,7 +292,6 @@ def scrape_google_maps(query: str) -> list[dict]:
     params = {
         "engine":  "google_maps",
         "q":       query,
-        "hl":      "he",
         "gl":      "il",
         "type":    "search",
         "api_key": SERPAPI_KEY,
