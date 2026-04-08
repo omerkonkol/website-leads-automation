@@ -509,3 +509,119 @@ def verify_business(biz: dict, quick: bool = False) -> dict:
 def verify_business_quick(biz: dict) -> dict:
     """אימות מהיר (בלי Google/WhatsApp) — לשימוש בסריקה המונית."""
     return verify_business(biz, quick=True)
+
+
+# ════════════════════════════════════════════════════════════════
+#  7. מחקר מעמיק — חיפוש מידע נוסף על העסק ובעליו
+# ════════════════════════════════════════════════════════════════
+def deep_research_business(biz: dict) -> dict:
+    """
+    מחקר מעמיק על העסק — מחפש ב-Google מידע נוסף:
+    - שם בעל העסק
+    - פרופילי רשתות חברתיות
+    - כתבות / אזכורים
+    - אימות מספר טלפון (האם מופיע ברשת)
+    - תמונות / לוגו
+    מחזיר dict עם כל המידע שנמצא.
+    """
+    result = {
+        "owner_name": "", "extra_phones": [], "extra_emails": [],
+        "social_profiles": [], "mentions": [], "phone_verified_online": False,
+        "score_bonus": 0, "details": [],
+    }
+    name = biz.get("name", "")
+    phone = biz.get("phone", "")
+    city = biz.get("city", "")
+    if not name:
+        return result
+
+    # ── A. חיפוש הטלפון ב-Google — אם מספר מופיע, הוא אמיתי ──
+    if phone:
+        try:
+            phone_query = f'"{phone}" OR "{phone[:3]}-{phone[3:6]}-{phone[6:]}"'
+            url = f"https://www.google.com/search?q={quote(phone_query)}&hl=he&gl=il&num=5"
+            resp = requests.get(url, headers=HEADERS, timeout=10)
+            if resp.status_code == 200 and "detected unusual traffic" not in resp.text.lower():
+                html = resp.text
+                # If phone appears in multiple results, it's verified
+                phone_digits = re.sub(r"[^\d]", "", phone)
+                occurrences = html.count(phone_digits)
+                if occurrences >= 2:
+                    result["phone_verified_online"] = True
+                    result["score_bonus"] += 10
+                    result["details"].append(f"מספר טלפון מאומת — מופיע {occurrences} פעמים ב-Google")
+                elif occurrences == 1:
+                    result["phone_verified_online"] = True
+                    result["score_bonus"] += 5
+                    result["details"].append("מספר טלפון נמצא ב-Google")
+
+                # Extract extra emails from search results
+                emails = re.findall(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", html)
+                skip = ["example.com", "google.com", "sentry.io", "w3.org", "wix", "schema.org"]
+                for em in emails:
+                    if not any(s in em for s in skip) and em.lower() not in result["extra_emails"]:
+                        result["extra_emails"].append(em.lower())
+
+            time.sleep(0.5)
+        except Exception:
+            pass
+
+    # ── B. חיפוש שם העסק + עיר — מידע נוסף ──
+    try:
+        search_query = f'"{name}"'
+        if city:
+            search_query += f" {city}"
+        url = f"https://www.google.com/search?q={quote(search_query)}&hl=he&gl=il&num=10"
+        resp = requests.get(url, headers=HEADERS, timeout=10)
+        if resp.status_code == 200 and "detected unusual traffic" not in resp.text.lower():
+            html = resp.text
+
+            # שם בעל העסק — מופיע ליד "בעלים" / "owner" / "מנהל"
+            owner_patterns = [
+                r'(?:בעלים|owner|מנהל|מייסד|founder)[:\s]+([א-ת]{2,15}\s+[א-ת]{2,15})',
+                r'([א-ת]{2,15}\s+[א-ת]{2,15})\s*(?:בעלים|owner|מנהל)',
+            ]
+            for pat in owner_patterns:
+                m = re.search(pat, html, re.IGNORECASE)
+                if m:
+                    result["owner_name"] = m.group(1).strip()
+                    result["details"].append(f"בעל העסק: {result['owner_name']}")
+                    result["score_bonus"] += 3
+                    break
+
+            # פרופילי רשתות חברתיות
+            social_patterns = {
+                "facebook": r'href=["\']?(https?://(?:www\.)?facebook\.com/[^"\'\s>]{3,60})',
+                "instagram": r'href=["\']?(https?://(?:www\.)?instagram\.com/[^"\'\s>]{2,40})',
+                "linkedin": r'href=["\']?(https?://(?:www\.)?linkedin\.com/(?:company|in)/[^"\'\s>]{2,60})',
+                "tiktok": r'href=["\']?(https?://(?:www\.)?tiktok\.com/@[^"\'\s>]{2,40})',
+            }
+            for platform, pattern in social_patterns.items():
+                for match in re.finditer(pattern, html):
+                    profile_url = match.group(1).rstrip("/")
+                    if "/sharer" not in profile_url and "share?" not in profile_url:
+                        result["social_profiles"].append({"platform": platform, "url": profile_url})
+                        result["details"].append(f"פרופיל {platform} נמצא")
+                        result["score_bonus"] += 2
+                        break  # one per platform
+
+            # אזכורים / כתבות
+            news_domains = ["ynet", "mako", "walla", "globes", "calcalist", "themarker", "rest.co.il", "timeout"]
+            for domain in news_domains:
+                if domain in html.lower():
+                    result["mentions"].append(domain)
+            if result["mentions"]:
+                result["score_bonus"] += 5
+                result["details"].append(f"אזכורים בתקשורת: {', '.join(result['mentions'])}")
+
+            # מיילים נוספים
+            emails = re.findall(r"[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}", html)
+            skip = ["example.com", "google.com", "sentry.io", "w3.org", "wix", "schema.org"]
+            for em in emails:
+                if not any(s in em for s in skip) and em.lower() not in result["extra_emails"]:
+                    result["extra_emails"].append(em.lower())
+
+    except Exception:
+        pass
+
+    return result

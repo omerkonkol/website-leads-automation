@@ -126,6 +126,29 @@ def run_scrape_and_analyze():
                 continue
             print(f"     ✅ פעילות: {verification['activity_score']}/100 — {verification['summary']}")
 
+            # ── מחקר מעמיק — חיפוש מידע נוסף על בעל העסק ──
+            from business_verifier import deep_research_business
+            research = deep_research_business(full_biz)
+            if research.get("owner_name"):
+                biz["owner_name"] = research["owner_name"]
+                print(f"     👤 בעל העסק: {research['owner_name']}")
+            if research.get("extra_emails") and not email:
+                email = research["extra_emails"][0]
+                print(f"     📧 מייל חדש (ממחקר): {email}")
+            if research.get("social_profiles"):
+                for sp in research["social_profiles"]:
+                    if sp["platform"] == "facebook" and not fb_url:
+                        fb_url = sp["url"]
+                    elif sp["platform"] == "instagram" and not ig_url:
+                        ig_url = sp["url"]
+                    elif sp["platform"] == "linkedin" and not li_url:
+                        li_url = sp["url"]
+                    print(f"     🔗 {sp['platform']}: {sp['url'][:50]}")
+            if research.get("phone_verified_online"):
+                print(f"     📞 טלפון מאומת ברשת")
+            if research.get("mentions"):
+                print(f"     📰 אזכורים: {', '.join(research['mentions'])}")
+
             # ── הודעות מכירה אישיות ──
             partial_biz = {
                 "name": name, "website": website,
@@ -182,6 +205,14 @@ def run_scrape_and_analyze():
                 "activity_score":    verification["activity_score"],
                 "is_likely_active":  1,  # רק פעילים מגיעים לכאן
                 "activity_details":  json.dumps(verification["reasons"], ensure_ascii=False),
+                # מידע מורחב לבניית אתר
+                "owner_name":     biz.get("owner_name") or research.get("owner_name", ""),
+                "logo_url":       biz.get("logo_url", ""),
+                "photos":         biz.get("photos", ""),
+                "description":    biz.get("description", ""),
+                "opening_hours":  biz.get("opening_hours", ""),
+                "services":       biz.get("services", ""),
+                "linkedin_url":   li_url,
             }
             bid = insert_business(row)
 
