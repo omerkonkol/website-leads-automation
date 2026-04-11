@@ -332,55 +332,35 @@ def bool_icon(v): return "✅" if v else "❌"
 
 
 def send_whatsapp(phone: str, message: str, links: list) -> bool:
-    from selenium import webdriver
-    from selenium.webdriver.chrome.service import Service
-    from selenium.webdriver.chrome.options import Options
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.common.keys import Keys
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions as EC
-    from webdriver_manager.chrome import ChromeDriverManager
-    from config import SESSION_DATA_DIR
+    """Send a WhatsApp message via the WhatsApp API server."""
+    # Append portfolio links to the message
+    full_message = message
+    if links:
+        full_message += "\n\n" + "\n".join(links)
 
-    def norm(p):
-        d = "".join(c for c in str(p) if c.isdigit())
-        return "972" + d.lstrip("0") if not d.startswith("972") else d
+    payload = {
+        "leads": [{
+            "name": "",
+            "phone": phone,
+            "message": full_message,
+        }]
+    }
 
-    def paste(drv, el, txt):
-        drv.execute_script(
-            "arguments[0].focus(); document.execCommand('insertText',false,arguments[1]);", el, txt)
+    resp = requests.post(
+        f"{WHATSAPP_API_URL}/api/campaign/send-json",
+        json=payload,
+        timeout=60,
+    )
 
-    phone = norm(phone)
-    subprocess.run(["taskkill", "/F", "/IM", "chromedriver.exe"], capture_output=True)
-    opts = Options()
-    opts.add_argument("--start-maximized")
-    opts.add_argument(f"user-data-dir={os.path.abspath(SESSION_DATA_DIR)}")
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=opts)
-    wait = WebDriverWait(driver, 35)
-    try:
-        driver.get("https://web.whatsapp.com")
-        st.info("ממתין ל-WhatsApp Web... (סרוק QR אם נדרש)")
-        time.sleep(6)
-        driver.get(f"https://web.whatsapp.com/send?phone={phone}")
-        wait.until(EC.presence_of_element_located(
-            (By.XPATH, '//div[@contenteditable="true"][@data-tab="10"]')))
-        time.sleep(2)
-        inp = wait.until(EC.element_to_be_clickable(
-            (By.XPATH, '//div[@contenteditable="true"][@data-tab="10"]')))
-        inp.click(); paste(driver, inp, message); time.sleep(0.5)
-        inp.send_keys(Keys.ENTER); time.sleep(1)
-        for link in links:
-            subprocess.run(["powershell", "-Command",
-                f"Set-Clipboard -Value '{link}'"], capture_output=True)
-            inp = wait.until(EC.element_to_be_clickable(
-                (By.XPATH, '//div[@contenteditable="true"][@data-tab="10"]')))
-            inp.click(); inp.send_keys(Keys.CONTROL + "v"); time.sleep(0.8)
-            inp.send_keys(Keys.ENTER); time.sleep(1)
-        time.sleep(2); return True
-    except Exception as e:
-        st.error(f"שגיאה: {e}"); return False
-    finally:
-        driver.quit()
+    if resp.status_code == 200:
+        data = resp.json()
+        return data.get("sent", 0) > 0
+    elif resp.status_code == 503:
+        raise ConnectionError("WhatsApp לא מחובר — סרוק QR בטרמינל של השרת")
+    elif resp.status_code == 429:
+        raise RuntimeError("הגעת למגבלת השליחה היומית. נסה שוב מחר.")
+    else:
+        raise RuntimeError(f"שגיאה מה-API (קוד {resp.status_code}): {resp.text[:200]}")
 
 
 def send_email(to: str, biz_name: str, issue: str) -> bool:
@@ -914,15 +894,35 @@ with tab_actions:
                 disabled=wa_done, key=f"wa_btn_{biz['id']}", use_container_width=True
             ):
                 if not biz.get("phone"):
-                    st.error("אין מספר טלפון.")
+                    st.error("❌ אין מספר טלפון לעסק הזה.")
+                elif not wa_text or len(wa_text.strip()) < 10:
+                    st.error("❌ ההודעה ריקה או קצרה מדי. כתוב הודעה לפני השליחה.")
                 else:
-                    with st.spinner("שולח..."):
-                        ok = send_whatsapp(biz["phone"], wa_text, PORTFOLIO_LINKS)
-                    if ok:
-                        mark_sent_db(biz["id"], "whatsapp")
-                        update_pipeline_stage(biz["id"], "contacted")
-                        st.success("✅ נשלח!"); st.cache_data.clear()
-                        time.sleep(1); st.rerun()
+                    try:
+                        with st.spinner("שולח הודעת WhatsApp..."):
+                            ok = send_whatsapp(biz["phone"], wa_text, PORTFOLIO_LINKS)
+                        if ok:
+                            mark_sent_db(biz["id"], "whatsapp")
+                            update_pipeline_stage(biz["id"], "contacted")
+                            st.success("✅ ההודעה נשלחה בהצלחה!")
+                            st.cache_data.clear()
+                            time.sleep(1); st.rerun()
+                        else:
+                            st.error("❌ השליחה נכשלה. ודא שהמספר תקין ושה-WhatsApp מחובר.")
+                    except requests.ConnectionError:
+                        st.error(
+                            "❌ לא ניתן להתחבר לשרת ה-WhatsApp API.\n\n"
+                            "הפעל אותו בטרמינל נפרד:\n"
+                            "```\ncd whatsapp-api && npm start\n```"
+                        )
+                    except ConnectionError as e:
+                        st.error(f"❌ {e}")
+                    except RuntimeError as e:
+                        st.error(f"❌ {e}")
+                    except requests.Timeout:
+                        st.error("❌ השרת לא הגיב בזמן. בדוק שהשרת רץ ותקין.")
+                    except Exception as e:
+                        st.error(f"❌ שגיאה לא צפויה: {e}")
 
         with wa_col2:
             if st.button("סמן כנשלח ידנית", key=f"wa_manual_{biz['id']}", use_container_width=True):
@@ -1056,13 +1056,26 @@ with tab_whatsapp:
     with wa_f3:
         if st.button("🔌 בדוק חיבור API", key="wa_health"):
             try:
-                health = requests.get(f"{WHATSAPP_API_URL}/api/health", timeout=5).json()
+                health_resp = requests.get(f"{WHATSAPP_API_URL}/api/health", timeout=5)
+                health_resp.raise_for_status()
+                health = health_resp.json()
                 if health.get("whatsapp") == "connected":
-                    st.success("WhatsApp מחובר ✅")
+                    st.success("WhatsApp מחובר ומוכן לשליחה ✅")
                 else:
-                    st.warning("API פעיל אבל WhatsApp לא מחובר — סרוק QR")
-            except Exception:
-                st.error("API לא זמין — הרם את השרת: cd whatsapp-api && npm start")
+                    st.warning(
+                        "⚠️ שרת ה-API פעיל, אבל WhatsApp לא מחובר.\n\n"
+                        "פתח את הטרמינל שבו רץ השרת וסרוק את קוד ה-QR עם WhatsApp בטלפון."
+                    )
+            except requests.ConnectionError:
+                st.error(
+                    "❌ שרת ה-WhatsApp API לא רץ.\n\n"
+                    "הפעל אותו בטרמינל נפרד:\n"
+                    "```\ncd whatsapp-api && npm start\n```"
+                )
+            except requests.Timeout:
+                st.error("❌ שרת ה-API לא מגיב (timeout). בדוק שהשרת רץ ותקין.")
+            except Exception as e:
+                st.error(f"❌ שגיאה לא צפויה בבדיקת חיבור: {e}")
 
     # ── Apply filters ──
     filtered_wa = all_wa_df.copy()
@@ -1141,19 +1154,36 @@ with tab_whatsapp:
                         "message": row["whatsapp_pitch"],
                     })
 
-                with st.spinner(f"שולח {len(leads_payload)} הודעות..."):
+                with st.spinner(f"שולח {len(leads_payload)} הודעות... (זה יכול לקחת כמה דקות)"):
                     try:
                         resp = requests.post(
                             f"{WHATSAPP_API_URL}/api/campaign/send-json",
                             json={"leads": leads_payload},
                             timeout=600,
                         )
+
                         if resp.status_code == 200:
                             data = resp.json()
-                            st.success(
-                                f"✅ נשלחו: {data['sent']} | נכשלו: {data['failed']} "
-                                f"| סה\"כ היום: {data['dailySent']}"
-                            )
+                            sent_count = data.get("sent", 0)
+                            fail_count = data.get("failed", 0)
+                            daily_count = data.get("dailySent", "?")
+
+                            # Show results summary
+                            if sent_count > 0 and fail_count == 0:
+                                st.success(f"✅ כל {sent_count} ההודעות נשלחו בהצלחה! (סה\"כ היום: {daily_count})")
+                            elif sent_count > 0 and fail_count > 0:
+                                st.warning(f"⚠️ נשלחו {sent_count} מתוך {sent_count + fail_count}. {fail_count} נכשלו.")
+                            else:
+                                st.error("❌ אף הודעה לא נשלחה. בדוק את חיבור ה-WhatsApp.")
+
+                            # Show failed leads details
+                            failed_results = [r for r in data.get("results", []) if r["status"] == "failed"]
+                            if failed_results:
+                                with st.expander(f"🔍 פרטי {len(failed_results)} שליחות שנכשלו"):
+                                    for r in failed_results:
+                                        st.markdown(f"- **{r['phone']}**: {r.get('error', 'שגיאה לא ידועה')}")
+
+                            # Update DB for sent leads
                             now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
                             conn_upd = sqlite3.connect(DB_PATH)
                             for r in data.get("results", []):
@@ -1168,19 +1198,55 @@ with tab_whatsapp:
                                     )
                             conn_upd.commit()
                             conn_upd.close()
-                            st.cache_data.clear()
-                            time.sleep(1)
-                            st.rerun()
+
+                            if sent_count > 0:
+                                st.cache_data.clear()
+                                time.sleep(1)
+                                st.rerun()
+
                         elif resp.status_code == 503:
-                            st.error("WhatsApp לא מחובר — סרוק QR קודם")
+                            st.error(
+                                "❌ WhatsApp לא מחובר.\n\n"
+                                "פתח את הטרמינל שבו רץ השרת וסרוק את קוד ה-QR עם WhatsApp בטלפון."
+                            )
                         elif resp.status_code == 429:
-                            st.warning(f"הגעת למגבלה היומית: {resp.json().get('dailySent', '?')} הודעות")
+                            try:
+                                daily = resp.json().get("dailySent", "?")
+                            except Exception:
+                                daily = "?"
+                            st.warning(
+                                f"⛔ הגעת למגבלת השליחה היומית ({daily} הודעות).\n\n"
+                                "נסה שוב מחר כדי למנוע חסימה מ-WhatsApp."
+                            )
+                        elif resp.status_code == 400:
+                            try:
+                                detail = resp.json().get("error", resp.text)
+                            except Exception:
+                                detail = resp.text
+                            st.error(f"❌ בקשה לא תקינה: {detail}")
+                        elif resp.status_code >= 500:
+                            st.error(
+                                f"❌ שגיאה פנימית בשרת ה-API (קוד {resp.status_code}).\n\n"
+                                "בדוק את הלוג בטרמינל של השרת לפרטים נוספים."
+                            )
                         else:
-                            st.error(f"שגיאה מה-API: {resp.text}")
+                            st.error(f"❌ תגובה לא צפויה מה-API (קוד {resp.status_code}): {resp.text[:200]}")
+
                     except requests.ConnectionError:
-                        st.error("לא ניתן להתחבר ל-API — הרם את השרת: cd whatsapp-api && npm start")
+                        st.error(
+                            "❌ לא ניתן להתחבר לשרת ה-WhatsApp API.\n\n"
+                            "הפעל אותו בטרמינל נפרד:\n"
+                            "```\ncd whatsapp-api && npm start\n```"
+                        )
+                    except requests.Timeout:
+                        st.error(
+                            "❌ השרת לא הגיב בזמן (timeout).\n\n"
+                            "ייתכן שהשליחה עדיין רצה ברקע — בדוק את הטרמינל של השרת."
+                        )
+                    except requests.JSONDecodeError:
+                        st.error("❌ התגובה מה-API לא תקינה. בדוק שהשרת רץ כראוי.")
                     except Exception as e:
-                        st.error(f"שגיאה: {e}")
+                        st.error(f"❌ שגיאה לא צפויה: {e}")
 
 
 # ════════════════════════════════════════════════════════════════
