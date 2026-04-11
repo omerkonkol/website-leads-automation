@@ -19,6 +19,7 @@ import sqlite3
 from datetime import datetime, timedelta
 
 import pandas as pd
+import requests
 import streamlit as st
 
 # ── Page config ──────────────────────────────────────────────────
@@ -431,9 +432,10 @@ st.markdown("---")
 # ════════════════════════════════════════════════════════════════
 #  TABS
 # ════════════════════════════════════════════════════════════════
-tab_leads, tab_actions, tab_pipeline, tab_analytics, tab_calendar, tab_contacts = st.tabs([
+tab_leads, tab_actions, tab_whatsapp, tab_pipeline, tab_analytics, tab_calendar, tab_contacts = st.tabs([
     "📋  לידים",
     "🚀  פעולות",
+    "📨  שלח הודעות",
     "📊  Pipeline",
     "📈  Analytics",
     "📅  Calendar",
@@ -544,7 +546,7 @@ with tab_leads:
         for _, r in df.iterrows():
             ls = r.get("lead_score") or 0
             if ls == 0:
-                ls, _ = compute_lead_score(r.to_dict())
+                ls, _ = compute_lead_score({k: (None if pd.isna(v) else v) for k, v in r.to_dict().items()})
 
             if ls >= 70:   tier_str = f"🔥 {ls}"
             elif ls >= 45: tier_str = f"⚡ {ls}"
@@ -601,7 +603,7 @@ with tab_leads:
         opts = {f"{r['name']} | {r.get('city') or ''} | ציון {r.get('lead_score') or 0}": i
                 for i, r in df.iterrows()}
         sel_label = st.selectbox("בחר עסק לפרטים:", list(opts.keys()), key="leads_detail_sel")
-        sel_biz = df.loc[opts[sel_label]].to_dict()
+        sel_biz = {k: (None if pd.isna(v) else v) for k, v in df.loc[opts[sel_label]].to_dict().items()}
 
         ls = sel_biz.get("lead_score") or 0
         _, breakdown = compute_lead_score(sel_biz)
@@ -766,7 +768,7 @@ with tab_actions:
 
     sel_label2 = st.selectbox("בחר ליד:", list(opts2.keys()), index=default_idx, key="action_sel")
     sel_id = opts2[sel_label2]
-    biz = all_df[all_df["id"] == sel_id].iloc[0].to_dict()
+    biz = {k: (None if pd.isna(v) else v) for k, v in all_df[all_df["id"] == sel_id].iloc[0].to_dict().items()}
 
     ls = biz.get("lead_score") or 0
     _, breakdown = compute_lead_score(biz)
@@ -1015,7 +1017,174 @@ with tab_actions:
 
 
 # ════════════════════════════════════════════════════════════════
-#  TAB 3 — PIPELINE VIEW
+#  TAB — SEND WHATSAPP MESSAGES
+# ════════════════════════════════════════════════════════════════
+WHATSAPP_API_URL = "http://localhost:3000"
+
+with tab_whatsapp:
+    st.markdown("### 📨 שליחת הודעות WhatsApp")
+
+    # ── Load all leads with Israeli mobile phone (05x) ──
+    conn_wa = sqlite3.connect(DB_PATH)
+    all_wa_df = pd.read_sql_query(
+        "SELECT id, name, phone, city, category, lead_score, whatsapp_pitch, whatsapp_sent "
+        "FROM businesses "
+        "WHERE blacklisted = 0 AND phone IS NOT NULL AND phone != '' "
+        "ORDER BY lead_score DESC",
+        conn_wa
+    )
+    conn_wa.close()
+
+    # Filter: Israeli mobile (05x / 9725x) + must have a pitch
+    def _is_mobile(phone):
+        digits = "".join(c for c in str(phone) if c.isdigit())
+        return digits.startswith("05") or digits.startswith("5") or digits.startswith("9725")
+    all_wa_df = all_wa_df[
+        all_wa_df["phone"].apply(_is_mobile) &
+        all_wa_df["whatsapp_pitch"].notna() &
+        (all_wa_df["whatsapp_pitch"] != "")
+    ].reset_index(drop=True)
+
+    # ── Filters ──
+    wa_f1, wa_f2, wa_f3 = st.columns([1, 1, 2])
+    wa_status_filter = wa_f1.selectbox(
+        "📬 סטטוס", ["טרם נשלח", "נשלח", "הכל"], key="wa_status_filter"
+    )
+    wa_score_range = wa_f2.slider("ציון ליד", 0, 100, (0, 100), key="wa_score_slider")
+
+    # API health check
+    with wa_f3:
+        if st.button("🔌 בדוק חיבור API", key="wa_health"):
+            try:
+                health = requests.get(f"{WHATSAPP_API_URL}/api/health", timeout=5).json()
+                if health.get("whatsapp") == "connected":
+                    st.success("WhatsApp מחובר ✅")
+                else:
+                    st.warning("API פעיל אבל WhatsApp לא מחובר — סרוק QR")
+            except Exception:
+                st.error("API לא זמין — הרם את השרת: cd whatsapp-api && npm start")
+
+    # ── Apply filters ──
+    filtered_wa = all_wa_df.copy()
+    if wa_status_filter == "טרם נשלח":
+        filtered_wa = filtered_wa[filtered_wa["whatsapp_sent"] == 0]
+    elif wa_status_filter == "נשלח":
+        filtered_wa = filtered_wa[filtered_wa["whatsapp_sent"] == 1]
+    filtered_wa = filtered_wa[
+        (filtered_wa["lead_score"] >= wa_score_range[0]) &
+        (filtered_wa["lead_score"] <= wa_score_range[1])
+    ]
+
+    st.markdown(f"**{len(filtered_wa)} לידים** (מתוך {len(all_wa_df)} סה\"כ)")
+
+    if filtered_wa.empty:
+        st.info("אין לידים להצגה עם הסינון הנוכחי.")
+    else:
+        # ── Display table with checkboxes ──
+        disp_wa = filtered_wa[["id", "name", "phone", "city", "category", "lead_score", "whatsapp_sent"]].copy()
+        disp_wa["סטטוס"] = disp_wa["whatsapp_sent"].apply(lambda x: "✅ נשלח" if x else "⏳ ממתין")
+        disp_wa = disp_wa.rename(columns={
+            "name": "שם עסק", "phone": "טלפון", "city": "עיר",
+            "category": "קטגוריה", "lead_score": "ציון ליד",
+        })
+        disp_wa = disp_wa[["id", "שם עסק", "טלפון", "עיר", "קטגוריה", "ציון ליד", "סטטוס"]]
+
+        # Selection mode
+        sel_mode = st.radio("בחירה:", ["בחר הכל", "בחר ידנית"], horizontal=True, key="wa_sel_mode")
+
+        if sel_mode == "בחר ידנית":
+            options = {f"{r['שם עסק']} | {r['טלפון']} | ציון {r['ציון ליד']}": r["id"]
+                       for _, r in disp_wa.iterrows()}
+            selected_labels = st.multiselect(
+                "בחר לידים לשליחה:", list(options.keys()), key="wa_manual_select"
+            )
+            selected_ids = [options[l] for l in selected_labels]
+        else:
+            selected_ids = disp_wa["id"].tolist()
+
+        st.dataframe(
+            disp_wa.drop(columns=["id"]),
+            use_container_width=True, hide_index=True, height=350,
+        )
+
+        # ── Preview message ──
+        if selected_ids:
+            preview_row = filtered_wa[filtered_wa["id"] == selected_ids[0]].iloc[0]
+            with st.expander("👁️ תצוגה מקדימה — הודעה לדוגמה"):
+                st.markdown(f"**{preview_row['name']}** — {preview_row['phone']}")
+                st.text(preview_row["whatsapp_pitch"])
+
+        st.markdown("---")
+
+        # ── Send buttons ──
+        pending_selected = filtered_wa[
+            (filtered_wa["id"].isin(selected_ids)) & (filtered_wa["whatsapp_sent"] == 0)
+        ]
+        n_to_send = len(pending_selected)
+
+        if n_to_send == 0:
+            st.info("כל הלידים שנבחרו כבר קיבלו הודעה.")
+        else:
+            st.markdown(f"**{n_to_send} לידים ממתינים לשליחה מהבחירה**")
+            send_btn = st.button(
+                f"🚀 שלח ל-{n_to_send} לידים",
+                type="primary", key="wa_send_selected"
+            )
+
+            if send_btn:
+                leads_payload = []
+                for _, row in pending_selected.iterrows():
+                    leads_payload.append({
+                        "id": int(row["id"]),
+                        "name": row["name"],
+                        "phone": row["phone"],
+                        "message": row["whatsapp_pitch"],
+                    })
+
+                with st.spinner(f"שולח {len(leads_payload)} הודעות..."):
+                    try:
+                        resp = requests.post(
+                            f"{WHATSAPP_API_URL}/api/campaign/send-json",
+                            json={"leads": leads_payload},
+                            timeout=600,
+                        )
+                        if resp.status_code == 200:
+                            data = resp.json()
+                            st.success(
+                                f"✅ נשלחו: {data['sent']} | נכשלו: {data['failed']} "
+                                f"| סה\"כ היום: {data['dailySent']}"
+                            )
+                            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                            conn_upd = sqlite3.connect(DB_PATH)
+                            for r in data.get("results", []):
+                                if r["status"] == "sent" and r.get("id"):
+                                    conn_upd.execute(
+                                        "UPDATE businesses SET whatsapp_sent=1, whatsapp_sent_at=? WHERE id=?",
+                                        (now, r["id"])
+                                    )
+                                    conn_upd.execute(
+                                        "INSERT INTO outreach_log (business_id, channel, status, sent_at) VALUES (?,?,?,?)",
+                                        (r["id"], "whatsapp", "sent", now)
+                                    )
+                            conn_upd.commit()
+                            conn_upd.close()
+                            st.cache_data.clear()
+                            time.sleep(1)
+                            st.rerun()
+                        elif resp.status_code == 503:
+                            st.error("WhatsApp לא מחובר — סרוק QR קודם")
+                        elif resp.status_code == 429:
+                            st.warning(f"הגעת למגבלה היומית: {resp.json().get('dailySent', '?')} הודעות")
+                        else:
+                            st.error(f"שגיאה מה-API: {resp.text}")
+                    except requests.ConnectionError:
+                        st.error("לא ניתן להתחבר ל-API — הרם את השרת: cd whatsapp-api && npm start")
+                    except Exception as e:
+                        st.error(f"שגיאה: {e}")
+
+
+# ════════════════════════════════════════════════════════════════
+#  TAB — PIPELINE VIEW
 # ════════════════════════════════════════════════════════════════
 with tab_pipeline:
     st.markdown("### 📊 Pipeline — מעקב שלבים")

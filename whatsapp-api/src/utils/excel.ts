@@ -1,4 +1,4 @@
-import * as XLSX from "xlsx";
+import ExcelJS from "exceljs";
 
 export interface LeadRow {
   name: string;
@@ -8,54 +8,75 @@ export interface LeadRow {
 }
 
 /**
- * Find a value in a row object by trying multiple possible column names (case-insensitive).
- */
-function findColumn(row: Record<string, unknown>, ...keys: string[]): string {
-  for (const key of Object.keys(row)) {
-    const lower = key.toLowerCase().trim();
-    if (keys.includes(lower)) {
-      return String(row[key] ?? "").trim();
-    }
-  }
-  return "";
-}
-
-/**
  * Parse an Excel buffer into an array of LeadRow objects.
  * Accepts columns named: name, phone/number, message, status (any casing).
  */
-export function parseExcelBuffer(buffer: Buffer): LeadRow[] {
-  const workbook = XLSX.read(buffer, { type: "buffer" });
-  const sheetName = workbook.SheetNames[0];
-  if (!sheetName) {
+export async function parseExcelBuffer(buffer: Buffer): Promise<LeadRow[]> {
+  const workbook = new ExcelJS.Workbook();
+  await workbook.xlsx.load(buffer as unknown as ExcelJS.Buffer);
+  const sheet = workbook.worksheets[0];
+  if (!sheet) {
     throw new Error("Excel file contains no sheets.");
   }
 
-  const sheet = workbook.Sheets[sheetName];
-  const rows = XLSX.utils.sheet_to_json<Record<string, unknown>>(sheet);
+  // Read header row to map column indices
+  const headerRow = sheet.getRow(1);
+  const colMap: Record<string, number> = {};
+  headerRow.eachCell((cell, colNumber) => {
+    const key = String(cell.value ?? "").toLowerCase().trim();
+    colMap[key] = colNumber;
+  });
 
-  return rows.map((row, index) => {
-    const name = findColumn(row, "name");
-    const phone = findColumn(row, "phone", "number");
-    const message = findColumn(row, "message");
-    const status = findColumn(row, "status");
+  // Find columns by possible names
+  function findCol(...keys: string[]): number | undefined {
+    for (const k of keys) {
+      if (colMap[k] !== undefined) return colMap[k];
+    }
+    return undefined;
+  }
+
+  const nameCol = findCol("name");
+  const phoneCol = findCol("phone", "number");
+  const messageCol = findCol("message");
+  const statusCol = findCol("status");
+
+  const rows: LeadRow[] = [];
+  sheet.eachRow((row, rowNumber) => {
+    if (rowNumber === 1) return; // skip header
+
+    const name = nameCol ? String(row.getCell(nameCol).value ?? "").trim() : "";
+    const phone = phoneCol ? String(row.getCell(phoneCol).value ?? "").trim() : "";
+    const message = messageCol ? String(row.getCell(messageCol).value ?? "").trim() : "";
+    const status = statusCol ? String(row.getCell(statusCol).value ?? "").trim() : "";
 
     if (!phone || !message) {
-      console.warn(
-        `⚠️  Row ${index + 2}: missing phone or message — will be skipped.`
-      );
+      console.warn(`⚠️  Row ${rowNumber}: missing phone or message — will be skipped.`);
     }
 
-    return { name, phone, message, status };
+    rows.push({ name, phone, message, status });
   });
+
+  return rows;
 }
 
 /**
  * Convert an array of LeadRow objects back into an Excel buffer (.xlsx).
  */
-export function buildExcelBuffer(rows: LeadRow[]): Buffer {
-  const worksheet = XLSX.utils.json_to_sheet(rows);
-  const workbook = XLSX.utils.book_new();
-  XLSX.utils.book_append_sheet(workbook, worksheet, "Campaign");
-  return XLSX.write(workbook, { type: "buffer", bookType: "xlsx" }) as Buffer;
+export async function buildExcelBuffer(rows: LeadRow[]): Promise<Buffer> {
+  const workbook = new ExcelJS.Workbook();
+  const sheet = workbook.addWorksheet("Campaign");
+
+  sheet.columns = [
+    { header: "name", key: "name" },
+    { header: "phone", key: "phone" },
+    { header: "message", key: "message" },
+    { header: "status", key: "status" },
+  ];
+
+  for (const row of rows) {
+    sheet.addRow(row);
+  }
+
+  const arrayBuffer = await workbook.xlsx.writeBuffer();
+  return Buffer.from(arrayBuffer);
 }

@@ -1,6 +1,6 @@
 import { Router } from "express";
 import multer from "multer";
-import { sendCampaign } from "../controllers/campaign.controller";
+import { sendCampaign, sendCampaignJson } from "../controllers/campaign.controller";
 
 const upload = multer({
   storage: multer.memoryStorage(),
@@ -21,5 +21,6 @@ const upload = multer({
 const router = Router();
 
 router.post("/send", upload.single("file"), sendCampaign);
+router.post("/send-json", sendCampaignJson);
 
 export default router;

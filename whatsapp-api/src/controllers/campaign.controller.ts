@@ -54,7 +54,7 @@ export async function sendCampaign(
     }
 
     // ── Parse Excel ───────────────────────────────────────────────────
-    const rows: LeadRow[] = parseExcelBuffer(req.file.buffer);
+    const rows: LeadRow[] = await parseExcelBuffer(req.file.buffer);
     if (rows.length === 0) {
       res.status(400).json({ error: "Excel file contains no data rows." });
       return;
@@ -131,7 +131,7 @@ export async function sendCampaign(
     }
 
     // ── Build updated Excel and respond ───────────────────────────────
-    const updatedBuffer = buildExcelBuffer(rows);
+    const updatedBuffer = await buildExcelBuffer(rows);
 
     console.log(
       `\n📊 Campaign finished — Sent: ${sent}, Skipped: ${skipped}, Failed: ${failed}`
@@ -150,6 +150,97 @@ export async function sendCampaign(
   } catch (err: unknown) {
     const message = err instanceof Error ? err.message : String(err);
     console.error("💥 Campaign error:", message);
+    res.status(500).json({ error: "Campaign processing failed.", details: message });
+  }
+}
+
+
+/**
+ * JSON-based campaign endpoint — accepts { leads: [{name, phone, message}] }
+ * Returns JSON with per-lead results instead of an Excel file.
+ */
+export async function sendCampaignJson(
+  req: Request,
+  res: Response
+): Promise<void> {
+  try {
+    const { leads } = req.body as {
+      leads: Array<{ id?: number; name: string; phone: string; message: string }>;
+    };
+
+    if (!leads || !Array.isArray(leads) || leads.length === 0) {
+      res.status(400).json({ error: "Missing or empty 'leads' array in body." });
+      return;
+    }
+
+    if (!whatsappService.getIsReady()) {
+      res.status(503).json({ error: "WhatsApp client is not ready yet." });
+      return;
+    }
+
+    if (!checkDailyLimit()) {
+      res.status(429).json({
+        error: `Daily limit reached (${MAX_MESSAGES_PER_DAY}). Try again tomorrow.`,
+        dailySent: dailySentCount,
+      });
+      return;
+    }
+
+    console.log(`\n📋 JSON Campaign started — ${leads.length} leads.`);
+    console.log(`   📊 Daily sent so far: ${dailySentCount}/${MAX_MESSAGES_PER_DAY}\n`);
+
+    const results: Array<{ id?: number; phone: string; status: string; error?: string }> = [];
+    let sent = 0;
+    let failed = 0;
+
+    for (let i = 0; i < leads.length; i++) {
+      const lead = leads[i];
+
+      if (sent >= MAX_MESSAGES_PER_BATCH) {
+        console.log(`   🛑 Batch limit reached (${MAX_MESSAGES_PER_BATCH}).`);
+        break;
+      }
+
+      if (!checkDailyLimit()) {
+        console.log(`   🛑 Daily limit reached (${MAX_MESSAGES_PER_DAY}).`);
+        break;
+      }
+
+      if (!lead.phone || !lead.message) {
+        results.push({ id: lead.id, phone: lead.phone || "", status: "skipped", error: "missing phone or message" });
+        continue;
+      }
+
+      try {
+        const personalizedMsg = personalizeMessage(lead.message, lead.name);
+        await whatsappService.sendMessage(lead.phone, personalizedMsg);
+        sent++;
+        dailySentCount++;
+        results.push({ id: lead.id, phone: lead.phone, status: "sent" });
+        console.log(`   ✅ ${lead.name} (${lead.phone}) [${dailySentCount}/${MAX_MESSAGES_PER_DAY} today]`);
+      } catch (err: unknown) {
+        const message = err instanceof Error ? err.message : String(err);
+        failed++;
+        results.push({ id: lead.id, phone: lead.phone, status: "failed", error: message });
+        console.error(`   ❌ ${lead.name} (${lead.phone}) — ${message}`);
+      }
+
+      // Delay between messages
+      if (i < leads.length - 1) {
+        if (sent > 0 && sent % COFFEE_BREAK_EVERY === 0) {
+          await coffeBreakSleep();
+        } else {
+          await randomSleep();
+        }
+      }
+    }
+
+    console.log(`\n📊 JSON Campaign done — Sent: ${sent}, Failed: ${failed}\n`);
+
+    res.json({ sent, failed, total: leads.length, dailySent: dailySentCount, results });
+  } catch (err: unknown) {
+    const message = err instanceof Error ? err.message : String(err);
+    console.error("💥 JSON Campaign error:", message);
     res.status(500).json({ error: "Campaign processing failed.", details: message });
   }
 }

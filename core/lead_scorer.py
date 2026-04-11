@@ -72,11 +72,15 @@ HIGH_TICKET_INDUSTRIES = {
 }
 
 
+def _str(val) -> str:
+    """Safe string conversion — handles None, NaN, and float values."""
+    if val is None or (isinstance(val, float) and val != val):
+        return ""
+    return str(val)
+
+
 def _category_score(biz: dict) -> tuple[int, str]:
-    cat = (
-        (biz.get("category") or "") + " " +
-        (biz.get("search_query") or "")
-    ).lower()
+    cat = (_str(biz.get("category")) + " " + _str(biz.get("search_query"))).lower()
 
     for kw in HIGH_VALUE_CATEGORIES:
         if kw.lower() in cat:
@@ -91,10 +95,7 @@ def _category_score(biz: dict) -> tuple[int, str]:
 
 def _is_high_ticket(biz: dict) -> bool:
     """בודק אם העסק בתחום high-ticket."""
-    cat = (
-        (biz.get("category") or "") + " " +
-        (biz.get("search_query") or "")
-    ).lower()
+    cat = (_str(biz.get("category")) + " " + _str(biz.get("search_query"))).lower()
     return any(kw.lower() in cat for kw in HIGH_TICKET_INDUSTRIES)
 
 
@@ -156,7 +157,7 @@ def compute_lead_score(biz: dict) -> tuple[int, dict]:
         # SEO 75+ = אין נקודות (האתר כבר מותאם)
 
     # ── 4. CMS & גיל האתר (עד 8 נקודות) ─────────────────────────
-    cms = biz.get("cms_platform") or ""
+    cms = _str(biz.get("cms_platform"))
     if cms == "wix":
         breakdown["אתר Wix — מוגבל"] = 5
     elif cms in ("weebly", "godaddy_builder"):
@@ -187,7 +188,7 @@ def compute_lead_score(biz: dict) -> tuple[int, dict]:
 
     # ── 6. ניתן ליצור קשר (עד 15 נקודות) ────────────────────────
     contact_pts = 0
-    phone = biz.get("phone") or ""
+    phone = _str(biz.get("phone"))
     if phone:
         # נייד (05X) שווה יותר — אפשר WA
         if phone.startswith("05"):
