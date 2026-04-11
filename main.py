@@ -12,15 +12,15 @@ sys.stdout.reconfigure(encoding="utf-8")
 from config import (
     SEARCH_QUERIES, FACEBOOK_FOCUSED_QUERIES, MIN_QUALITY_SCORE, PORTFOLIO_LINKS
 )
-from database import (
+from core.database import (
     init_db, business_exists, insert_business, update_business,
     get_pending_outreach, export_to_excel, get_stats, sync_all_to_supabase
 )
-from scraper import scrape_businesses, scrape_facebook_no_website, enrich_from_website, find_website_and_email
-from analyzer import analyze_website
-from pitch_builder import build_whatsapp_pitch, build_full_pitch, build_sales_summary
-from lead_scorer import compute_lead_score, score_tier_hebrew
-from business_verifier import verify_business_quick, verify_business
+from scrapers.scraper import scrape_businesses, scrape_facebook_no_website, enrich_from_website, find_website_and_email
+from analysis.analyzer import analyze_website
+from outreach.pitch_builder import build_whatsapp_pitch, build_full_pitch, build_sales_summary
+from core.lead_scorer import compute_lead_score, score_tier_hebrew
+from analysis.business_verifier import verify_business_quick, verify_business
 
 
 # ════════════════════════════════════════════════════════════════
@@ -127,7 +127,7 @@ def run_scrape_and_analyze():
             print(f"     ✅ פעילות: {verification['activity_score']}/100 — {verification['summary']}")
 
             # ── מחקר מעמיק — חיפוש מידע נוסף על בעל העסק ──
-            from business_verifier import deep_research_business
+            from analysis.business_verifier import deep_research_business
             research = deep_research_business(full_biz)
             if research.get("owner_name"):
                 biz["owner_name"] = research["owner_name"]
@@ -370,7 +370,7 @@ def run_export():
 #  שלב 4 — שליחת פניות
 # ════════════════════════════════════════════════════════════════
 def run_whatsapp():
-    from whatsapp_sender import run_whatsapp_campaign
+    from outreach.whatsapp_sender import run_whatsapp_campaign
     print("\n" + "="*60)
     print("  שלב 4א: שליחת WhatsApp")
     print("="*60)
@@ -383,7 +383,7 @@ def run_whatsapp():
 
 
 def run_email():
-    from email_sender import run_email_campaign
+    from outreach.email_sender import run_email_campaign
     print("\n" + "="*60)
     print("  שלב 4ב: שליחת מיילים")
     print("="*60)
@@ -455,17 +455,17 @@ def main_menu():
             if confirm in ("כן", "yes", "y"):
                 run_email()
         elif choice == "7":
-            from scheduler import run_weekly_reanalysis
+            from generators.scheduler import run_weekly_reanalysis
             run_weekly_reanalysis()
         elif choice == "8":
             from lead_scorer import rescore_all
             n = rescore_all()
             print(f"  ✅ עודכנו {n} ציוני לידים")
         elif choice == "9":
-            from scheduler import run_daemon
+            from generators.scheduler import run_daemon
             run_daemon()
         elif choice in ("fb", "FB"):
-            from facebook_scraper import run_facebook_scan
+            from scrapers.facebook_scraper import run_facebook_scan
             run_facebook_scan(FACEBOOK_FOCUSED_QUERIES)
         elif choice in ("s", "S", "ס"):
             print("\n☁️  מסנכרן את כל הלידים ל-Supabase...")

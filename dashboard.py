@@ -170,7 +170,7 @@ if not _CLOUD_SB_URL:
 _USE_SUPABASE = bool(_CLOUD_SB_URL and _CLOUD_SB_KEY)
 
 def _sb():
-    from db_engine import SupabaseREST
+    from core.db_engine import SupabaseREST
     return SupabaseREST(_CLOUD_SB_URL, _CLOUD_SB_KEY)
 
 def _db():
@@ -320,7 +320,7 @@ def save_demo_url(bid: int, html_path: str, public_url: str):
 # ════════════════════════════════════════════════════════════════
 #  Helpers
 # ════════════════════════════════════════════════════════════════
-from lead_scorer import compute_lead_score, score_tier_hebrew
+from core.lead_scorer import compute_lead_score, score_tier_hebrew
 
 def tier_badge(score: int) -> str:
     if score >= 70: return f'<span class="tier-hot">🔥 HOT {score}</span>'
@@ -386,7 +386,7 @@ def send_email(to: str, biz_name: str, issue: str) -> bool:
     import smtplib
     from email.mime.multipart import MIMEMultipart
     from email.mime.text import MIMEText
-    from email_sender import build_html_email, build_plain_text
+    from outreach.email_sender import build_html_email, build_plain_text
     from config import EMAIL_SENDER, EMAIL_APP_PASSWORD, PORTFOLIO_LINKS, YOUR_NAME
     msg = MIMEMultipart("alternative")
     msg["Subject"] = f"שדרוג האתר של {biz_name}"
@@ -406,7 +406,7 @@ def send_email(to: str, biz_name: str, issue: str) -> bool:
 # ════════════════════════════════════════════════════════════════
 #  Init DB
 # ════════════════════════════════════════════════════════════════
-from database import init_db
+from core.database import init_db
 init_db()
 
 
@@ -844,7 +844,7 @@ with tab_actions:
         if st.button("✨ בנה אתר דמו עכשיו", type="primary", key="build_demo"):
             with st.spinner(f"בונה אתר עבור {biz['name']}..."):
                 try:
-                    from demo_generator import create_demo_for_business
+                    from generators.demo_generator import create_demo_for_business
                     result = create_demo_for_business(biz, extra_info=demo_extra, deploy=deploy_gh)
                     html_path = result["html_path"]
                     public_url = result.get("public_url", "")
@@ -967,14 +967,14 @@ with tab_actions:
         with resp_col1:
             if st.button("✅ מעוניין", key=f"interested_{biz['id']}", use_container_width=True):
                 if response_text:
-                    from outreach_engine import record_response
+                    from outreach.outreach_engine import record_response
                     record_response(biz["id"], response_text, interested=True)
                     st.success("נרשם! הליד עודכן ל'מעוניין'")
                     st.cache_data.clear()
         with resp_col2:
             if st.button("❌ לא מעוניין", key=f"not_interested_{biz['id']}", use_container_width=True):
                 if response_text:
-                    from outreach_engine import record_response
+                    from outreach.outreach_engine import record_response
                     record_response(biz["id"], response_text, interested=False)
                     st.warning("נרשם.")
                     st.cache_data.clear()
@@ -1019,7 +1019,7 @@ with tab_actions:
 # ════════════════════════════════════════════════════════════════
 with tab_pipeline:
     st.markdown("### 📊 Pipeline — מעקב שלבים")
-    from database import PIPELINE_STAGES, PIPELINE_LABELS, get_pipeline_counts
+    from core.database import PIPELINE_STAGES, PIPELINE_LABELS, get_pipeline_counts
 
     counts = get_pipeline_counts()
 
@@ -1079,7 +1079,7 @@ with tab_pipeline:
 with tab_analytics:
     st.markdown("### 📈 Analytics & Insights")
 
-    from database import get_conversion_stats, get_source_stats, get_category_stats, get_city_stats, get_revenue_stats
+    from core.database import get_conversion_stats, get_source_stats, get_category_stats, get_city_stats, get_revenue_stats
 
     # ── Conversion Funnel ──
     st.markdown("#### 🔄 Conversion Funnel")
@@ -1159,7 +1159,7 @@ with tab_analytics:
     # ── A/B Test Results ──
     st.markdown("---")
     st.markdown("#### 🔬 A/B Test Results")
-    from database import get_ab_stats
+    from core.database import get_ab_stats
     ab = get_ab_stats()
     ab_col1, ab_col2 = st.columns(2)
     for variant, col in [("A", ab_col1), ("B", ab_col2)]:
@@ -1189,7 +1189,7 @@ with tab_analytics:
 with tab_calendar:
     st.markdown("### 📅 Follow-ups מתוזמנים")
 
-    from database import get_followups_due, set_next_followup
+    from core.database import get_followups_due, set_next_followup
 
     # ── Today's follow-ups ──
     today = datetime.now().strftime("%Y-%m-%d")
