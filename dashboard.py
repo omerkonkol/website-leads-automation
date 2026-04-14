@@ -19,6 +19,7 @@ import sqlite3
 from datetime import datetime, timedelta
 
 import pandas as pd
+import requests
 import streamlit as st
 
 # ── Page config ──────────────────────────────────────────────────
@@ -330,56 +331,39 @@ def tier_badge(score: int) -> str:
 def bool_icon(v): return "✅" if v else "❌"
 
 
+WHATSAPP_API_URL = "http://localhost:3000"
+
+
 def send_whatsapp(phone: str, message: str, links: list) -> bool:
-    from selenium import webdriver
-    from selenium.webdriver.chrome.service import Service
-    from selenium.webdriver.chrome.options import Options
-    from selenium.webdriver.common.by import By
-    from selenium.webdriver.common.keys import Keys
-    from selenium.webdriver.support.ui import WebDriverWait
-    from selenium.webdriver.support import expected_conditions as EC
-    from webdriver_manager.chrome import ChromeDriverManager
-    from config import SESSION_DATA_DIR
+    """Send a WhatsApp message via the WhatsApp API server."""
+    # Append portfolio links to the message
+    full_message = message
+    if links:
+        full_message += "\n\n" + "\n".join(links)
 
-    def norm(p):
-        d = "".join(c for c in str(p) if c.isdigit())
-        return "972" + d.lstrip("0") if not d.startswith("972") else d
+    payload = {
+        "leads": [{
+            "name": "",
+            "phone": phone,
+            "message": full_message,
+        }]
+    }
 
-    def paste(drv, el, txt):
-        drv.execute_script(
-            "arguments[0].focus(); document.execCommand('insertText',false,arguments[1]);", el, txt)
+    resp = requests.post(
+        f"{WHATSAPP_API_URL}/api/campaign/send-json",
+        json=payload,
+        timeout=60,
+    )
 
-    phone = norm(phone)
-    subprocess.run(["taskkill", "/F", "/IM", "chromedriver.exe"], capture_output=True)
-    opts = Options()
-    opts.add_argument("--start-maximized")
-    opts.add_argument(f"user-data-dir={os.path.abspath(SESSION_DATA_DIR)}")
-    driver = webdriver.Chrome(service=Service(ChromeDriverManager().install()), options=opts)
-    wait = WebDriverWait(driver, 35)
-    try:
-        driver.get("https://web.whatsapp.com")
-        st.info("ממתין ל-WhatsApp Web... (סרוק QR אם נדרש)")
-        time.sleep(6)
-        driver.get(f"https://web.whatsapp.com/send?phone={phone}")
-        wait.until(EC.presence_of_element_located(
-            (By.XPATH, '//div[@contenteditable="true"][@data-tab="10"]')))
-        time.sleep(2)
-        inp = wait.until(EC.element_to_be_clickable(
-            (By.XPATH, '//div[@contenteditable="true"][@data-tab="10"]')))
-        inp.click(); paste(driver, inp, message); time.sleep(0.5)
-        inp.send_keys(Keys.ENTER); time.sleep(1)
-        for link in links:
-            subprocess.run(["powershell", "-Command",
-                f"Set-Clipboard -Value '{link}'"], capture_output=True)
-            inp = wait.until(EC.element_to_be_clickable(
-                (By.XPATH, '//div[@contenteditable="true"][@data-tab="10"]')))
-            inp.click(); inp.send_keys(Keys.CONTROL + "v"); time.sleep(0.8)
-            inp.send_keys(Keys.ENTER); time.sleep(1)
-        time.sleep(2); return True
-    except Exception as e:
-        st.error(f"שגיאה: {e}"); return False
-    finally:
-        driver.quit()
+    if resp.status_code == 200:
+        data = resp.json()
+        return data.get("sent", 0) > 0
+    elif resp.status_code == 503:
+        raise ConnectionError("WhatsApp לא מחובר — סרוק QR בטרמינל של השרת")
+    elif resp.status_code == 429:
+        raise RuntimeError("הגעת למגבלת השליחה היומית. נסה שוב מחר.")
+    else:
+        raise RuntimeError(f"שגיאה מה-API (קוד {resp.status_code}): {resp.text[:200]}")
 
 
 def send_email(to: str, biz_name: str, issue: str) -> bool:
@@ -431,9 +415,10 @@ st.markdown("---")
 # ════════════════════════════════════════════════════════════════
 #  TABS
 # ════════════════════════════════════════════════════════════════
-tab_leads, tab_actions, tab_pipeline, tab_analytics, tab_calendar, tab_contacts = st.tabs([
+tab_leads, tab_actions, tab_whatsapp, tab_pipeline, tab_analytics, tab_calendar, tab_contacts = st.tabs([
     "📋  לידים",
     "🚀  פעולות",
+    "📨  שלח הודעות",
     "📊  Pipeline",
     "📈  Analytics",
     "📅  Calendar",
@@ -473,7 +458,7 @@ with tab_leads:
     if btn1.button("🔄 רענן"):
         st.cache_data.clear(); st.rerun()
     if btn2.button("🎯 עדכן דירוגים"):
-        from lead_scorer import rescore_all
+        from core.lead_scorer import rescore_all
         n = rescore_all()
         st.cache_data.clear()
         st.success(f"עודכנו {n} עסקים"); time.sleep(1); st.rerun()
@@ -496,7 +481,7 @@ with tab_leads:
         if _USE_SUPABASE:
             all_biz = _sb().select("businesses", filters="blacklisted=eq.0", order="lead_score.desc")
         else:
-            from database import get_all_businesses
+            from core.database import get_all_businesses
             all_biz = [b for b in get_all_businesses() if not b.get("blacklisted")]
     except Exception:
         all_biz = []
@@ -544,7 +529,7 @@ with tab_leads:
         for _, r in df.iterrows():
             ls = r.get("lead_score") or 0
             if ls == 0:
-                ls, _ = compute_lead_score(r.to_dict())
+                ls, _ = compute_lead_score({k: (None if pd.isna(v) else v) for k, v in r.to_dict().items()})
 
             if ls >= 70:   tier_str = f"🔥 {ls}"
             elif ls >= 45: tier_str = f"⚡ {ls}"
@@ -601,7 +586,7 @@ with tab_leads:
         opts = {f"{r['name']} | {r.get('city') or ''} | ציון {r.get('lead_score') or 0}": i
                 for i, r in df.iterrows()}
         sel_label = st.selectbox("בחר עסק לפרטים:", list(opts.keys()), key="leads_detail_sel")
-        sel_biz = df.loc[opts[sel_label]].to_dict()
+        sel_biz = {k: (None if pd.isna(v) else v) for k, v in df.loc[opts[sel_label]].to_dict().items()}
 
         ls = sel_biz.get("lead_score") or 0
         _, breakdown = compute_lead_score(sel_biz)
@@ -690,7 +675,7 @@ with tab_leads:
         st.markdown("---")
         st.markdown("#### 💬 הודעה אישית לעסק")
 
-        from pitch_builder import build_whatsapp_pitch, detect_issues, ISSUES, build_full_pitch
+        from outreach.pitch_builder import build_whatsapp_pitch, detect_issues, ISSUES, build_full_pitch
 
         pitch_issues = detect_issues(sel_biz)
 
@@ -766,7 +751,7 @@ with tab_actions:
 
     sel_label2 = st.selectbox("בחר ליד:", list(opts2.keys()), index=default_idx, key="action_sel")
     sel_id = opts2[sel_label2]
-    biz = all_df[all_df["id"] == sel_id].iloc[0].to_dict()
+    biz = {k: (None if pd.isna(v) else v) for k, v in all_df[all_df["id"] == sel_id].iloc[0].to_dict().items()}
 
     ls = biz.get("lead_score") or 0
     _, breakdown = compute_lead_score(biz)
@@ -789,7 +774,7 @@ with tab_actions:
                     unsafe_allow_html=True)
 
         # Pipeline stage selector
-        from database import PIPELINE_LABELS, update_pipeline_stage
+        from core.database import PIPELINE_LABELS, update_pipeline_stage
         current_stage = biz.get("pipeline_stage") or "new"
         stage_options = list(PIPELINE_LABELS.keys())
         stage_labels = [f"{PIPELINE_LABELS[s]}" for s in stage_options]
@@ -861,7 +846,7 @@ with tab_actions:
         # ── Blacklist button ──
         st.markdown("---")
         if st.button("🚫 הוסף ל-Blacklist", key="blacklist_btn"):
-            from database import blacklist_business
+            from core.database import blacklist_business
             blacklist_business(biz["id"], "ידני מהדשבורד")
             st.warning("העסק הוסר מרשימת השליחה")
             st.cache_data.clear()
@@ -880,7 +865,7 @@ with tab_actions:
         saved_pitch = biz.get("whatsapp_pitch", "")
         default_msg = saved_pitch if saved_pitch and len(saved_pitch) > 20 else ""
         if not default_msg:
-            from pitch_builder import build_whatsapp_pitch
+            from outreach.pitch_builder import build_whatsapp_pitch
             default_msg = build_whatsapp_pitch(biz)
 
         demo_url = (
@@ -912,15 +897,35 @@ with tab_actions:
                 disabled=wa_done, key=f"wa_btn_{biz['id']}", use_container_width=True
             ):
                 if not biz.get("phone"):
-                    st.error("אין מספר טלפון.")
+                    st.error("❌ אין מספר טלפון לעסק הזה.")
+                elif not wa_text or len(wa_text.strip()) < 10:
+                    st.error("❌ ההודעה ריקה או קצרה מדי. כתוב הודעה לפני השליחה.")
                 else:
-                    with st.spinner("שולח..."):
-                        ok = send_whatsapp(biz["phone"], wa_text, PORTFOLIO_LINKS)
-                    if ok:
-                        mark_sent_db(biz["id"], "whatsapp")
-                        update_pipeline_stage(biz["id"], "contacted")
-                        st.success("✅ נשלח!"); st.cache_data.clear()
-                        time.sleep(1); st.rerun()
+                    try:
+                        with st.spinner("שולח הודעת WhatsApp..."):
+                            ok = send_whatsapp(biz["phone"], wa_text, PORTFOLIO_LINKS)
+                        if ok:
+                            mark_sent_db(biz["id"], "whatsapp")
+                            update_pipeline_stage(biz["id"], "contacted")
+                            st.success("✅ ההודעה נשלחה בהצלחה!")
+                            st.cache_data.clear()
+                            time.sleep(1); st.rerun()
+                        else:
+                            st.error("❌ השליחה נכשלה. ודא שהמספר תקין ושה-WhatsApp מחובר.")
+                    except requests.ConnectionError:
+                        st.error(
+                            "❌ לא ניתן להתחבר לשרת ה-WhatsApp API.\n\n"
+                            "הפעל אותו בטרמינל נפרד:\n"
+                            "```\ncd whatsapp-api && npm start\n```"
+                        )
+                    except ConnectionError as e:
+                        st.error(f"❌ {e}")
+                    except RuntimeError as e:
+                        st.error(f"❌ {e}")
+                    except requests.Timeout:
+                        st.error("❌ השרת לא הגיב בזמן. בדוק שהשרת רץ ותקין.")
+                    except Exception as e:
+                        st.error(f"❌ שגיאה לא צפויה: {e}")
 
         with wa_col2:
             if st.button("סמן כנשלח ידנית", key=f"wa_manual_{biz['id']}", use_container_width=True):
@@ -992,7 +997,7 @@ with tab_actions:
         st.markdown("#### 💰 סגור עסקה")
         deal_amount = st.number_input("סכום העסקה (₪):", min_value=0, value=600, key=f"deal_{biz['id']}")
         if st.button("💰 סגור עסקה!", type="primary", key=f"close_deal_{biz['id']}"):
-            from database import create_deal
+            from core.database import create_deal
             create_deal(biz["id"], deal_amount, notes_val)
             st.balloons()
             st.success(f"🎉 עסקה נסגרה! ₪{deal_amount:,.0f}")
@@ -1015,7 +1020,240 @@ with tab_actions:
 
 
 # ════════════════════════════════════════════════════════════════
-#  TAB 3 — PIPELINE VIEW
+#  TAB — SEND WHATSAPP MESSAGES
+# ════════════════════════════════════════════════════════════════
+WHATSAPP_API_URL = "http://localhost:3000"
+
+with tab_whatsapp:
+    st.markdown("### 📨 שליחת הודעות WhatsApp")
+
+    # ── Load all leads with Israeli mobile phone (05x) ──
+    conn_wa = sqlite3.connect(DB_PATH)
+    all_wa_df = pd.read_sql_query(
+        "SELECT id, name, phone, city, category, lead_score, whatsapp_pitch, whatsapp_sent "
+        "FROM businesses "
+        "WHERE blacklisted = 0 AND phone IS NOT NULL AND phone != '' "
+        "ORDER BY lead_score DESC",
+        conn_wa
+    )
+    conn_wa.close()
+
+    # Filter: Israeli mobile (05x / 9725x) + must have a pitch
+    def _is_mobile(phone):
+        digits = "".join(c for c in str(phone) if c.isdigit())
+        return digits.startswith("05") or digits.startswith("5") or digits.startswith("9725")
+    all_wa_df = all_wa_df[
+        all_wa_df["phone"].apply(_is_mobile) &
+        all_wa_df["whatsapp_pitch"].notna() &
+        (all_wa_df["whatsapp_pitch"] != "")
+    ].reset_index(drop=True)
+
+    # ── Filters ──
+    wa_f1, wa_f2, wa_f3 = st.columns([1, 1, 2])
+    wa_status_filter = wa_f1.selectbox(
+        "📬 סטטוס", ["טרם נשלח", "נשלח", "הכל"], key="wa_status_filter"
+    )
+    wa_score_range = wa_f2.slider("ציון ליד", 0, 100, (0, 100), key="wa_score_slider")
+
+    # API health check
+    with wa_f3:
+        if st.button("🔌 בדוק חיבור API", key="wa_health"):
+            try:
+                health_resp = requests.get(f"{WHATSAPP_API_URL}/api/health", timeout=5)
+                health_resp.raise_for_status()
+                health = health_resp.json()
+                if health.get("whatsapp") == "connected":
+                    st.success("WhatsApp מחובר ומוכן לשליחה ✅")
+                else:
+                    st.warning(
+                        "⚠️ שרת ה-API פעיל, אבל WhatsApp לא מחובר.\n\n"
+                        "פתח את הטרמינל שבו רץ השרת וסרוק את קוד ה-QR עם WhatsApp בטלפון."
+                    )
+            except requests.ConnectionError:
+                st.error(
+                    "❌ שרת ה-WhatsApp API לא רץ.\n\n"
+                    "הפעל אותו בטרמינל נפרד:\n"
+                    "```\ncd whatsapp-api && npm start\n```"
+                )
+            except requests.Timeout:
+                st.error("❌ שרת ה-API לא מגיב (timeout). בדוק שהשרת רץ ותקין.")
+            except Exception as e:
+                st.error(f"❌ שגיאה לא צפויה בבדיקת חיבור: {e}")
+
+    # ── Apply filters ──
+    filtered_wa = all_wa_df.copy()
+    if wa_status_filter == "טרם נשלח":
+        filtered_wa = filtered_wa[filtered_wa["whatsapp_sent"] == 0]
+    elif wa_status_filter == "נשלח":
+        filtered_wa = filtered_wa[filtered_wa["whatsapp_sent"] == 1]
+    filtered_wa = filtered_wa[
+        (filtered_wa["lead_score"] >= wa_score_range[0]) &
+        (filtered_wa["lead_score"] <= wa_score_range[1])
+    ]
+
+    st.markdown(f"**{len(filtered_wa)} לידים** (מתוך {len(all_wa_df)} סה\"כ)")
+
+    if filtered_wa.empty:
+        st.info("אין לידים להצגה עם הסינון הנוכחי.")
+    else:
+        # ── Display table with checkboxes ──
+        disp_wa = filtered_wa[["id", "name", "phone", "city", "category", "lead_score", "whatsapp_sent"]].copy()
+        disp_wa["סטטוס"] = disp_wa["whatsapp_sent"].apply(lambda x: "✅ נשלח" if x else "⏳ ממתין")
+        disp_wa = disp_wa.rename(columns={
+            "name": "שם עסק", "phone": "טלפון", "city": "עיר",
+            "category": "קטגוריה", "lead_score": "ציון ליד",
+        })
+        disp_wa = disp_wa[["id", "שם עסק", "טלפון", "עיר", "קטגוריה", "ציון ליד", "סטטוס"]]
+
+        # Selection mode
+        sel_mode = st.radio("בחירה:", ["בחר הכל", "בחר ידנית"], horizontal=True, key="wa_sel_mode")
+
+        if sel_mode == "בחר ידנית":
+            options = {f"{r['שם עסק']} | {r['טלפון']} | ציון {r['ציון ליד']}": r["id"]
+                       for _, r in disp_wa.iterrows()}
+            selected_labels = st.multiselect(
+                "בחר לידים לשליחה:", list(options.keys()), key="wa_manual_select"
+            )
+            selected_ids = [options[l] for l in selected_labels]
+        else:
+            selected_ids = disp_wa["id"].tolist()
+
+        st.dataframe(
+            disp_wa.drop(columns=["id"]),
+            use_container_width=True, hide_index=True, height=350,
+        )
+
+        # ── Preview message ──
+        if selected_ids:
+            preview_row = filtered_wa[filtered_wa["id"] == selected_ids[0]].iloc[0]
+            with st.expander("👁️ תצוגה מקדימה — הודעה לדוגמה"):
+                st.markdown(f"**{preview_row['name']}** — {preview_row['phone']}")
+                st.text(preview_row["whatsapp_pitch"])
+
+        st.markdown("---")
+
+        # ── Send buttons ──
+        pending_selected = filtered_wa[
+            (filtered_wa["id"].isin(selected_ids)) & (filtered_wa["whatsapp_sent"] == 0)
+        ]
+        n_to_send = len(pending_selected)
+
+        if n_to_send == 0:
+            st.info("כל הלידים שנבחרו כבר קיבלו הודעה.")
+        else:
+            st.markdown(f"**{n_to_send} לידים ממתינים לשליחה מהבחירה**")
+            send_btn = st.button(
+                f"🚀 שלח ל-{n_to_send} לידים",
+                type="primary", key="wa_send_selected"
+            )
+
+            if send_btn:
+                leads_payload = []
+                for _, row in pending_selected.iterrows():
+                    leads_payload.append({
+                        "id": int(row["id"]),
+                        "name": row["name"],
+                        "phone": row["phone"],
+                        "message": row["whatsapp_pitch"],
+                    })
+
+                with st.spinner(f"שולח {len(leads_payload)} הודעות... (זה יכול לקחת כמה דקות)"):
+                    try:
+                        resp = requests.post(
+                            f"{WHATSAPP_API_URL}/api/campaign/send-json",
+                            json={"leads": leads_payload},
+                            timeout=600,
+                        )
+
+                        if resp.status_code == 200:
+                            data = resp.json()
+                            sent_count = data.get("sent", 0)
+                            fail_count = data.get("failed", 0)
+                            daily_count = data.get("dailySent", "?")
+
+                            # Show results summary
+                            if sent_count > 0 and fail_count == 0:
+                                st.success(f"✅ כל {sent_count} ההודעות נשלחו בהצלחה! (סה\"כ היום: {daily_count})")
+                            elif sent_count > 0 and fail_count > 0:
+                                st.warning(f"⚠️ נשלחו {sent_count} מתוך {sent_count + fail_count}. {fail_count} נכשלו.")
+                            else:
+                                st.error("❌ אף הודעה לא נשלחה. בדוק את חיבור ה-WhatsApp.")
+
+                            # Show failed leads details
+                            failed_results = [r for r in data.get("results", []) if r["status"] == "failed"]
+                            if failed_results:
+                                with st.expander(f"🔍 פרטי {len(failed_results)} שליחות שנכשלו"):
+                                    for r in failed_results:
+                                        st.markdown(f"- **{r['phone']}**: {r.get('error', 'שגיאה לא ידועה')}")
+
+                            # Update DB for sent leads
+                            now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
+                            conn_upd = sqlite3.connect(DB_PATH)
+                            for r in data.get("results", []):
+                                if r["status"] == "sent" and r.get("id"):
+                                    conn_upd.execute(
+                                        "UPDATE businesses SET whatsapp_sent=1, whatsapp_sent_at=? WHERE id=?",
+                                        (now, r["id"])
+                                    )
+                                    conn_upd.execute(
+                                        "INSERT INTO outreach_log (business_id, channel, status, sent_at) VALUES (?,?,?,?)",
+                                        (r["id"], "whatsapp", "sent", now)
+                                    )
+                            conn_upd.commit()
+                            conn_upd.close()
+
+                            if sent_count > 0:
+                                st.cache_data.clear()
+                                time.sleep(1)
+                                st.rerun()
+
+                        elif resp.status_code == 503:
+                            st.error(
+                                "❌ WhatsApp לא מחובר.\n\n"
+                                "פתח את הטרמינל שבו רץ השרת וסרוק את קוד ה-QR עם WhatsApp בטלפון."
+                            )
+                        elif resp.status_code == 429:
+                            try:
+                                daily = resp.json().get("dailySent", "?")
+                            except Exception:
+                                daily = "?"
+                            st.warning(
+                                f"⛔ הגעת למגבלת השליחה היומית ({daily} הודעות).\n\n"
+                                "נסה שוב מחר כדי למנוע חסימה מ-WhatsApp."
+                            )
+                        elif resp.status_code == 400:
+                            try:
+                                detail = resp.json().get("error", resp.text)
+                            except Exception:
+                                detail = resp.text
+                            st.error(f"❌ בקשה לא תקינה: {detail}")
+                        elif resp.status_code >= 500:
+                            st.error(
+                                f"❌ שגיאה פנימית בשרת ה-API (קוד {resp.status_code}).\n\n"
+                                "בדוק את הלוג בטרמינל של השרת לפרטים נוספים."
+                            )
+                        else:
+                            st.error(f"❌ תגובה לא צפויה מה-API (קוד {resp.status_code}): {resp.text[:200]}")
+
+                    except requests.ConnectionError:
+                        st.error(
+                            "❌ לא ניתן להתחבר לשרת ה-WhatsApp API.\n\n"
+                            "הפעל אותו בטרמינל נפרד:\n"
+                            "```\ncd whatsapp-api && npm start\n```"
+                        )
+                    except requests.Timeout:
+                        st.error(
+                            "❌ השרת לא הגיב בזמן (timeout).\n\n"
+                            "ייתכן שהשליחה עדיין רצה ברקע — בדוק את הטרמינל של השרת."
+                        )
+                    except requests.JSONDecodeError:
+                        st.error("❌ התגובה מה-API לא תקינה. בדוק שהשרת רץ כראוי.")
+                    except Exception as e:
+                        st.error(f"❌ שגיאה לא צפויה: {e}")
+
+
+# ════════════════════════════════════════════════════════════════
+#  TAB — PIPELINE VIEW
 # ════════════════════════════════════════════════════════════════
 with tab_pipeline:
     st.markdown("### 📊 Pipeline — מעקב שלבים")

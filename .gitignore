@@ -35,6 +35,13 @@ desktop.ini
 # ═══ Streamlit secrets ═══
 .streamlit/secrets.toml
 
+# Node.js
+node_modules/
+dist/
+whatsapp-api/session_data/
+whatsapp-api/.wwebjs_auth/
+whatsapp-api/.wwebjs_cache/
+
 # ═══ IDE ═══
 .vscode/
 .idea/
