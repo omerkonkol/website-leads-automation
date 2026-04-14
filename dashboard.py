@@ -331,6 +331,9 @@ def tier_badge(score: int) -> str:
 def bool_icon(v): return "✅" if v else "❌"
 
 
+WHATSAPP_API_URL = "http://localhost:3000"
+
+
 def send_whatsapp(phone: str, message: str, links: list) -> bool:
     """Send a WhatsApp message via the WhatsApp API server."""
     # Append portfolio links to the message
