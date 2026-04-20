@@ -91,6 +91,7 @@ st.markdown("""
     border: 1px solid #334155;
     border-radius: 12px;
     padding: 16px 20px;
+    min-width: 0;
   }
   [data-testid="stMetricLabel"] { color: #94A3B8 !important; font-size: 13px; }
   [data-testid="stMetricValue"] { color: #F1F5F9 !important; font-size: 26px; font-weight: 700; }
@@ -391,14 +392,15 @@ init_db()
 # ════════════════════════════════════════════════════════════════
 st.markdown("## 🎯 מערכת לידים — בניית אתרים")
 kpis = get_kpis()
-k1,k2,k3,k4,k5,k6,k7,k8 = st.columns(8)
-k1.metric("סה\"כ",        kpis["total"])
-k2.metric("🔥 HOT",       kpis["hot"])
-k3.metric("⚡ WARM",      kpis["warm"])
-k4.metric("🌐 ללא אתר",   kpis["no_site"])
-k5.metric("✅ פעילים",    kpis.get("active", kpis["total"]))
-k6.metric("⏳ ממתינים",   kpis["pending"])
-k7.metric("💰 עסקאות",    kpis["deals"])
+k1,k2,k3,k4 = st.columns(4)
+k1.metric("סה\"כ לידים", kpis["total"])
+k2.metric("🔥 HOT",      kpis["hot"])
+k3.metric("⚡ WARM",     kpis["warm"])
+k4.metric("⏳ ממתינים",  kpis["pending"])
+k5,k6,k7,k8 = st.columns(4)
+k5.metric("🌐 ללא אתר",  kpis["no_site"])
+k6.metric("✅ פעילים",   kpis.get("active", kpis["total"]))
+k7.metric("💰 עסקאות",   kpis["deals"])
 k8.metric("₪ הכנסות",    f"₪{kpis['revenue']:,.0f}")
 
 st.markdown("---")
@@ -446,14 +448,14 @@ with tab_leads:
     df = load_df(tier_filter, sent_filter, site_filter, score_range, search,
                  source_filter=_src_tuple)
 
-    btn1, btn2, btn3, btn4 = st.columns([1, 1, 2, 1])
+    btn1, btn2, btn3, btn4 = st.columns([1, 2, 3, 1])
     if btn1.button("🔄 רענן"):
         st.cache_data.clear(); st.rerun()
     if btn2.button("🎯 עדכן דירוגים"):
         from core.lead_scorer import rescore_all
         n = rescore_all()
         st.cache_data.clear()
-        st.success(f"עודכנו {n} עסקים"); time.sleep(1); st.rerun()
+        st.toast(f"✅ עודכנו {n} עסקים"); st.rerun()
 
     # ── Excel export ──
     import io
