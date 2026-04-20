@@ -34,7 +34,7 @@ st.set_page_config(
 st.markdown("""
 <style>
   /* RTL base */
-  html, body, [class*="css"] {
+  html, body {
     direction: rtl;
     font-family: 'Segoe UI', sans-serif;
   }
