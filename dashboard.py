@@ -118,6 +118,7 @@ st.markdown("""
   .stButton > button {
     border-radius: 8px; font-weight: 600; font-size: 14px;
     padding: 10px 20px; width: 100%;
+    white-space: nowrap; overflow: hidden; text-overflow: ellipsis;
   }
   .stButton > button[kind="primary"] { background: #4F46E5 !important; border: none !important; }
 
