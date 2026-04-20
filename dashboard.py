@@ -59,8 +59,12 @@ st.markdown("""
     direction: ltr !important;
   }
 
-  /* Dataframe — DO NOT reverse, just align text */
-  [data-testid="stDataFrame"] { direction: ltr !important; }
+  /* Dataframe — force LTR on all children to prevent vertical text from RTL override */
+  [data-testid="stDataFrame"],
+  [data-testid="stDataFrame"] *,
+  .ag-root-wrapper, .ag-root-wrapper *,
+  .ag-header, .ag-header *,
+  .ag-cell, .ag-header-cell { direction: ltr !important; writing-mode: horizontal-tb !important; }
   [data-testid="stDataFrame"] th { text-align: right !important; }
   [data-testid="stDataFrame"] td { text-align: right !important; }
 
