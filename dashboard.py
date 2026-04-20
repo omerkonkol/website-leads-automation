@@ -331,6 +331,9 @@ def bool_icon(v): return "✅" if v else "❌"
 
 
 def send_whatsapp(phone: str, message: str, links: list) -> bool:
+    if sys.platform != "win32":
+        st.warning("שליחת WhatsApp זמינה רק בהרצה מקומית על Windows.")
+        return False
     from selenium import webdriver
     from selenium.webdriver.chrome.service import Service
     from selenium.webdriver.chrome.options import Options
@@ -473,7 +476,7 @@ with tab_leads:
     if btn1.button("🔄 רענן"):
         st.cache_data.clear(); st.rerun()
     if btn2.button("🎯 עדכן דירוגים"):
-        from lead_scorer import rescore_all
+        from core.lead_scorer import rescore_all
         n = rescore_all()
         st.cache_data.clear()
         st.success(f"עודכנו {n} עסקים"); time.sleep(1); st.rerun()
@@ -496,7 +499,7 @@ with tab_leads:
         if _USE_SUPABASE:
             all_biz = _sb().select("businesses", filters="blacklisted=eq.0", order="lead_score.desc")
         else:
-            from database import get_all_businesses
+            from core.database import get_all_businesses
             all_biz = [b for b in get_all_businesses() if not b.get("blacklisted")]
     except Exception:
         all_biz = []
@@ -690,7 +693,7 @@ with tab_leads:
         st.markdown("---")
         st.markdown("#### 💬 הודעה אישית לעסק")
 
-        from pitch_builder import build_whatsapp_pitch, detect_issues, ISSUES, build_full_pitch
+        from outreach.pitch_builder import build_whatsapp_pitch, detect_issues, ISSUES, build_full_pitch
 
         pitch_issues = detect_issues(sel_biz)
 
@@ -789,7 +792,7 @@ with tab_actions:
                     unsafe_allow_html=True)
 
         # Pipeline stage selector
-        from database import PIPELINE_LABELS, update_pipeline_stage
+        from core.database import PIPELINE_LABELS, update_pipeline_stage
         current_stage = biz.get("pipeline_stage") or "new"
         stage_options = list(PIPELINE_LABELS.keys())
         stage_labels = [f"{PIPELINE_LABELS[s]}" for s in stage_options]
@@ -861,7 +864,7 @@ with tab_actions:
         # ── Blacklist button ──
         st.markdown("---")
         if st.button("🚫 הוסף ל-Blacklist", key="blacklist_btn"):
-            from database import blacklist_business
+            from core.database import blacklist_business
             blacklist_business(biz["id"], "ידני מהדשבורד")
             st.warning("העסק הוסר מרשימת השליחה")
             st.cache_data.clear()
@@ -880,7 +883,7 @@ with tab_actions:
         saved_pitch = biz.get("whatsapp_pitch", "")
         default_msg = saved_pitch if saved_pitch and len(saved_pitch) > 20 else ""
         if not default_msg:
-            from pitch_builder import build_whatsapp_pitch
+            from outreach.pitch_builder import build_whatsapp_pitch
             default_msg = build_whatsapp_pitch(biz)
 
         demo_url = (
@@ -992,7 +995,7 @@ with tab_actions:
         st.markdown("#### 💰 סגור עסקה")
         deal_amount = st.number_input("סכום העסקה (₪):", min_value=0, value=600, key=f"deal_{biz['id']}")
         if st.button("💰 סגור עסקה!", type="primary", key=f"close_deal_{biz['id']}"):
-            from database import create_deal
+            from core.database import create_deal
             create_deal(biz["id"], deal_amount, notes_val)
             st.balloons()
             st.success(f"🎉 עסקה נסגרה! ₪{deal_amount:,.0f}")
@@ -1281,3 +1284,50 @@ with tab_contacts:
             st.info("אין פניות עדיין — ברגע שמישהו ישלח טופס מהאתר, זה יופיע כאן.")
     except Exception as e:
         st.warning(f"לא ניתן לטעון פניות: {e}")
+
+# ════════════════════════════════════════════════════════════════
+#  SIDEBAR — Google Sheets + סנכרון DB
+# ════════════════════════════════════════════════════════════════
+with st.sidebar:
+    # ── Google Sheets sync ──────────────────────────────────────
+    _sheet_id = os.getenv("GOOGLE_SHEET_ID", "")
+    if _sheet_id:
+        st.markdown("---")
+        st.markdown("### 📊 Google Sheets")
+        if st.button("🔄 סנכרן לידים לגיליון", key="sync_sheets"):
+            with st.spinner("מסנכרן..."):
+                try:
+                    from core.sheets_sync import sync_leads_to_sheet
+                    from core.database import get_all_businesses
+                    _url = sync_leads_to_sheet(get_all_businesses())
+                    st.success("✅ סונכרן!")
+                    st.markdown(f"[פתח גיליון]({_url})")
+                except Exception as _e:
+                    st.error(f"שגיאה: {_e}")
+    # ── DB upload (admin only) ──────────────────────────────────
+    st.markdown("---")
+    st.markdown("### ☁️ עדכון מסד נתונים")
+    _ADMIN_PWD = os.getenv("ADMIN_PASSWORD", "")
+    _entered_pwd = st.text_input("סיסמת מנהל:", type="password", key="admin_pwd")
+    if _ADMIN_PWD and _entered_pwd != _ADMIN_PWD:
+        st.warning("🔒 נדרשת סיסמה להעלאת DB")
+    else:
+        uploaded_db = st.file_uploader("העלה leads.db מעודכן", type=["db"], key="db_upload")
+        if uploaded_db is not None:
+            import shutil, tempfile, sqlite3 as _sqlite3
+            with tempfile.NamedTemporaryFile(delete=False, suffix=".db") as tmp:
+                tmp.write(uploaded_db.read())
+                tmp_path = tmp.name
+            try:
+                _sqlite3.connect(tmp_path).execute("SELECT 1").fetchone()
+            except Exception:
+                os.remove(tmp_path)
+                st.error("❌ קובץ לא תקין — חייב להיות SQLite database")
+            else:
+                target = os.path.realpath(DB_PATH)
+                shutil.copy(target, target + ".bak")
+                shutil.copy(tmp_path, target)
+                os.remove(tmp_path)
+                st.cache_data.clear()
+                st.success("✅ DB עודכן! טוען מחדש...")
+                st.rerun()

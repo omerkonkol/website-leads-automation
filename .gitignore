@@ -7,7 +7,6 @@ venv/
 env/
 
 # ═══ נתונים רגישים ═══
-leads.db
 leads_export.xlsx
 leads_active.xlsx
 session_data/
