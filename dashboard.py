@@ -33,12 +33,19 @@ st.set_page_config(
 # ── Global CSS ────────────────────────────────────────────────────
 st.markdown("""
 <style>
-  /* RTL base */
-  html, body {
-    direction: rtl;
-    font-family: 'Segoe UI', sans-serif;
-  }
+  /* RTL — main content only, NOT sidebar/layout containers */
+  html, body { font-family: 'Segoe UI', sans-serif; }
+  [data-testid="stMainBlockContainer"],
+  [data-testid="stMain"] { direction: rtl; }
   .stApp { background: #0F172A; }
+
+  /* Sidebar — keep horizontal, prevent vertical overflow */
+  [data-testid="stSidebar"],
+  [data-testid="stSidebar"] * {
+    writing-mode: horizontal-tb !important;
+    direction: rtl !important;
+    overflow-x: hidden !important;
+  }
 
   /* RTL for text elements */
   h1, h2, h3, h4, p, li, label, span,
