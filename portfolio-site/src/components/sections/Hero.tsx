@@ -1,6 +1,5 @@
 "use client";
 
-import Image from "next/image";
 import { motion, useReducedMotion } from "motion/react";
 import MagneticButton from "../MagneticButton";
 import Icon from "../Icon";
@@ -19,23 +18,6 @@ export default function Hero() {
 
   return (
     <section className="relative min-h-screen flex flex-col justify-center overflow-hidden pt-28 pb-20">
-      <motion.div
-        className="hidden lg:block absolute -left-20 top-1/2 -translate-y-1/2 w-[55%] max-w-[720px] aspect-[16/10] pointer-events-none select-none"
-        initial={{ opacity: 0, scale: 0.96 }}
-        animate={{ opacity: 0.55, scale: 1 }}
-        transition={{ duration: 1.4, delay: 0.4, ease: [0.21, 0.6, 0.35, 1] }}
-      >
-        <Image
-          src="/portfolio/hero-wireframe.png"
-          alt=""
-          fill
-          priority
-          sizes="55vw"
-          className="object-contain"
-        />
-        <div className="absolute inset-0 bg-gradient-to-r from-[var(--bg-base)] via-transparent to-[var(--bg-base)]/40" />
-      </motion.div>
-
       <div className="relative max-w-7xl mx-auto px-6 sm:px-10 w-full">
         <motion.div
           className="section-num mb-6 sm:mb-10 flex items-center gap-3"

@@ -33,18 +33,12 @@ export default function Portfolio() {
               href={project.url}
               target="_blank"
               rel="noopener noreferrer"
-              className={`group relative block ${
-                project.span === "wide" ? "sm:col-span-2 lg:col-span-2" : ""
-              }`}
+              className="group relative block"
               whileHover={{ y: -4 }}
               transition={{ type: "spring", stiffness: 220, damping: 22 }}
             >
-              <div className="relative bg-[var(--bg-elev)] rounded-xl overflow-hidden border border-[var(--bg-line)]">
-                <div
-                  className={`relative overflow-hidden ${
-                    project.span === "wide" ? "h-56 sm:h-72" : "h-44 sm:h-52"
-                  }`}
-                >
+              <div className="relative bg-[var(--bg-elev)] rounded-xl overflow-hidden border border-[var(--bg-line)] group-hover:border-white/30 transition-colors">
+                <div className="relative aspect-[4/3] overflow-hidden bg-black">
                   {project.image ? (
                     <>
                       <Image
@@ -52,32 +46,28 @@ export default function Portfolio() {
                         alt={project.title}
                         fill
                         sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
-                        className="object-cover transition-transform duration-700 group-hover:scale-105"
+                        className="object-cover object-center transition-transform duration-700 group-hover:scale-[1.04]"
                       />
-                      <div className="absolute inset-0 bg-gradient-to-t from-black/70 via-black/10 to-transparent" />
+                      {/* Bottom mask hides Gemini watermark + softens transition to card body */}
+                      <div className="absolute inset-x-0 bottom-0 h-20 bg-gradient-to-t from-[var(--bg-elev)] via-[var(--bg-elev)]/80 to-transparent" />
                     </>
                   ) : (
-                    <>
-                      <div
-                        className={`absolute inset-0 bg-gradient-to-br ${project.color}`}
-                      />
-                      <div className="absolute inset-0 bg-black/30 group-hover:bg-black/10 transition-colors" />
-                      <div className="absolute inset-0 flex items-center justify-center">
-                        <span className="text-white text-xl font-bold drop-shadow">
-                          {project.title}
-                        </span>
-                      </div>
-                    </>
+                    <PlaceholderArt title={project.title} />
                   )}
                   {project.isNew && (
-                    <span className="absolute top-3 left-3 badge-new text-[11px] font-bold px-2 py-1 rounded uppercase tracking-wider z-10">
+                    <span className="absolute top-3 left-3 badge-new text-[10px] font-bold px-2 py-1 rounded uppercase tracking-wider z-10">
                       חדש
                     </span>
                   )}
+                  <div className="absolute top-3 right-3 opacity-0 group-hover:opacity-100 transition-opacity z-10">
+                    <span className="inline-flex items-center justify-center w-8 h-8 rounded-md bg-white/10 backdrop-blur-sm text-white">
+                      <Icon name="arrow-up-right" size={14} />
+                    </span>
+                  </div>
                 </div>
 
                 <div className="p-5">
-                  <h3 className="text-base font-bold text-white mb-2">
+                  <h3 className="text-base font-bold text-white mb-1.5">
                     {project.title}
                   </h3>
                   <p className="text-[var(--text-muted)] text-sm mb-4 leading-relaxed">
@@ -94,17 +84,31 @@ export default function Portfolio() {
                     ))}
                   </div>
                 </div>
-
-                <div className="absolute top-4 right-4 opacity-0 group-hover:opacity-100 transition-opacity z-10">
-                  <span className="inline-flex items-center justify-center w-8 h-8 rounded-md bg-white/10 backdrop-blur-sm text-white">
-                    <Icon name="arrow-up-right" size={14} />
-                  </span>
-                </div>
               </div>
             </motion.a>
           ))}
         </RevealStagger>
       </div>
     </section>
+  );
+}
+
+function PlaceholderArt({ title }: { title: string }) {
+  return (
+    <div className="absolute inset-0 flex items-center justify-center bg-[var(--bg-base)]">
+      <div className="absolute inset-0 opacity-40" style={{
+        backgroundImage:
+          "linear-gradient(rgba(255,255,255,0.04) 1px, transparent 1px), linear-gradient(90deg, rgba(255,255,255,0.04) 1px, transparent 1px)",
+        backgroundSize: "24px 24px",
+      }} />
+      <div className="relative text-center px-4">
+        <div className="text-[var(--text-dim)] text-[10px] uppercase tracking-[0.2em] mb-2">
+          בקרוב
+        </div>
+        <div className="text-white text-lg font-bold">
+          {title}
+        </div>
+      </div>
+    </div>
   );
 }

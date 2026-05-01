@@ -17,7 +17,6 @@ export const portfolioProjects: PortfolioProject[] = [
     tags: ["דף נחיתה", "תשתית", "בריאות"],
     color: "from-fuchsia-500 to-pink-500",
     image: "/portfolio/pilates.png",
-    span: "wide",
   },
   {
     title: "משרד עורכי דין",
