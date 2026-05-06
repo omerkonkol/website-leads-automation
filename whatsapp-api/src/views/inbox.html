@@ -1,0 +1,196 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>NovaDigital — Inbox</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@400;500;600;700;800&family=Inter:wght@400;500&display=swap" rel="stylesheet">
+<script src="https://cdn.tailwindcss.com"></script>
+<script>
+tailwind.config = {
+  theme: { extend: {
+    fontFamily: { sans: ['Heebo','Inter','system-ui','sans-serif'] },
+    colors: { ink: '#0a0a0b', accent: '#FF5722' },
+  }},
+};
+</script>
+<style>
+body { font-family: 'Heebo', sans-serif; background: #0a0a0b; color: #f4f4f5; }
+.scroll::-webkit-scrollbar { width: 8px; }
+.scroll::-webkit-scrollbar-track { background: #131316; }
+.scroll::-webkit-scrollbar-thumb { background: #2a2a30; border-radius: 4px; }
+.bubble-in { background: #1f2937; align-self: flex-start; border-radius: 12px 12px 12px 2px; }
+.bubble-out { background: #1f4f30; align-self: flex-end; border-radius: 12px 12px 2px 12px; }
+.fadein { opacity: 0; animation: f .4s forwards; }
+@keyframes f { to { opacity: 1; } }
+</style>
+</head>
+<body class="h-screen flex flex-col overflow-hidden">
+
+<!-- Header -->
+<header class="bg-zinc-900 border-b border-zinc-800 px-6 py-3 flex items-center justify-between flex-shrink-0">
+  <div class="flex items-center gap-3">
+    <div class="w-9 h-9 rounded-lg bg-accent flex items-center justify-center font-extrabold text-zinc-900">N</div>
+    <div>
+      <div class="font-bold text-lg">NovaDigital · Inbox</div>
+      <div id="stats-line" class="text-xs text-zinc-400">טוען…</div>
+    </div>
+  </div>
+  <div id="accounts-line" class="text-xs text-zinc-400 font-mono"></div>
+</header>
+
+<div class="flex flex-1 overflow-hidden">
+
+  <!-- Conversation list (right side, RTL → on the right) -->
+  <aside class="w-80 border-l border-zinc-800 bg-zinc-900 flex flex-col flex-shrink-0">
+    <div class="px-4 py-3 border-b border-zinc-800 flex items-center justify-between">
+      <span class="font-bold text-sm">שיחות</span>
+      <button onclick="loadConvos()" class="text-xs text-accent hover:underline">רענן</button>
+    </div>
+    <div id="convo-list" class="flex-1 overflow-y-auto scroll"></div>
+  </aside>
+
+  <!-- Thread (center) -->
+  <main class="flex-1 flex flex-col bg-zinc-950 overflow-hidden">
+    <div id="thread-header" class="px-6 py-3 border-b border-zinc-800 flex-shrink-0 hidden">
+      <div class="font-bold" id="thread-title">—</div>
+      <div class="text-xs text-zinc-400" id="thread-sub">—</div>
+    </div>
+    <div id="thread" class="flex-1 overflow-y-auto p-6 flex flex-col gap-2 scroll">
+      <div class="m-auto text-zinc-500 text-sm">בחר שיחה מהרשימה</div>
+    </div>
+
+    <!-- Reply box -->
+    <div id="reply-box" class="border-t border-zinc-800 p-4 hidden flex-shrink-0">
+      <form onsubmit="sendReply(event)" class="flex gap-2">
+        <textarea id="reply-text" rows="2" placeholder="כתוב תגובה…"
+          class="flex-1 bg-zinc-900 border border-zinc-700 rounded-lg px-4 py-2 text-sm focus:border-accent focus:outline-none resize-none"></textarea>
+        <button type="submit" class="bg-accent text-zinc-900 font-bold px-5 py-2 rounded-lg hover:brightness-110">
+          שלח
+        </button>
+      </form>
+      <div id="reply-meta" class="text-xs text-zinc-500 mt-2"></div>
+    </div>
+  </main>
+</div>
+
+<script>
+let activePeer = null;
+
+function fmtTime(iso) {
+  if (!iso) return '';
+  const d = new Date(iso);
+  const today = new Date();
+  const sameDay = d.toDateString() === today.toDateString();
+  if (sameDay) return d.toTimeString().slice(0,5);
+  return d.toLocaleDateString('he-IL', { day: '2-digit', month: '2-digit' }) + ' ' + d.toTimeString().slice(0,5);
+}
+
+function escapeHtml(s) {
+  return (s || '').replace(/[&<>"']/g, c => ({'&':'&amp;','<':'&lt;','>':'&gt;','"':'&quot;',"'":'&#39;'}[c]));
+}
+
+async function loadStats() {
+  const r = await fetch('/api/inbox/stats');
+  const j = await r.json();
+  const t = j.totals;
+  document.getElementById('stats-line').textContent =
+    `${t.sent} נשלחו · ${t.received} התקבלו · ${t.unread} לא נקראו · ${t.unique_responders} ענו`;
+  const accs = j.accounts.map(a =>
+    `${a.phone} ${a.daily_sent}/${a.daily_limit}${a.status==='ready'?' ✓':' ✗'}`
+  ).join(' | ');
+  document.getElementById('accounts-line').textContent = accs;
+}
+
+async function loadConvos() {
+  const r = await fetch('/api/inbox');
+  const j = await r.json();
+  const list = document.getElementById('convo-list');
+  if (!j.conversations || j.conversations.length === 0) {
+    list.innerHTML = '<div class="p-8 text-center text-zinc-500 text-sm">אין שיחות עדיין</div>';
+    return;
+  }
+  list.innerHTML = j.conversations.map(c => {
+    const name = c.lead_name || c.peer_phone;
+    const subline = c.lead_category && c.lead_city
+      ? `${c.lead_category} · ${c.lead_city}`
+      : (c.lead_id ? `ליד #${c.lead_id}` : c.peer_phone);
+    const unread = c.unread_count > 0
+      ? `<span class="bg-accent text-zinc-900 text-xs font-bold rounded-full px-2 py-0.5 mr-2">${c.unread_count}</span>`
+      : '';
+    const arrow = c.last_direction === 'in' ? '↩' : '→';
+    const isActive = activePeer === c.peer_phone ? 'bg-zinc-800' : '';
+    return `
+    <div onclick="openThread('${c.peer_phone}')" class="${isActive} px-4 py-3 border-b border-zinc-800 cursor-pointer hover:bg-zinc-800 transition">
+      <div class="flex items-center justify-between mb-1">
+        <div class="font-bold text-sm truncate flex-1">${escapeHtml(name)}</div>
+        <div class="text-xs text-zinc-500 mr-2">${fmtTime(c.last_at)}</div>
+      </div>
+      <div class="text-xs text-zinc-500 mb-1 truncate">${escapeHtml(subline)}</div>
+      <div class="text-xs text-zinc-400 truncate flex items-start gap-1">
+        ${unread}<span class="opacity-60">${arrow}</span> ${escapeHtml((c.last_body || '').slice(0, 60))}
+      </div>
+    </div>`;
+  }).join('');
+}
+
+async function openThread(peer) {
+  activePeer = peer;
+  const r = await fetch('/api/inbox/' + encodeURIComponent(peer));
+  const j = await r.json();
+  const thread = document.getElementById('thread');
+  const header = document.getElementById('thread-header');
+  const replyBox = document.getElementById('reply-box');
+  header.classList.remove('hidden');
+  replyBox.classList.remove('hidden');
+  document.getElementById('thread-title').textContent =
+    j.lead ? j.lead.name : peer;
+  document.getElementById('thread-sub').textContent = j.lead
+    ? `${j.lead.phone} · ${j.lead.category || ''} · ${j.lead.city || ''}${j.lead.google_rating ? ' · ' + j.lead.google_rating + '★' : ''}`
+    : peer;
+  thread.innerHTML = j.messages.map(m => {
+    const cls = m.direction === 'out' ? 'bubble-out' : 'bubble-in';
+    return `
+      <div class="${cls} px-4 py-2 max-w-[70%] fadein">
+        <div class="text-sm whitespace-pre-wrap">${escapeHtml(m.body || '')}</div>
+        <div class="text-[10px] text-zinc-400 mt-1">${fmtTime(m.sent_at)} · ${m.account_phone}</div>
+      </div>`;
+  }).join('');
+  thread.scrollTop = thread.scrollHeight;
+  loadConvos(); // refresh unread counts
+}
+
+async function sendReply(e) {
+  e.preventDefault();
+  const text = document.getElementById('reply-text').value.trim();
+  if (!text || !activePeer) return;
+  const meta = document.getElementById('reply-meta');
+  meta.textContent = 'שולח…';
+  try {
+    const r = await fetch('/api/inbox/reply', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ peer_phone: activePeer, body: text }),
+    });
+    const j = await r.json();
+    if (j.ok) {
+      meta.textContent = '✓ נשלח מ-' + j.account_phone;
+      document.getElementById('reply-text').value = '';
+      setTimeout(() => meta.textContent = '', 3000);
+      openThread(activePeer);
+    } else {
+      meta.textContent = '✗ ' + (j.error || 'שגיאה');
+    }
+  } catch (err) {
+    meta.textContent = '✗ ' + err.message;
+  }
+}
+
+// Initial load + auto-refresh every 10s
+loadStats(); loadConvos();
+setInterval(() => { loadStats(); loadConvos(); if (activePeer) openThread(activePeer); }, 10000);
+</script>
+</body>
+</html>

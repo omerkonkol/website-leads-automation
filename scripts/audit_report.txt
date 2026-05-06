@@ -1,0 +1,67 @@
+
+========== TOTAL: 455 leads ==========
+
+--- 1. כיסוי signals ---
+  verified_at:           455/455  (100%)
+  quality_score > 0:     132/455  (29%)
+  is_likely_active=1:    455/455
+  is_likely_active=0:    0/455
+
+--- 2. high-ticket בלבד: 93/455 (20%) ---
+  מרפאת שיניים                                15
+  אדריכלים תל אביב                            15
+  צלם חתונות                                  14
+  צימר גליל                                   11
+  משרד עורכי דין                              9
+  עורך דין                                    9
+  קבלן שיפוצים רמת גן                         7
+  רופא שיניים                                 5
+  גן אירועים מרכז                             3
+  קבלן בנייה                                  2
+  חברת בנייה                                  1
+  עו"ד פלילי                                  1
+  עורך דין המתמחה בדיני משפחה                 1
+
+--- 3. high-ticket × tier ---
+  HOT  (70+):    53
+  WARM (45-69):  31
+  COLD (<45):    9
+
+--- 4. high-ticket × סטטוס אתר ---
+  no_site               54
+  good_site             32
+  mediocre_site         7
+
+--- 5. high-ticket × אימות פעילות ---
+  אומתו (verified_at):  93/93
+  פעיל (is_likely=1):   93
+  לא פעיל (=0):         0
+
+--- 6. ליד אידיאלי: high-ticket + פעיל מאומת + HOT + צריך אתר ---
+  סה"כ: 29
+
+  TOP 20:
+  score  name                                      category                   site                  phone         source         
+    100  Menachem Shankar, notary and lawyer       עורך דין                   no_site               0522662393    google_maps    
+    100  יצחק בם, עו"ד (LLM, Harvard)              עורך דין                   no_site               0547546790    google_maps    
+    100  מרפאת שיניים ד"ר דניאל אילייזרוב          מרפאת שיניים               no_site               0544475950    google_maps    
+     81  קובי ג'נגו עבודות גבס                                                no_site               0526443784    dapei_zahav    
+     81  אוש - הופ בע"מ                                                       no_site               0522508363    dapei_zahav    
+     81  ירונדיס שיפוצים ועבודות גמר בע"מ                                     no_site               0523828729    dapei_zahav    
+     81  איכות השיפוץ                                                         no_site               0544666515    dapei_zahav    
+     81  אריאל גולדשטיין שיפוצים                                              no_site               0528783584    dapei_zahav    
+     81  גולן בניה ושיפוצים                                                   no_site               0505294453    dapei_zahav    
+     81  התחלה חדשה                                                           no_site               0544799479    dapei_zahav    
+     81  בחלום של יוסף                                                        no_site               0524092525    dapei_zahav    
+     81  פנינה בהרים                                                          no_site               0537777792    dapei_zahav    
+     81  מול הפסגה                                                            no_site               0544696528    dapei_zahav    
+     81  הבית האדום                                                           no_site               0546699975    dapei_zahav    
+     81  צימר אידיליה                                                         no_site               0543089232    dapei_zahav    
+     81  רגע קסום                                                             no_site               0505885883    dapei_zahav    
+     81  הבקתה של אורה                                                        no_site               0544784011    dapei_zahav    
+     81  בקתות בטבע הבריאה                                                    no_site               0534777726    dapei_zahav    
+     81  בצל הסברס                                                            no_site               0504231507    dapei_zahav    
+     81  מול הכינרת                                                           no_site               0542446418    dapei_zahav    
+
+--- 7. המלצה ---
+  יש 29 לידים אידיאליים. מספיק ל-batch ראשון, אבל כדאי להוסיף מקורות (שלב 3) במקביל.
