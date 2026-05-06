@@ -1,5 +1,9 @@
-import { Client, LocalAuth, Message } from "whatsapp-web.js";
+import { Client, LocalAuth, Message, MessageMedia } from "whatsapp-web.js";
 import qrcode from "qrcode-terminal";
+import * as QRCode from "qrcode";
+import * as path from "path";
+
+const QR_IMAGE_PATH = path.resolve(process.cwd(), "..", "qr.png");
 
 class WhatsAppService {
   private client: Client;
@@ -27,6 +31,9 @@ class WhatsAppService {
     this.client.on("qr", (qr: string) => {
       console.log("\n📱 Scan this QR code with WhatsApp:\n");
       qrcode.generate(qr, { small: true });
+      QRCode.toFile(QR_IMAGE_PATH, qr, { width: 400, margin: 2 })
+        .then(() => console.log(`   💾 QR also saved as PNG: ${QR_IMAGE_PATH}\n`))
+        .catch((err) => console.error("   ⚠️  Failed to save QR PNG:", err));
     });
 
     this.client.on("authenticated", () => {
@@ -69,6 +76,20 @@ class WhatsAppService {
 
     const chatId = this.formatNumber(phoneNumber);
     return this.client.sendMessage(chatId, message);
+  }
+
+  async sendMessageWithMedia(
+    phoneNumber: string,
+    caption: string,
+    imagePath: string
+  ): Promise<Message> {
+    if (!this.isReady) {
+      throw new Error("WhatsApp client is not ready.");
+    }
+
+    const chatId = this.formatNumber(phoneNumber);
+    const media = MessageMedia.fromFilePath(imagePath);
+    return this.client.sendMessage(chatId, media, { caption });
   }
 
   private formatNumber(phone: string): string {

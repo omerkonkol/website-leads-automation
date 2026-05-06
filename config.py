@@ -152,6 +152,11 @@ EMAIL_SENDER       = _env("EMAIL_SENDER")
 EMAIL_APP_PASSWORD = _env("EMAIL_APP_PASSWORD")
 EMAIL_PAUSE_BETWEEN = _env_int("EMAIL_PAUSE_BETWEEN", 5)
 
+SMTP_HOST = _env("SMTP_HOST", "smtp.gmail.com")
+SMTP_PORT = _env_int("SMTP_PORT", 465)
+IMAP_HOST = _env("IMAP_HOST", "imap.gmail.com")
+IMAP_PORT = _env_int("IMAP_PORT", 993)
+
 # ════════════════════════════════════════════════
 #  תיק עבודות
 # ════════════════════════════════════════════════

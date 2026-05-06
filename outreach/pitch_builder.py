@@ -199,6 +199,9 @@ def build_whatsapp_pitch(biz: dict) -> str:
             f"{YOUR_NAME} | {YOUR_PHONE}"
         )
 
+    if not issues:
+        return ""
+
     top  = ISSUES[issues[0]]
     rest = issues[1:]
 

@@ -3,18 +3,18 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0">
-<title>קפה נוף ים — השירות שלנו בהרצליה</title>
-<meta name="description" content="קפה נוף ים — השירות שלנו מקצועי בהרצליה. שירות אישי, ניסיון של שנים, מחיר הוגן.">
+<title>קפה נוף ים — קפה בהרצליה</title>
+<meta name="description" content="קפה נוף ים — קפה מקצועי בהרצליה. שירות אישי, ניסיון של שנים, מחיר הוגן.">
 <meta name="robots" content="noindex,nofollow,noarchive">
-<meta property="og:title" content="קפה נוף ים — השירות שלנו בהרצליה">
-<meta property="og:description" content="קפה נוף ים — השירות שלנו מקצועי בהרצליה. שירות אישי, ניסיון של שנים, מחיר הוגן.">
+<meta property="og:title" content="קפה נוף ים — קפה בהרצליה">
+<meta property="og:description" content="קפה נוף ים — קפה מקצועי בהרצליה. שירות אישי, ניסיון של שנים, מחיר הוגן.">
 <meta property="og:type" content="website">
 
 <link rel="preconnect" href="https://fonts.googleapis.com">
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Heebo:wght@400;500;600;700;800;900&display=swap">
-<link rel="preload" as="image" href="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&auto=format&fit=crop&q=85" fetchpriority="high">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1600&auto=format&fit=crop&q=85" fetchpriority="high">
 
 <!-- Tailwind CSS via CDN (Play CDN — fine for landing pages) -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -22,8 +22,8 @@
   theme: {
     extend: {
       colors: {
-        'brand-primary': '#E76F51',
-        'brand-primaryDark': '#C8553D',
+        'brand-primary': '#9B5E3F',
+        'brand-primaryDark': '#7E4A30',
         'brand-dark': '#1A1A1A',
         'brand-light': '#FAFAF7',
         'brand-gray': '#F4F0EA',
@@ -33,7 +33,7 @@
         sans: ['Assistant','Heebo','ui-sans-serif','system-ui','sans-serif'],
       },
       boxShadow: {
-        'glow': '0 8px 24px #E76F5140',
+        'glow': '0 8px 24px #9B5E3F40',
         'premium': '0 12px 40px rgba(0,0,0,0.12)',
       },
     },
@@ -85,8 +85,8 @@
     inset-inline-start: 0; top: 0.55em;
     width: 8px; height: 8px;
     border-radius: 50%;
-    background: #E76F51;
-    box-shadow: 0 0 0 4px #E76F511a;
+    background: #9B5E3F;
+    box-shadow: 0 0 0 4px #9B5E3F1a;
   }
 
   /* ═══════ LOGOS STRIP — refined ═══════ */
@@ -106,12 +106,12 @@
   }
   .logo-badge:hover {
     transform: translateY(-2px);
-    border-color: #E76F5140;
+    border-color: #9B5E3F40;
     box-shadow: 0 6px 18px rgba(0,0,0,0.06);
   }
   .logo-dot {
     width: 6px; height: 6px; border-radius: 50%;
-    background: #E76F51;
+    background: #9B5E3F;
     flex-shrink: 0;
     opacity: 0.65;
     transition: opacity 250ms ease, transform 250ms ease;
@@ -127,7 +127,7 @@
     white-space: nowrap;
     transition: color 250ms ease;
   }
-  .logo-badge:hover .logo-text { color: #C8553D; }
+  .logo-badge:hover .logo-text { color: #7E4A30; }
 
   /* ═══════ PHOTO FRAMES — premium polaroid effect ═══════ */
   .photo-card {
@@ -165,8 +165,8 @@
   .photo-frame-bg-1 {
     position: absolute;
     inset: -16px;
-    background: #E76F5114;
-    border: 1.5px solid #E76F5133;
+    background: #9B5E3F14;
+    border: 1.5px solid #9B5E3F33;
     border-radius: 40px;
     transform: rotate(-3deg);
     z-index: -1;
@@ -218,7 +218,7 @@
   /* Scroll progress bar */
   .scroll-progress {
     position: fixed; top: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, #E76F51 var(--prog,0%), transparent var(--prog,0%));
+    background: linear-gradient(90deg, #9B5E3F var(--prog,0%), transparent var(--prog,0%));
     z-index: 100;
     pointer-events: none;
     transition: background 80ms linear;
@@ -232,7 +232,7 @@
   .nav-link { position: relative; }
   .nav-link::after {
     content: ""; position: absolute; left: 0; right: 0; bottom: -4px;
-    height: 2px; background: #E76F51;
+    height: 2px; background: #9B5E3F;
     transform: scaleX(0); transform-origin: right;
     transition: transform 300ms cubic-bezier(0.22,1,0.36,1);
   }
@@ -295,7 +295,7 @@
     font-family: Georgia, serif;
     font-size: 64px;
     line-height: 0.6;
-    color: #E76F51;
+    color: #9B5E3F;
     opacity: 0.2;
     user-select: none;
   }
@@ -324,8 +324,8 @@
   .testi-card .avatar {
     width: 44px; height: 44px;
     border-radius: 50%;
-    background: #E76F511a;
-    color: #C8553D;
+    background: #9B5E3F1a;
+    color: #7E4A30;
     display: grid; place-items: center;
     font-family: 'Assistant','Heebo',sans-serif;
     font-weight: 800;
@@ -348,7 +348,7 @@
   .testi-heading-underline {
     display: block;
     width: 60px; height: 4px;
-    background: #E76F51;
+    background: #9B5E3F;
     border-radius: 2px;
     margin: 18px auto 0;
   }
@@ -364,7 +364,7 @@
     transition: all 250ms ease;
   }
   .swiper-pagination-bullet-active {
-    background: #E76F51 !important;
+    background: #9B5E3F !important;
     opacity: 1 !important;
     width: 28px !important;
     border-radius: 5px !important;
@@ -395,11 +395,11 @@
   <div class="container mx-auto max-w-7xl px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
     <a href="#hero" class="flex items-center gap-3 group" aria-label="דף הבית">
       <div class="w-10 h-10 sm:w-11 sm:h-11 bg-brand-light border border-slate-200 rounded-xl flex items-center justify-center text-brand-primary shadow-sm group-hover:scale-110 group-hover:border-brand-primary transition-all duration-300">
-        <i data-lucide="building-2" class="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]"></i>
+        <i data-lucide="coffee" class="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]"></i>
       </div>
       <div class="flex flex-col">
         <span class="font-black text-xl sm:text-2xl tracking-tight text-brand-dark leading-none">קפה נוף ים</span>
-        <span class="text-[9px] sm:text-[11px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">שירות מקצועי</span>
+        <span class="text-[9px] sm:text-[11px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">קפה איכותי</span>
       </div>
     </a>
 
@@ -436,7 +436,7 @@
           <span class="absolute inline-flex h-full w-full rounded-full bg-brand-primary opacity-75 eyebrow-ping"></span>
           <span class="relative inline-flex rounded-full h-3 w-3 bg-brand-primary"></span>
         </span>
-        <span class="text-xs sm:text-sm font-bold text-slate-600 tracking-wide">השירות שלנו · הרצליה</span>
+        <span class="text-xs sm:text-sm font-bold text-slate-600 tracking-wide">קפה · הרצליה</span>
       </div>
 
       <h1 class="text-4xl sm:text-5xl md:text-6xl font-black text-brand-dark leading-[1.1] mb-4 sm:mb-6 hero-headline">
@@ -490,7 +490,7 @@
         <div class="photo-frame-bg-1"></div>
         <div class="photo-frame-bg-2"></div>
         <div class="photo-inner">
-          <img src="https://images.unsplash.com/photo-1497366216548-37526070297c?w=1600&auto=format&fit=crop&q=85" alt="קפה נוף ים — השירות שלנו" loading="eager" fetchpriority="high">
+          <img src="https://images.unsplash.com/photo-1554118811-1e0d58224f24?w=1600&auto=format&fit=crop&q=85" alt="קפה נוף ים — קפה" loading="eager" fetchpriority="high">
         </div>
         <div class="photo-badge-overlay">
           <span class="block text-3xl sm:text-4xl font-black text-brand-primary leading-none mb-1">+500</span>
@@ -511,19 +511,19 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
       <div class="text-center p-6 sm:p-8 bg-white rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-2 hover:shadow-premium transition-all duration-300" data-aos="flip-up" data-aos-delay="0" data-aos-duration="800">
           <div class="text-5xl sm:text-6xl font-black text-brand-primary leading-none mb-2 tracking-tight">
-            <span data-counter="10">0</span><span class="text-3xl sm:text-4xl">+</span>
+            <span data-counter="7">0</span><span class="text-3xl sm:text-4xl">+</span>
           </div>
-          <div class="text-slate-600 font-bold text-sm sm:text-base">שנות ניסיון</div>
+          <div class="text-slate-600 font-bold text-sm sm:text-base">שנות פעילות</div>
         </div><div class="text-center p-6 sm:p-8 bg-white rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-2 hover:shadow-premium transition-all duration-300" data-aos="zoom-in" data-aos-delay="150" data-aos-duration="800">
           <div class="text-5xl sm:text-6xl font-black text-brand-primary leading-none mb-2 tracking-tight">
-            <span data-counter="500">0</span><span class="text-3xl sm:text-4xl">+</span>
+            <span data-counter="15">0</span><span class="text-3xl sm:text-4xl">K</span>
           </div>
-          <div class="text-slate-600 font-bold text-sm sm:text-base">לקוחות מרוצים</div>
+          <div class="text-slate-600 font-bold text-sm sm:text-base">לקוחות</div>
         </div><div class="text-center p-6 sm:p-8 bg-white rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-2 hover:shadow-premium transition-all duration-300" data-aos="flip-up" data-aos-delay="300" data-aos-duration="800">
           <div class="text-5xl sm:text-6xl font-black text-brand-primary leading-none mb-2 tracking-tight">
-            <span data-counter="98">0</span><span class="text-3xl sm:text-4xl">%</span>
+            <span data-counter="4.8">0</span><span class="text-3xl sm:text-4xl"></span>
           </div>
-          <div class="text-slate-600 font-bold text-sm sm:text-base">ממליצים</div>
+          <div class="text-slate-600 font-bold text-sm sm:text-base">דירוג</div>
         </div>
     </div>
   </div>
@@ -534,45 +534,45 @@
   <div class="ticker-wrapper">
     <div class="ticker-track">
       <div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="heart-handshake" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ליווי אישי</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- יחס לכל לקוח</span>
+              <i data-lucide="coffee" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">פולים מובחרים</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- קלייה בארץ</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">איכות מובטחת</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- אחריות מלאה</span>
-            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="clock" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">זמינות אישית</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מענה מהיר</span>
-            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="sparkles" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">שירות פרימיום</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- תוצאה אמיתית</span>
-            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="award" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ניסיון של שנים</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- לקוחות מרוצים</span>
+              <i data-lucide="croissant" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">מאפים טריים</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- אפייה בכל בוקר</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
               <i data-lucide="heart-handshake" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ליווי אישי</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- יחס לכל לקוח</span>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">אווירה חמה</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מקום שאוהבים</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">איכות מובטחת</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- אחריות מלאה</span>
+              <i data-lucide="wifi" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">Wi-Fi חופשי</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מקום לעבודה</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
               <i data-lucide="clock" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">זמינות אישית</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מענה מהיר</span>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">פתוחים מ-07:00</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- עד הערב</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="sparkles" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">שירות פרימיום</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- תוצאה אמיתית</span>
+              <i data-lucide="coffee" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">פולים מובחרים</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- קלייה בארץ</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="award" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ניסיון של שנים</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- לקוחות מרוצים</span>
+              <i data-lucide="croissant" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">מאפים טריים</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- אפייה בכל בוקר</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="heart-handshake" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">אווירה חמה</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מקום שאוהבים</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="wifi" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">Wi-Fi חופשי</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מקום לעבודה</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="clock" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">פתוחים מ-07:00</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- עד הערב</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div>
     </div>
   </div>
@@ -588,7 +588,7 @@
           <div class="photo-frame-bg-1"></div>
           <div class="photo-frame-bg-2"></div>
           <div class="photo-inner">
-            <img src="https://images.unsplash.com/photo-1497366811353-6870744d04b2?w=1600&auto=format&fit=crop&q=85" alt="השירות שלנו" loading="lazy">
+            <img src="https://images.unsplash.com/photo-1559496417-e7f25cb247f3?w=1600&auto=format&fit=crop&q=85" alt="קפה" loading="lazy">
           </div>
           <div class="photo-badge-overlay">
             <span class="block text-3xl sm:text-4xl font-black text-brand-primary leading-none mb-1">5.0★</span>
@@ -643,51 +643,51 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
       <div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-right" data-aos-delay="0" data-aos-duration="900">
           <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-            <i data-lucide="sparkles" class="w-7 h-7"></i>
+            <i data-lucide="coffee" class="w-7 h-7"></i>
           </div>
-          <h3 class="text-2xl font-black text-brand-dark mb-2">שירות מקצועי</h3>
-          <p class="text-slate-600 font-medium mb-4 leading-relaxed">ניסיון של שנים בתחום, גישה אישית לכל לקוח.</p>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">קפה אומנותי</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">פולים מובחרים, קלייה אישית, חליטה מקצועית.</p>
           <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
-            <li><span class="text-brand-primary font-bold">✓</span> יחס אישי</li><li><span class="text-brand-primary font-bold">✓</span> מקצועיות בכל שלב</li><li><span class="text-brand-primary font-bold">✓</span> שקיפות מלאה</li><li><span class="text-brand-primary font-bold">✓</span> אחריות</li>
+            <li><span class="text-brand-primary font-bold">✓</span> פולי בוטיק</li><li><span class="text-brand-primary font-bold">✓</span> קלייה ישראלית</li><li><span class="text-brand-primary font-bold">✓</span> ברטיסטה מקצועי</li><li><span class="text-brand-primary font-bold">✓</span> שיטות חליטה מגוונות</li>
           </ul>
           <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
-            👉 תוצאה: שירות שחוזרים אליו
+            👉 תוצאה: קפה ברמה אחרת
           </div>
         </div><div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-left" data-aos-delay="150" data-aos-duration="900">
           <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-            <i data-lucide="heart-handshake" class="w-7 h-7"></i>
+            <i data-lucide="croissant" class="w-7 h-7"></i>
           </div>
-          <h3 class="text-2xl font-black text-brand-dark mb-2">ליווי אישי</h3>
-          <p class="text-slate-600 font-medium mb-4 leading-relaxed">תשומת לב לכל פרט, מהפנייה הראשונה ועד התוצאה.</p>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">מאפים טריים</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">מאפים טריים שנאפים בכל בוקר.</p>
           <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
-            <li><span class="text-brand-primary font-bold">✓</span> הקשבה אמיתית</li><li><span class="text-brand-primary font-bold">✓</span> פגישות תיאום</li><li><span class="text-brand-primary font-bold">✓</span> ליווי לאורך התהליך</li><li><span class="text-brand-primary font-bold">✓</span> זמינות בכל שאלה</li>
+            <li><span class="text-brand-primary font-bold">✓</span> קרואסונים</li><li><span class="text-brand-primary font-bold">✓</span> דניש</li><li><span class="text-brand-primary font-bold">✓</span> עוגיות</li><li><span class="text-brand-primary font-bold">✓</span> מאפים מלוחים</li>
           </ul>
           <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
-            👉 תוצאה: לקוח שמרגיש מובן
+            👉 תוצאה: בוקר מושלם
           </div>
         </div><div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-right" data-aos-delay="0" data-aos-duration="900">
           <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-            <i data-lucide="shield-check" class="w-7 h-7"></i>
+            <i data-lucide="utensils-crossed" class="w-7 h-7"></i>
           </div>
-          <h3 class="text-2xl font-black text-brand-dark mb-2">איכות מובטחת</h3>
-          <p class="text-slate-600 font-medium mb-4 leading-relaxed">אנחנו לא מתפשרים — וגם לא נותנים לכם להתפשר.</p>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">ארוחות קלות</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">ארוחות בוקר, סלטים וסנדוויצ&#x27;ים יומיים.</p>
           <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
-            <li><span class="text-brand-primary font-bold">✓</span> סטנדרטים גבוהים</li><li><span class="text-brand-primary font-bold">✓</span> חומרים מובחרים</li><li><span class="text-brand-primary font-bold">✓</span> ביצוע מדויק</li><li><span class="text-brand-primary font-bold">✓</span> אחריות בכתב</li>
+            <li><span class="text-brand-primary font-bold">✓</span> ארוחות בוקר</li><li><span class="text-brand-primary font-bold">✓</span> סלטים בריאים</li><li><span class="text-brand-primary font-bold">✓</span> סנדוויצ&#x27;ים</li><li><span class="text-brand-primary font-bold">✓</span> ארוחות צהריים קלות</li>
           </ul>
           <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
-            👉 תוצאה: תוצאה שמחזיקה
+            👉 תוצאה: מקום ליום שלם
           </div>
         </div><div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-left" data-aos-delay="150" data-aos-duration="900">
           <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-            <i data-lucide="clock" class="w-7 h-7"></i>
+            <i data-lucide="wifi" class="w-7 h-7"></i>
           </div>
-          <h3 class="text-2xl font-black text-brand-dark mb-2">זמינות אישית</h3>
-          <p class="text-slate-600 font-medium mb-4 leading-relaxed">מענה תוך זמן קצר, גם בשעות חריגות.</p>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">מקום לעבודה</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">Wi-Fi חופשי, שקעי חשמל, אווירה רגועה.</p>
           <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
-            <li><span class="text-brand-primary font-bold">✓</span> מענה ב-WhatsApp</li><li><span class="text-brand-primary font-bold">✓</span> פגישה תוך 48 שעות</li><li><span class="text-brand-primary font-bold">✓</span> זמינות לשאלות</li><li><span class="text-brand-primary font-bold">✓</span> עדכונים שוטפים</li>
+            <li><span class="text-brand-primary font-bold">✓</span> Wi-Fi מהיר</li><li><span class="text-brand-primary font-bold">✓</span> שקעים בכל שולחן</li><li><span class="text-brand-primary font-bold">✓</span> אווירה רגועה</li><li><span class="text-brand-primary font-bold">✓</span> פתוחים מ-07:00</li>
           </ul>
           <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
-            👉 תוצאה: לא נשארים תקועים
+            👉 תוצאה: משרד מחוץ למשרד
           </div>
         </div>
     </div>
@@ -861,14 +861,14 @@
       <div>
         <div class="flex items-center gap-3 mb-4">
           <div class="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center text-white">
-            <i data-lucide="building-2" class="w-5 h-5"></i>
+            <i data-lucide="coffee" class="w-5 h-5"></i>
           </div>
           <div class="flex flex-col">
             <span class="font-black text-xl text-white leading-none">קפה נוף ים</span>
-            <span class="text-[10px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">שירות מקצועי</span>
+            <span class="text-[10px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">קפה איכותי</span>
           </div>
         </div>
-        <p class="text-sm text-slate-400 leading-relaxed">השירות שלנו · הרצליה</p>
+        <p class="text-sm text-slate-400 leading-relaxed">קפה · הרצליה</p>
       </div>
       <div>
         <h4 class="text-white font-black mb-3 text-sm tracking-widest uppercase">שעות פעילות</h4>

@@ -140,10 +140,11 @@ def init_db():
         CREATE TABLE IF NOT EXISTS outreach_log (
             id          INTEGER PRIMARY KEY AUTOINCREMENT,
             business_id INTEGER,
-            channel     TEXT,   -- 'whatsapp' / 'email' / 'phone_call'
-            status      TEXT,   -- 'sent' / 'failed' / 'replied' / 'interested' / 'not_interested'
+            channel     TEXT,   -- 'whatsapp' / 'email' / 'phone_call' / 'email_reply'
+            status      TEXT,   -- 'sent' / 'failed' / 'replied' / 'interested' / 'not_interested' / 'received'
             message     TEXT,
             variant     TEXT,   -- A/B variant
+            message_id  TEXT,   -- RFC 5322 Message-ID (for matching email replies via In-Reply-To)
             sent_at     TEXT DEFAULT (datetime('now','localtime')),
             FOREIGN KEY (business_id) REFERENCES businesses(id)
         );
@@ -233,7 +234,7 @@ def init_db():
         # אימות פעילות
         ("activity_score",    "INTEGER"),
         ("activity_details",  "TEXT"),
-        ("is_likely_active",  "INTEGER DEFAULT 1"),
+        ("is_likely_active",  "INTEGER"),
         ("verified_at",       "TEXT"),
         # פייסבוק
         ("fb_followers",          "INTEGER DEFAULT 0"),
@@ -254,6 +255,14 @@ def init_db():
     for col, col_type in new_columns:
         if col not in existing:
             c.execute(f"ALTER TABLE businesses ADD COLUMN {col} {col_type}")
+    conn.commit()
+
+    # ── outreach_log: עמודות נוספות לקיים ──
+    outreach_log_columns = [("message_id", "TEXT")]
+    existing_log = {row[1] for row in c.execute("PRAGMA table_info(outreach_log)").fetchall()}
+    for col, col_type in outreach_log_columns:
+        if col not in existing_log:
+            c.execute(f"ALTER TABLE outreach_log ADD COLUMN {col} {col_type}")
     conn.commit()
 
     # ── אינדקסים — אחרי שכל העמודות קיימות ──
@@ -374,7 +383,7 @@ def sync_all_to_supabase() -> int:
     return synced
 
 
-def mark_sent(business_id: int, channel: str, message: str = "", status: str = "sent"):
+def mark_sent(business_id: int, channel: str, message: str = "", status: str = "sent", message_id: str = None):
     """מסמן שליחה ומוסיף רשומה ל-outreach_log."""
     now = datetime.now().strftime("%Y-%m-%d %H:%M:%S")
     conn = get_conn()
@@ -391,8 +400,8 @@ def mark_sent(business_id: int, channel: str, message: str = "", status: str = "
         )
     # הוסף ל-log
     conn.execute(
-        "INSERT INTO outreach_log (business_id, channel, status, message, sent_at) VALUES (?,?,?,?,?)",
-        (business_id, channel, status, message, now)
+        "INSERT INTO outreach_log (business_id, channel, status, message, message_id, sent_at) VALUES (?,?,?,?,?,?)",
+        (business_id, channel, status, message, message_id, now)
     )
     conn.commit()
     conn.close()

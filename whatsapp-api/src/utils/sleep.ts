@@ -13,10 +13,13 @@ export function randomSleep(
 
 /**
  * Longer "coffee break" pause every N messages to look natural.
- * Pauses between 45–90 seconds.
+ * Defaults to 45–90 seconds; pass min/max to override.
  */
-export function coffeBreakSleep(): Promise<void> {
-  const delay = Math.floor(Math.random() * 45000) + 45000;
+export function coffeBreakSleep(
+  minMs: number = 45000,
+  maxMs: number = 90000
+): Promise<void> {
+  const delay = Math.floor(Math.random() * (maxMs - minMs + 1)) + minMs;
   console.log(`   ☕ Taking a break for ${(delay / 1000).toFixed(0)}s...`);
   return new Promise((resolve) => setTimeout(resolve, delay));
 }

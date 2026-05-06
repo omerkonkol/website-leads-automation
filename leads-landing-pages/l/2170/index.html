@@ -22,8 +22,8 @@
   theme: {
     extend: {
       colors: {
-        'brand-primary': '#E76F51',
-        'brand-primaryDark': '#C8553D',
+        'brand-primary': '#C9849A',
+        'brand-primaryDark': '#A56B7E',
         'brand-dark': '#1A1A1A',
         'brand-light': '#FAFAF7',
         'brand-gray': '#F4F0EA',
@@ -33,7 +33,7 @@
         sans: ['Assistant','Heebo','ui-sans-serif','system-ui','sans-serif'],
       },
       boxShadow: {
-        'glow': '0 8px 24px #E76F5140',
+        'glow': '0 8px 24px #C9849A40',
         'premium': '0 12px 40px rgba(0,0,0,0.12)',
       },
     },
@@ -85,8 +85,8 @@
     inset-inline-start: 0; top: 0.55em;
     width: 8px; height: 8px;
     border-radius: 50%;
-    background: #E76F51;
-    box-shadow: 0 0 0 4px #E76F511a;
+    background: #C9849A;
+    box-shadow: 0 0 0 4px #C9849A1a;
   }
 
   /* ═══════ LOGOS STRIP — refined ═══════ */
@@ -106,12 +106,12 @@
   }
   .logo-badge:hover {
     transform: translateY(-2px);
-    border-color: #E76F5140;
+    border-color: #C9849A40;
     box-shadow: 0 6px 18px rgba(0,0,0,0.06);
   }
   .logo-dot {
     width: 6px; height: 6px; border-radius: 50%;
-    background: #E76F51;
+    background: #C9849A;
     flex-shrink: 0;
     opacity: 0.65;
     transition: opacity 250ms ease, transform 250ms ease;
@@ -127,7 +127,7 @@
     white-space: nowrap;
     transition: color 250ms ease;
   }
-  .logo-badge:hover .logo-text { color: #C8553D; }
+  .logo-badge:hover .logo-text { color: #A56B7E; }
 
   /* ═══════ PHOTO FRAMES — premium polaroid effect ═══════ */
   .photo-card {
@@ -165,8 +165,8 @@
   .photo-frame-bg-1 {
     position: absolute;
     inset: -16px;
-    background: #E76F5114;
-    border: 1.5px solid #E76F5133;
+    background: #C9849A14;
+    border: 1.5px solid #C9849A33;
     border-radius: 40px;
     transform: rotate(-3deg);
     z-index: -1;
@@ -218,7 +218,7 @@
   /* Scroll progress bar */
   .scroll-progress {
     position: fixed; top: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, #E76F51 var(--prog,0%), transparent var(--prog,0%));
+    background: linear-gradient(90deg, #C9849A var(--prog,0%), transparent var(--prog,0%));
     z-index: 100;
     pointer-events: none;
     transition: background 80ms linear;
@@ -232,7 +232,7 @@
   .nav-link { position: relative; }
   .nav-link::after {
     content: ""; position: absolute; left: 0; right: 0; bottom: -4px;
-    height: 2px; background: #E76F51;
+    height: 2px; background: #C9849A;
     transform: scaleX(0); transform-origin: right;
     transition: transform 300ms cubic-bezier(0.22,1,0.36,1);
   }
@@ -295,7 +295,7 @@
     font-family: Georgia, serif;
     font-size: 64px;
     line-height: 0.6;
-    color: #E76F51;
+    color: #C9849A;
     opacity: 0.2;
     user-select: none;
   }
@@ -324,8 +324,8 @@
   .testi-card .avatar {
     width: 44px; height: 44px;
     border-radius: 50%;
-    background: #E76F511a;
-    color: #C8553D;
+    background: #C9849A1a;
+    color: #A56B7E;
     display: grid; place-items: center;
     font-family: 'Assistant','Heebo',sans-serif;
     font-weight: 800;
@@ -348,7 +348,7 @@
   .testi-heading-underline {
     display: block;
     width: 60px; height: 4px;
-    background: #E76F51;
+    background: #C9849A;
     border-radius: 2px;
     margin: 18px auto 0;
   }
@@ -364,7 +364,7 @@
     transition: all 250ms ease;
   }
   .swiper-pagination-bullet-active {
-    background: #E76F51 !important;
+    background: #C9849A !important;
     opacity: 1 !important;
     width: 28px !important;
     border-radius: 5px !important;
@@ -395,11 +395,11 @@
   <div class="container mx-auto max-w-7xl px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
     <a href="#hero" class="flex items-center gap-3 group" aria-label="דף הבית">
       <div class="w-10 h-10 sm:w-11 sm:h-11 bg-brand-light border border-slate-200 rounded-xl flex items-center justify-center text-brand-primary shadow-sm group-hover:scale-110 group-hover:border-brand-primary transition-all duration-300">
-        <i data-lucide="building-2" class="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]"></i>
+        <i data-lucide="shirt" class="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]"></i>
       </div>
       <div class="flex flex-col">
         <span class="font-black text-xl sm:text-2xl tracking-tight text-brand-dark leading-none">צמיגי דוד</span>
-        <span class="text-[9px] sm:text-[11px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">שירות מקצועי</span>
+        <span class="text-[9px] sm:text-[11px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">אופנה אישית</span>
       </div>
     </a>
 
@@ -511,19 +511,19 @@
     <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
       <div class="text-center p-6 sm:p-8 bg-white rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-2 hover:shadow-premium transition-all duration-300" data-aos="flip-up" data-aos-delay="0" data-aos-duration="800">
           <div class="text-5xl sm:text-6xl font-black text-brand-primary leading-none mb-2 tracking-tight">
-            <span data-counter="10">0</span><span class="text-3xl sm:text-4xl">+</span>
+            <span data-counter="9">0</span><span class="text-3xl sm:text-4xl">+</span>
           </div>
-          <div class="text-slate-600 font-bold text-sm sm:text-base">שנות ניסיון</div>
+          <div class="text-slate-600 font-bold text-sm sm:text-base">שנות פעילות</div>
         </div><div class="text-center p-6 sm:p-8 bg-white rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-2 hover:shadow-premium transition-all duration-300" data-aos="zoom-in" data-aos-delay="150" data-aos-duration="800">
           <div class="text-5xl sm:text-6xl font-black text-brand-primary leading-none mb-2 tracking-tight">
-            <span data-counter="500">0</span><span class="text-3xl sm:text-4xl">+</span>
+            <span data-counter="5">0</span><span class="text-3xl sm:text-4xl">K</span>
           </div>
-          <div class="text-slate-600 font-bold text-sm sm:text-base">לקוחות מרוצים</div>
+          <div class="text-slate-600 font-bold text-sm sm:text-base">לקוחות</div>
         </div><div class="text-center p-6 sm:p-8 bg-white rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-2 hover:shadow-premium transition-all duration-300" data-aos="flip-up" data-aos-delay="300" data-aos-duration="800">
           <div class="text-5xl sm:text-6xl font-black text-brand-primary leading-none mb-2 tracking-tight">
-            <span data-counter="98">0</span><span class="text-3xl sm:text-4xl">%</span>
+            <span data-counter="4.8">0</span><span class="text-3xl sm:text-4xl"></span>
           </div>
-          <div class="text-slate-600 font-bold text-sm sm:text-base">ממליצים</div>
+          <div class="text-slate-600 font-bold text-sm sm:text-base">דירוג</div>
         </div>
     </div>
   </div>
@@ -534,45 +534,45 @@
   <div class="ticker-wrapper">
     <div class="ticker-track">
       <div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="heart-handshake" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ליווי אישי</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- יחס לכל לקוח</span>
-            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">איכות מובטחת</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- אחריות מלאה</span>
-            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="clock" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">זמינות אישית</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מענה מהיר</span>
+              <i data-lucide="shirt" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">קולקציות עונתיות</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מותגים מובילים</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
               <i data-lucide="sparkles" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">שירות פרימיום</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- תוצאה אמיתית</span>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">סטיילינג אישי</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- ייעוץ ללקוח</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="award" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ניסיון של שנים</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- לקוחות מרוצים</span>
+              <i data-lucide="tag" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">מבצעים שבועיים</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- במחירים אטרקטיביים</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="gift" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">מתנות אריזה</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- שירות חינם</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
               <i data-lucide="heart-handshake" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ליווי אישי</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- יחס לכל לקוח</span>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">יחס אישי</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- אווירה נעימה</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">איכות מובטחת</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- אחריות מלאה</span>
-            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="clock" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">זמינות אישית</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מענה מהיר</span>
+              <i data-lucide="shirt" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">קולקציות עונתיות</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מותגים מובילים</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
               <i data-lucide="sparkles" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">שירות פרימיום</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- תוצאה אמיתית</span>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">סטיילינג אישי</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- ייעוץ ללקוח</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="award" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ניסיון של שנים</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- לקוחות מרוצים</span>
+              <i data-lucide="tag" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">מבצעים שבועיים</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- במחירים אטרקטיביים</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="gift" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">מתנות אריזה</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- שירות חינם</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="heart-handshake" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">יחס אישי</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- אווירה נעימה</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div>
     </div>
   </div>
@@ -643,51 +643,51 @@
     <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
       <div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-right" data-aos-delay="0" data-aos-duration="900">
           <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-            <i data-lucide="sparkles" class="w-7 h-7"></i>
+            <i data-lucide="shirt" class="w-7 h-7"></i>
           </div>
-          <h3 class="text-2xl font-black text-brand-dark mb-2">שירות מקצועי</h3>
-          <p class="text-slate-600 font-medium mb-4 leading-relaxed">ניסיון של שנים בתחום, גישה אישית לכל לקוח.</p>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">קולקציות עונתיות</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">מותגים מובחרים בכל קולקציה.</p>
           <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
-            <li><span class="text-brand-primary font-bold">✓</span> יחס אישי</li><li><span class="text-brand-primary font-bold">✓</span> מקצועיות בכל שלב</li><li><span class="text-brand-primary font-bold">✓</span> שקיפות מלאה</li><li><span class="text-brand-primary font-bold">✓</span> אחריות</li>
+            <li><span class="text-brand-primary font-bold">✓</span> מותגים מובילים</li><li><span class="text-brand-primary font-bold">✓</span> קולקציות עונתיות</li><li><span class="text-brand-primary font-bold">✓</span> מבחר רחב</li><li><span class="text-brand-primary font-bold">✓</span> מידות נדירות</li>
           </ul>
           <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
-            👉 תוצאה: שירות שחוזרים אליו
+            👉 תוצאה: מבחר שאוהבים
           </div>
         </div><div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-left" data-aos-delay="150" data-aos-duration="900">
           <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-            <i data-lucide="heart-handshake" class="w-7 h-7"></i>
+            <i data-lucide="sparkles" class="w-7 h-7"></i>
           </div>
-          <h3 class="text-2xl font-black text-brand-dark mb-2">ליווי אישי</h3>
-          <p class="text-slate-600 font-medium mb-4 leading-relaxed">תשומת לב לכל פרט, מהפנייה הראשונה ועד התוצאה.</p>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">סטיילינג אישי</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">ייעוץ סטייל אישי לכל לקוח.</p>
           <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
-            <li><span class="text-brand-primary font-bold">✓</span> הקשבה אמיתית</li><li><span class="text-brand-primary font-bold">✓</span> פגישות תיאום</li><li><span class="text-brand-primary font-bold">✓</span> ליווי לאורך התהליך</li><li><span class="text-brand-primary font-bold">✓</span> זמינות בכל שאלה</li>
+            <li><span class="text-brand-primary font-bold">✓</span> ייעוץ סטייל</li><li><span class="text-brand-primary font-bold">✓</span> התאמת מידות</li><li><span class="text-brand-primary font-bold">✓</span> שילובים</li><li><span class="text-brand-primary font-bold">✓</span> אבחון אישי</li>
           </ul>
           <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
-            👉 תוצאה: לקוח שמרגיש מובן
+            👉 תוצאה: בגד שמחמיא
           </div>
         </div><div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-right" data-aos-delay="0" data-aos-duration="900">
           <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-            <i data-lucide="shield-check" class="w-7 h-7"></i>
+            <i data-lucide="tag" class="w-7 h-7"></i>
           </div>
-          <h3 class="text-2xl font-black text-brand-dark mb-2">איכות מובטחת</h3>
-          <p class="text-slate-600 font-medium mb-4 leading-relaxed">אנחנו לא מתפשרים — וגם לא נותנים לכם להתפשר.</p>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">מבצעים ומועדון</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">מועדון לקוחות עם הטבות מתחדשות.</p>
           <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
-            <li><span class="text-brand-primary font-bold">✓</span> סטנדרטים גבוהים</li><li><span class="text-brand-primary font-bold">✓</span> חומרים מובחרים</li><li><span class="text-brand-primary font-bold">✓</span> ביצוע מדויק</li><li><span class="text-brand-primary font-bold">✓</span> אחריות בכתב</li>
+            <li><span class="text-brand-primary font-bold">✓</span> מועדון לקוחות</li><li><span class="text-brand-primary font-bold">✓</span> הנחות</li><li><span class="text-brand-primary font-bold">✓</span> מבצעים שבועיים</li><li><span class="text-brand-primary font-bold">✓</span> קופונים</li>
           </ul>
           <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
-            👉 תוצאה: תוצאה שמחזיקה
+            👉 תוצאה: חיסכון לאורך שנה
           </div>
         </div><div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-left" data-aos-delay="150" data-aos-duration="900">
           <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
-            <i data-lucide="clock" class="w-7 h-7"></i>
+            <i data-lucide="gift" class="w-7 h-7"></i>
           </div>
-          <h3 class="text-2xl font-black text-brand-dark mb-2">זמינות אישית</h3>
-          <p class="text-slate-600 font-medium mb-4 leading-relaxed">מענה תוך זמן קצר, גם בשעות חריגות.</p>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">מתנות ואריזה</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">שירותי אריזת מתנה ושוברים.</p>
           <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
-            <li><span class="text-brand-primary font-bold">✓</span> מענה ב-WhatsApp</li><li><span class="text-brand-primary font-bold">✓</span> פגישה תוך 48 שעות</li><li><span class="text-brand-primary font-bold">✓</span> זמינות לשאלות</li><li><span class="text-brand-primary font-bold">✓</span> עדכונים שוטפים</li>
+            <li><span class="text-brand-primary font-bold">✓</span> אריזת מתנה</li><li><span class="text-brand-primary font-bold">✓</span> שוברים</li><li><span class="text-brand-primary font-bold">✓</span> התאמה אישית</li><li><span class="text-brand-primary font-bold">✓</span> משלוח</li>
           </ul>
           <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
-            👉 תוצאה: לא נשארים תקועים
+            👉 תוצאה: מתנה מושלמת
           </div>
         </div>
     </div>
@@ -861,11 +861,11 @@
       <div>
         <div class="flex items-center gap-3 mb-4">
           <div class="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center text-white">
-            <i data-lucide="building-2" class="w-5 h-5"></i>
+            <i data-lucide="shirt" class="w-5 h-5"></i>
           </div>
           <div class="flex flex-col">
             <span class="font-black text-xl text-white leading-none">צמיגי דוד</span>
-            <span class="text-[10px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">שירות מקצועי</span>
+            <span class="text-[10px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">אופנה אישית</span>
           </div>
         </div>
         <p class="text-sm text-slate-400 leading-relaxed">חנות צמיגים · רמת גן</p>

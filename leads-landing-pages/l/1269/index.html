@@ -14,7 +14,7 @@
 <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
 <link rel="preconnect" href="https://images.unsplash.com" crossorigin>
 <link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Heebo:wght@400;500;600;700;800;900&display=swap">
-<link rel="preload" as="image" href="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1600&auto=format&fit=crop&q=85" fetchpriority="high">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=1600&auto=format&fit=crop&q=85" fetchpriority="high">
 
 <!-- Tailwind CSS via CDN (Play CDN — fine for landing pages) -->
 <script src="https://cdn.tailwindcss.com"></script>
@@ -22,8 +22,8 @@
   theme: {
     extend: {
       colors: {
-        'brand-primary': '#3D5468',
-        'brand-primaryDark': '#2E4151',
+        'brand-primary': '#8E5FA0',
+        'brand-primaryDark': '#714880',
         'brand-dark': '#1A1A1A',
         'brand-light': '#FAFAF7',
         'brand-gray': '#F4F0EA',
@@ -33,7 +33,7 @@
         sans: ['Assistant','Heebo','ui-sans-serif','system-ui','sans-serif'],
       },
       boxShadow: {
-        'glow': '0 8px 24px #3D546840',
+        'glow': '0 8px 24px #8E5FA040',
         'premium': '0 12px 40px rgba(0,0,0,0.12)',
       },
     },
@@ -85,8 +85,8 @@
     inset-inline-start: 0; top: 0.55em;
     width: 8px; height: 8px;
     border-radius: 50%;
-    background: #3D5468;
-    box-shadow: 0 0 0 4px #3D54681a;
+    background: #8E5FA0;
+    box-shadow: 0 0 0 4px #8E5FA01a;
   }
 
   /* ═══════ LOGOS STRIP — refined ═══════ */
@@ -106,12 +106,12 @@
   }
   .logo-badge:hover {
     transform: translateY(-2px);
-    border-color: #3D546840;
+    border-color: #8E5FA040;
     box-shadow: 0 6px 18px rgba(0,0,0,0.06);
   }
   .logo-dot {
     width: 6px; height: 6px; border-radius: 50%;
-    background: #3D5468;
+    background: #8E5FA0;
     flex-shrink: 0;
     opacity: 0.65;
     transition: opacity 250ms ease, transform 250ms ease;
@@ -127,7 +127,7 @@
     white-space: nowrap;
     transition: color 250ms ease;
   }
-  .logo-badge:hover .logo-text { color: #2E4151; }
+  .logo-badge:hover .logo-text { color: #714880; }
 
   /* ═══════ PHOTO FRAMES — premium polaroid effect ═══════ */
   .photo-card {
@@ -165,8 +165,8 @@
   .photo-frame-bg-1 {
     position: absolute;
     inset: -16px;
-    background: #3D546814;
-    border: 1.5px solid #3D546833;
+    background: #8E5FA014;
+    border: 1.5px solid #8E5FA033;
     border-radius: 40px;
     transform: rotate(-3deg);
     z-index: -1;
@@ -218,7 +218,7 @@
   /* Scroll progress bar */
   .scroll-progress {
     position: fixed; top: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, #3D5468 var(--prog,0%), transparent var(--prog,0%));
+    background: linear-gradient(90deg, #8E5FA0 var(--prog,0%), transparent var(--prog,0%));
     z-index: 100;
     pointer-events: none;
     transition: background 80ms linear;
@@ -232,7 +232,7 @@
   .nav-link { position: relative; }
   .nav-link::after {
     content: ""; position: absolute; left: 0; right: 0; bottom: -4px;
-    height: 2px; background: #3D5468;
+    height: 2px; background: #8E5FA0;
     transform: scaleX(0); transform-origin: right;
     transition: transform 300ms cubic-bezier(0.22,1,0.36,1);
   }
@@ -295,7 +295,7 @@
     font-family: Georgia, serif;
     font-size: 64px;
     line-height: 0.6;
-    color: #3D5468;
+    color: #8E5FA0;
     opacity: 0.2;
     user-select: none;
   }
@@ -324,8 +324,8 @@
   .testi-card .avatar {
     width: 44px; height: 44px;
     border-radius: 50%;
-    background: #3D54681a;
-    color: #2E4151;
+    background: #8E5FA01a;
+    color: #714880;
     display: grid; place-items: center;
     font-family: 'Assistant','Heebo',sans-serif;
     font-weight: 800;
@@ -348,7 +348,7 @@
   .testi-heading-underline {
     display: block;
     width: 60px; height: 4px;
-    background: #3D5468;
+    background: #8E5FA0;
     border-radius: 2px;
     margin: 18px auto 0;
   }
@@ -364,7 +364,7 @@
     transition: all 250ms ease;
   }
   .swiper-pagination-bullet-active {
-    background: #3D5468 !important;
+    background: #8E5FA0 !important;
     opacity: 1 !important;
     width: 28px !important;
     border-radius: 5px !important;
@@ -399,7 +399,7 @@
       </div>
       <div class="flex flex-col">
         <span class="font-black text-xl sm:text-2xl tracking-tight text-brand-dark leading-none">מספרת רפאל - מספרה ברמת גן</span>
-        <span class="text-[9px] sm:text-[11px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">סטיילינג מקצועי</span>
+        <span class="text-[9px] sm:text-[11px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">סטיילינג נשי</span>
       </div>
     </a>
 
@@ -440,12 +440,12 @@
       </div>
 
       <h1 class="text-4xl sm:text-5xl md:text-6xl font-black text-brand-dark leading-[1.1] mb-4 sm:mb-6 hero-headline">
-        מאוכזבים מתספורות שלא נראות כמו ברפרנס?<br>
-        <span class="text-brand-primary">סטייל שעוצב במיוחד עליכם.</span>
+        עייפה מתספורות שלא נראות כמו ברפרנס?<br>
+        <span class="text-brand-primary">סטייל שעוצב במיוחד עבורך.</span>
       </h1>
 
       <p class="text-base sm:text-lg md:text-xl text-slate-600 mb-6 font-medium leading-relaxed max-w-lg mx-auto lg:mx-0 lg:mr-0 lg:ml-auto" data-aos="fade-up" data-aos-delay="400" data-aos-duration="700">
-        סטייליסט קבוע, הקשבה אמיתית, וטכניקות מודרניות לכל סוג שיער.
+        סטייליסטית קבועה, הקשבה אמיתית, וטכניקות מתקדמות לצבע, החלקה וגוונים.
       </p>
 
       <ul class="text-slate-700 font-bold space-y-3 mb-8 sm:mb-10 text-base sm:text-lg max-w-lg mx-auto lg:mx-0 lg:mr-0 lg:ml-auto text-right" data-aos="fade-up" data-aos-delay="500" data-aos-duration="700">
@@ -458,17 +458,17 @@
             <svg class="w-6 h-6 text-brand-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
             </svg>
-            <span>טכניקות מתקדמות לכל סוג שיער</span>
+            <span>צבע ובלאיאז&#x27; מקצועי</span>
           </li><li class="flex items-start gap-3">
             <svg class="w-6 h-6 text-brand-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
             </svg>
-            <span>מוצרים פרימיום בלבד</span>
+            <span>החלקות וטיפולי שיקום שיער</span>
           </li><li class="flex items-start gap-3">
             <svg class="w-6 h-6 text-brand-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
               <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
             </svg>
-            <span>אווירה רגועה ומטופחת</span>
+            <span>אווירה רגועה ומפנקת</span>
           </li>
       </ul>
 
@@ -490,11 +490,11 @@
         <div class="photo-frame-bg-1"></div>
         <div class="photo-frame-bg-2"></div>
         <div class="photo-inner">
-          <img src="https://images.unsplash.com/photo-1503951914875-452162b0f3f1?w=1600&auto=format&fit=crop&q=85" alt="מספרת רפאל - מספרה ברמת גן — מספרה" loading="eager" fetchpriority="high">
+          <img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=1600&auto=format&fit=crop&q=85" alt="מספרת רפאל - מספרה ברמת גן — מספרה" loading="eager" fetchpriority="high">
         </div>
         <div class="photo-badge-overlay">
           <span class="block text-3xl sm:text-4xl font-black text-brand-primary leading-none mb-1">+3500</span>
-          <span class="font-bold text-sm text-slate-700">תספורות</span>
+          <span class="font-bold text-sm text-slate-700">לקוחות מרוצות</span>
         </div>
       </div>
     </div>
@@ -535,44 +535,44 @@
     <div class="ticker-track">
       <div class="flex items-center gap-3 shrink-0">
               <i data-lucide="scissors" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">סטיילינג מותאם</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- לפנים ולסגנון</span>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">סטיילינג נשי מותאם</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- לפנים, לסגנון ולאישיות</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="palette" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">צבע ובלאיאז&#x27;</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- טכניקות מתקדמות שמחזיקות</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
               <i data-lucide="sparkles" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">טכניקות מתקדמות</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- צבע, החלקה, גוונים</span>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">החלקות וטיפולים</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- יפנית, קרטין ושיקום</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
               <i data-lucide="heart-handshake" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ספר קבוע</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- אותו ספר תמיד</span>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ספרית קבועה</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- הקשבה אמיתית בכל ביקור</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
               <i data-lucide="clock" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
               <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">תורים זמינים</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- גם בערב</span>
-            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="award" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">+3500 תספורות</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מבחר רחב</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- גם בערב ובסוף שבוע</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
               <i data-lucide="scissors" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">סטיילינג מותאם</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- לפנים ולסגנון</span>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">סטיילינג נשי מותאם</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- לפנים, לסגנון ולאישיות</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="palette" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">צבע ובלאיאז&#x27;</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- טכניקות מתקדמות שמחזיקות</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
               <i data-lucide="sparkles" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">טכניקות מתקדמות</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- צבע, החלקה, גוונים</span>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">החלקות וטיפולים</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- יפנית, קרטין ושיקום</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
               <i data-lucide="heart-handshake" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ספר קבוע</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- אותו ספר תמיד</span>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ספרית קבועה</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- הקשבה אמיתית בכל ביקור</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
               <i data-lucide="clock" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
               <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">תורים זמינים</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- גם בערב</span>
-            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
-              <i data-lucide="award" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
-              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">+3500 תספורות</span>
-              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מבחר רחב</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- גם בערב ובסוף שבוע</span>
             </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div>
     </div>
   </div>
@@ -588,7 +588,7 @@
           <div class="photo-frame-bg-1"></div>
           <div class="photo-frame-bg-2"></div>
           <div class="photo-inner">
-            <img src="https://images.unsplash.com/photo-1521590832167-7bcbfaa6381f?w=1600&auto=format&fit=crop&q=85" alt="מספרה" loading="lazy">
+            <img src="https://images.unsplash.com/photo-1560066984-138dadb4c035?w=1600&auto=format&fit=crop&q=85" alt="מספרה" loading="lazy">
           </div>
           <div class="photo-badge-overlay">
             <span class="block text-3xl sm:text-4xl font-black text-brand-primary leading-none mb-1">5.0★</span>
@@ -606,25 +606,25 @@
 
         <div class="text-slate-600 text-base sm:text-lg leading-relaxed mb-6 font-medium">
           <ul class="pain-list mb-4">
-            <li>תספורת שלא מתאימה לפנים שלכם?</li><li>צבע שדהה אחרי שבועיים?</li><li>חיכיתם שעה ואז מיהרו אתכם?</li><li>ספר חדש בכל פעם — אין רצף?</li>
+            <li>תספורת שלא מתאימה לפנים שלך?</li><li>צבע שדהה אחרי שבועיים?</li><li>חיכית שעה ואז מיהרו אותך?</li><li>מספרה חדשה בכל פעם — בלי רצף?</li><li>החלקה שלא החזיקה חודש?</li><li>המלצות שלא התאימו לסוג השיער?</li>
           </ul>
           <div class="bg-brand-primary/5 p-4 border-r-4 border-brand-primary mt-4 rounded-l-lg font-bold text-brand-dark">
-            ✂️ תספורת טובה מתחילה בהקשבה. אצלנו לא חותכים לפני שמבינים בדיוק מה מתאים לכם.
+            ✂️ תספורת טובה מתחילה בהקשבה. אצלנו לא חותכים לפני שמבינות בדיוק מה מתאים לפנים שלך.
           </div>
         </div>
 
-        <h3 class="text-2xl font-black text-brand-dark mb-3 mt-8">לא חותכים על עיוור</h3>
-        <p class="text-slate-600 text-base sm:text-lg leading-relaxed mb-6 font-medium">אנחנו מקשיבים לסגנון, לאישיות ולמה שמתאים לפנים שלכם. רק אז מתחילים לחתוך.</p>
+        <h3 class="text-2xl font-black text-brand-dark mb-3 mt-8">לא חותכות על עיוור</h3>
+        <p class="text-slate-600 text-base sm:text-lg leading-relaxed mb-6 font-medium">אנחנו מקשיבות לסגנון, לאישיות ולמה שמתאים לפנים שלך. רק אז מתחילים לחתוך.</p>
 
         <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
           <div class="bg-brand-gray p-5 sm:p-6 rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-1 hover:shadow-md transition-all duration-300">
             <i data-lucide="sparkles" class="w-7 h-7 sm:w-8 sm:h-8 text-brand-primary mb-3"></i>
-            <h4 class="font-black text-brand-dark text-base sm:text-lg mb-1">סטיילינג מותאם</h4>
-            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">אנחנו לא חותכים לפני שמבינים אתכם.</p>
+            <h4 class="font-black text-brand-dark text-base sm:text-lg mb-1">סטיילינג נשי מותאם</h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">מבינות את הסגנון שלך לפני שמתחילים.</p>
           </div><div class="bg-brand-gray p-5 sm:p-6 rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-1 hover:shadow-md transition-all duration-300">
             <i data-lucide="heart" class="w-7 h-7 sm:w-8 sm:h-8 text-brand-primary mb-3"></i>
-            <h4 class="font-black text-brand-dark text-base sm:text-lg mb-1">ליווי אישי קבוע</h4>
-            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">אותו ספר, אותה הקשבה, בכל פעם שאתם מגיעים.</p>
+            <h4 class="font-black text-brand-dark text-base sm:text-lg mb-1">ספרית קבועה</h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">אותה ספרית, אותה הקשבה, בכל ביקור.</p>
           </div>
         </div>
       </div>
@@ -645,10 +645,10 @@
           <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
             <i data-lucide="scissors" class="w-7 h-7"></i>
           </div>
-          <h3 class="text-2xl font-black text-brand-dark mb-2">תספורת מותאמת</h3>
-          <p class="text-slate-600 font-medium mb-4 leading-relaxed">סטיילינג שעוצב במיוחד לפנים, לסגנון ולאישיות שלך.</p>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">תספורת נשית מותאמת</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">ייעוץ סגנון, חיתוך מדויק לפנים ולאישיות, גימור מקצועי.</p>
           <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
-            <li><span class="text-brand-primary font-bold">✓</span> ייעוץ סטייל לפני תספורת</li><li><span class="text-brand-primary font-bold">✓</span> טכניקות מודרניות</li><li><span class="text-brand-primary font-bold">✓</span> מוצרים פרימיום בלבד</li><li><span class="text-brand-primary font-bold">✓</span> אווירה רגועה</li>
+            <li><span class="text-brand-primary font-bold">✓</span> ייעוץ סטייל לפני תספורת</li><li><span class="text-brand-primary font-bold">✓</span> חיתוך לפי צורת פנים</li><li><span class="text-brand-primary font-bold">✓</span> גימור מקצועי</li><li><span class="text-brand-primary font-bold">✓</span> אווירה מפנקת</li>
           </ul>
           <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
             👉 תוצאה: חיוך מהמראה
@@ -657,37 +657,37 @@
           <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
             <i data-lucide="palette" class="w-7 h-7"></i>
           </div>
-          <h3 class="text-2xl font-black text-brand-dark mb-2">צבע והבהרה</h3>
-          <p class="text-slate-600 font-medium mb-4 leading-relaxed">טכניקות מתקדמות וצבעים שומרי-גוון לאורך זמן.</p>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">צבע ובלאיאז&#x27;</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">טכניקות צבע מתקדמות — בלאיאז&#x27;, אומבר ותיקוני גוון.</p>
           <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
-            <li><span class="text-brand-primary font-bold">✓</span> בלאיאז&#x27; ואומבר</li><li><span class="text-brand-primary font-bold">✓</span> תיקון צבע</li><li><span class="text-brand-primary font-bold">✓</span> מסכות שיקום</li><li><span class="text-brand-primary font-bold">✓</span> אבחון מקצועי</li>
+            <li><span class="text-brand-primary font-bold">✓</span> בלאיאז&#x27; ואומבר</li><li><span class="text-brand-primary font-bold">✓</span> תיקון צבע</li><li><span class="text-brand-primary font-bold">✓</span> מסכות שיקום</li><li><span class="text-brand-primary font-bold">✓</span> אבחון מקצועי לפני הצבע</li>
           </ul>
           <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
-            👉 תוצאה: צבע שמחזיק
+            👉 תוצאה: צבע שמחזיק חודשים
           </div>
         </div><div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-right" data-aos-delay="0" data-aos-duration="900">
           <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
             <i data-lucide="sparkles" class="w-7 h-7"></i>
           </div>
-          <h3 class="text-2xl font-black text-brand-dark mb-2">החלקה וטיפולי שיער</h3>
-          <p class="text-slate-600 font-medium mb-4 leading-relaxed">החלקה יפנית, טיפולי קרטין ושיקום שיער.</p>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">החלקות וטיפולי שיקום</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">החלקה יפנית, קרטין ברזילאי וטיפולי בוטוקס לשיער.</p>
           <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
-            <li><span class="text-brand-primary font-bold">✓</span> החלקה יפנית 6 חודשים</li><li><span class="text-brand-primary font-bold">✓</span> קרטין ברזילאי</li><li><span class="text-brand-primary font-bold">✓</span> טיפולי בוטוקס לשיער</li><li><span class="text-brand-primary font-bold">✓</span> החזרת שיער בריא</li>
+            <li><span class="text-brand-primary font-bold">✓</span> החלקה יפנית 6 חודשים</li><li><span class="text-brand-primary font-bold">✓</span> קרטין ברזילאי</li><li><span class="text-brand-primary font-bold">✓</span> בוטוקס לשיער</li><li><span class="text-brand-primary font-bold">✓</span> שיקום שיער פגום</li>
           </ul>
           <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
-            👉 תוצאה: שיער שמרגיש בריא
+            👉 תוצאה: שיער חלק ובריא
           </div>
         </div><div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-left" data-aos-delay="150" data-aos-duration="900">
           <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
             <i data-lucide="heart-handshake" class="w-7 h-7"></i>
           </div>
-          <h3 class="text-2xl font-black text-brand-dark mb-2">חבילות מנויים</h3>
-          <p class="text-slate-600 font-medium mb-4 leading-relaxed">מסלולי תספורת חודשיים במחירים אטרקטיביים.</p>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">מנוי לקוחה קבועה</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">מסלולי טיפוח חודשיים במחיר מוזל עם תור מובטח.</p>
           <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
-            <li><span class="text-brand-primary font-bold">✓</span> תספורת + שיוף חודשי</li><li><span class="text-brand-primary font-bold">✓</span> הנחה לקבועים</li><li><span class="text-brand-primary font-bold">✓</span> תור מובטח</li><li><span class="text-brand-primary font-bold">✓</span> מתנה לכל מצטרף חדש</li>
+            <li><span class="text-brand-primary font-bold">✓</span> תספורת + שיוף חודשי</li><li><span class="text-brand-primary font-bold">✓</span> הנחה לקבועות</li><li><span class="text-brand-primary font-bold">✓</span> תור מובטח</li><li><span class="text-brand-primary font-bold">✓</span> הפתעה לכל מצטרפת חדשה</li>
           </ul>
           <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
-            👉 תוצאה: חיסכון לטווח ארוך
+            👉 תוצאה: חיסכון וטיפוח קבוע
           </div>
         </div>
     </div>
@@ -826,7 +826,7 @@
       <div data-aos="fade-left">
         <span class="text-brand-primary font-black tracking-widest text-xs sm:text-sm uppercase mb-3 inline-block bg-white/5 border border-white/10 px-3 py-1 rounded-full">צרו קשר</span>
         <h2 class="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight mb-6">
-          מוכנים לסטייל חדש?<br><span class="text-brand-primary">קבעו תור.</span>
+          מוכנת לסטייל חדש?<br><span class="text-brand-primary">קבעי תור.</span>
         </h2>
         <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 font-medium max-w-lg">נחזור אליכם תוך זמן קצר. ללא התחייבות, ללא הפתעות.</p>
         <div class="flex flex-wrap gap-3">
@@ -865,7 +865,7 @@
           </div>
           <div class="flex flex-col">
             <span class="font-black text-xl text-white leading-none">מספרת רפאל - מספרה ברמת גן</span>
-            <span class="text-[10px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">סטיילינג מקצועי</span>
+            <span class="text-[10px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">סטיילינג נשי</span>
           </div>
         </div>
         <p class="text-sm text-slate-400 leading-relaxed">מספרה · רמת גן</p>
