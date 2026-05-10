@@ -2,754 +2,1132 @@
 <html lang="he" dir="rtl">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1">
-<title>מרכז המזגנים | תיקון והתקנת מזגנים ראשון לציון | נתנאל</title>
-<meta name="description" content="מרכז המזגנים – תיקון, התקנה וניקוי מזגנים בראשון לציון והסביבה. 12 שנות ניסיון, מחירים שקופים, אחריות על כל עבודה. התקשרו: 050-937-5678">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>מרכז המזגנים — מזגן בראשון לציון</title>
+<meta name="description" content="מרכז המזגנים — מזגן מקצועי בראשון לציון. שירות אישי, ניסיון של שנים, מחיר הוגן.">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta property="og:title" content="מרכז המזגנים — מזגן בראשון לציון">
+<meta property="og:description" content="מרכז המזגנים — מזגן מקצועי בראשון לציון. שירות אישי, ניסיון של שנים, מחיר הוגן.">
+<meta property="og:type" content="website">
+
 <link rel="preconnect" href="https://fonts.googleapis.com">
-<link href="https://fonts.googleapis.com/css2?family=Heebo:wght@300;400;500;600;700;800;900&display=swap" rel="stylesheet">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Heebo:wght@400;500;600;700;800;900&display=swap">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&auto=format&fit=crop&q=85" fetchpriority="high">
+
+<!-- Tailwind CSS via CDN (Play CDN — fine for landing pages) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        'brand-primary': '#3E92CC',
+        'brand-primaryDark': '#2E7AB0',
+        'brand-dark': '#1A1A1A',
+        'brand-light': '#FAFAF7',
+        'brand-gray': '#F4F0EA',
+        'brand-whatsapp': '#25D366',
+      },
+      fontFamily: {
+        sans: ['Assistant','Heebo','ui-sans-serif','system-ui','sans-serif'],
+      },
+      boxShadow: {
+        'glow': '0 8px 24px #3E92CC40',
+        'premium': '0 12px 40px rgba(0,0,0,0.12)',
+      },
+    },
+  },
+}</script>
+
+<!-- AOS — scroll animations -->
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+<!-- Swiper — carousel for testimonials -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<!-- Lucide icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
 <style>
-*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+  body { font-family: 'Assistant', 'Heebo', system-ui, sans-serif; }
+  /* Sections — paint containment so scroll repaint stays cheap */
+  section { contain: layout style paint; }
+  /* Hero must NOT contain because the floating blobs need to overflow into next section visually — but we set overflow:hidden so it's fine */
+  /* Images render hint */
+  img { image-rendering: auto; }
+  .glass-nav {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+  }
+  .nav-shadow { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
 
-:root {
-  --blue: #13aff0;
-  --blue-dark: #0e8fc8;
-  --blue-light: #e8f6fd;
-  --text: #333;
-  --text-light: #666;
-  --border: #e0e0e0;
-  --bg-gray: #f5f5f5;
-  --white: #fff;
-  --footer-bg: #222;
-}
+  /* AOS RTL — flip fade-left/right */
+  [dir="rtl"] [data-aos="fade-left"] { transform: translate3d(-50px, 0, 0); }
+  [dir="rtl"] [data-aos="fade-right"] { transform: translate3d(50px, 0, 0); }
+  [dir="rtl"] [data-aos="fade-left"].aos-animate,
+  [dir="rtl"] [data-aos="fade-right"].aos-animate { transform: translate3d(0, 0, 0); }
 
-html { scroll-behavior: smooth; }
-body { font-family: 'Heebo', sans-serif; background: var(--white); color: var(--text); line-height: 1.7; font-size: 16px; }
-a { color: var(--blue); text-decoration: none; }
-a:hover { color: var(--blue-dark); }
-img { max-width: 100%; height: auto; display: block; }
+  /* Pain bullet list */
+  .pain-list { list-style: none; padding: 0; }
+  .pain-list li {
+    position: relative;
+    padding-inline-start: 1.5rem;
+    margin-bottom: 0.625rem;
+    line-height: 1.55;
+  }
+  .pain-list li::before {
+    content: ""; position: absolute;
+    inset-inline-start: 0; top: 0.55em;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #3E92CC;
+    box-shadow: 0 0 0 4px #3E92CC1a;
+  }
 
-/* TOP BAR */
-#top-bar { background: #1a1a1a; color: #ccc; font-size: 13px; padding: 8px 0; text-align: center; }
-#top-bar a { color: #ccc; }
-#top-bar a:hover { color: var(--blue); }
+  /* ═══════ LOGOS STRIP — refined ═══════ */
+  .logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 56px;
+    padding: 0 22px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    flex-shrink: 0;
+    transition: all 250ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .logo-badge:hover {
+    transform: translateY(-2px);
+    border-color: #3E92CC40;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  }
+  .logo-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #3E92CC;
+    flex-shrink: 0;
+    opacity: 0.65;
+    transition: opacity 250ms ease, transform 250ms ease;
+  }
+  .logo-badge:hover .logo-dot { opacity: 1; transform: scale(1.4); }
+  .logo-text {
+    font-family: 'Assistant', 'Heebo', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: #4a4a4a;
+    letter-spacing: 0.04em;
+    line-height: 1.15;
+    white-space: nowrap;
+    transition: color 250ms ease;
+  }
+  .logo-badge:hover .logo-text { color: #2E7AB0; }
 
-/* HEADER */
-#site-header {
-  background: var(--white); border-bottom: 1px solid var(--border);
-  padding: 18px 0; position: sticky; top: 0; z-index: 100;
-  box-shadow: 0 2px 8px rgba(0,0,0,0.06);
-}
-.header-inner {
-  max-width: 1140px; margin: 0 auto; padding: 0 20px;
-  display: flex; align-items: center; justify-content: space-between; gap: 20px;
-}
-.site-logo { font-size: 1.55rem; font-weight: 900; color: var(--text); line-height: 1.1; flex-shrink: 0; }
-.site-logo span { color: var(--blue); }
-.site-logo small { display: block; font-size: 0.58rem; font-weight: 400; color: var(--text-light); letter-spacing: 0.5px; }
-#site-nav { display: flex; gap: 24px; list-style: none; align-items: center; }
-#site-nav a { color: var(--text); font-weight: 500; font-size: 0.92rem; transition: color .2s; white-space: nowrap; }
-#site-nav a:hover { color: var(--blue); }
-.header-cta {
-  display: inline-flex; align-items: center; gap: 8px;
-  background: var(--blue); color: #fff; font-weight: 700;
-  padding: 11px 20px; border-radius: 4px; font-size: 0.95rem;
-  white-space: nowrap; transition: background .2s; flex-shrink: 0;
-}
-.header-cta:hover { background: var(--blue-dark); color: #fff; }
+  /* ═══════ PHOTO FRAMES — premium polaroid effect ═══════ */
+  .photo-card {
+    position: relative;
+    border-radius: 32px;
+    overflow: hidden;
+    background: #fff;
+    padding: 10px;
+    box-shadow: 0 24px 60px -20px rgba(0,0,0,0.25), 0 8px 20px -8px rgba(0,0,0,0.1);
+    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 600ms ease;
+  }
+  .photo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 32px 70px -20px rgba(0,0,0,0.28), 0 12px 24px -8px rgba(0,0,0,0.12);
+  }
+  .photo-inner {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/5;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #e5e7eb;
+  }
+  .photo-inner img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .photo-card:hover .photo-inner img { transform: scale(1.04); }
+  .photo-inner::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.18) 100%);
+    pointer-events: none;
+  }
+  .photo-frame-bg-1 {
+    position: absolute;
+    inset: -16px;
+    background: #3E92CC14;
+    border: 1.5px solid #3E92CC33;
+    border-radius: 40px;
+    transform: rotate(-3deg);
+    z-index: -1;
+  }
+  .photo-frame-bg-2 {
+    position: absolute;
+    inset: -16px;
+    background: rgba(0,0,0,0.04);
+    border-radius: 40px;
+    transform: rotate(2deg);
+    z-index: -2;
+  }
+  .photo-badge-overlay {
+    position: absolute;
+    bottom: 24px;
+    inset-inline-start: -16px;
+    background: #fff;
+    padding: 16px 22px;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px -8px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.04);
+    z-index: 5;
+  }
+  @media (max-width: 768px) {
+    .photo-card { padding: 8px; border-radius: 24px; }
+    .photo-inner { border-radius: 18px; aspect-ratio: 4/3; }
+    .photo-frame-bg-1, .photo-frame-bg-2 { inset: -12px; border-radius: 32px; }
+    .photo-badge-overlay { padding: 12px 16px; bottom: 16px; inset-inline-start: -8px; }
+  }
 
-/* PAGE BANNER */
-.page-banner {
-  position: relative; height: 420px; overflow: hidden; background: #000;
-  display: flex; align-items: center; justify-content: center; text-align: center;
-}
-.page-banner img {
-  position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover;
-  opacity: 0.45; object-position: center center;
-}
-.banner-content { position: relative; z-index: 1; padding: 20px; }
-.banner-content h1 { font-size: clamp(2rem, 5vw, 3.2rem); font-weight: 900; color: #fff; margin-bottom: 12px; line-height: 1.2; }
-.banner-content p { color: rgba(255,255,255,0.88); font-size: 1.1rem; }
-.breadcrumbs { margin-top: 14px; font-size: 0.85rem; color: rgba(255,255,255,0.7); }
-.breadcrumbs a { color: rgba(255,255,255,0.85); }
+  /* ═══════ HERO — static blobs (drift removed for perf — animating blur() is very expensive) ═══════ */
+  .blob-drift-1, .blob-drift-2 { /* static — kept the class names for HTML compat */ will-change: auto; }
 
-/* TRUST BAR */
-.trust-bar { background: var(--blue); }
-.trust-bar-inner {
-  max-width: 1140px; margin: 0 auto; padding: 0 20px;
-  display: flex; justify-content: space-between; flex-wrap: wrap;
-}
-.trust-item { display: flex; align-items: center; gap: 10px; padding: 16px 0; font-size: 0.92rem; font-weight: 600; color: #fff; }
-.trust-item .icon { font-size: 1.3rem; }
+  /* Headline word-reveal (split via JS) */
+  .word-wrap { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 0.04em; }
+  .word-wrap > .word {
+    display: inline-block;
+    transform: translateY(110%);
+    transition: transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .word-wrap.reveal > .word { transform: translateY(0); }
 
-/* MAIN LAYOUT */
-.main-wrap {
-  max-width: 1140px; margin: 0 auto; padding: 48px 20px;
-  display: grid; grid-template-columns: 1fr 290px; gap: 40px;
-}
-.content-area { min-width: 0; }
+  /* Eyebrow pill — pulsing dot (slower for less GPU churn) */
+  @keyframes eyebrow-ping {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+  .eyebrow-ping { animation: eyebrow-ping 3s cubic-bezier(0,0,0.2,1) infinite; will-change: transform, opacity; }
 
-/* TYPOGRAPHY */
-h2.section-title {
-  font-size: 1.55rem; font-weight: 800; color: var(--text);
-  border-right: 4px solid var(--blue); padding-right: 14px;
-  margin-bottom: 16px; line-height: 1.3; margin-top: 36px;
-}
-h2.section-title:first-child { margin-top: 0; }
-h3.sub-title { font-size: 1.1rem; font-weight: 700; margin-bottom: 10px; color: var(--text); margin-top: 20px; }
-p { margin-bottom: 14px; color: var(--text-light); line-height: 1.8; }
-strong { color: var(--text); }
-ul.content-list { padding-right: 20px; margin-bottom: 20px; }
-ul.content-list li { margin-bottom: 8px; color: var(--text-light); }
-ul.content-list li::marker { color: var(--blue); }
+  /* Scroll progress bar */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #3E92CC var(--prog,0%), transparent var(--prog,0%));
+    z-index: 100;
+    pointer-events: none;
+    transition: background 80ms linear;
+  }
 
-/* PHONE CTA BUTTON */
-.phone-cta-btn {
-  display: inline-flex; align-items: center; gap: 10px;
-  background: var(--blue); color: #fff; font-weight: 800;
-  padding: 14px 28px; border-radius: 4px; font-size: 1.05rem;
-  margin: 8px 0 24px; transition: background .2s;
-}
-.phone-cta-btn:hover { background: var(--blue-dark); color: #fff; }
+  /* Card hover lift — universal */
+  .lift-card { transition: transform 350ms cubic-bezier(0.22,1,0.36,1), box-shadow 350ms ease, border-color 350ms ease; }
+  .lift-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15); }
 
-/* SECTION CTA */
-.section-cta { background: var(--blue-light); border-right: 4px solid var(--blue); padding: 20px; border-radius: 4px; margin: 24px 0; }
-.section-cta p { margin: 0; color: var(--text); }
+  /* Animated underline on nav links */
+  .nav-link { position: relative; }
+  .nav-link::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -4px;
+    height: 2px; background: #3E92CC;
+    transform: scaleX(0); transform-origin: right;
+    transition: transform 300ms cubic-bezier(0.22,1,0.36,1);
+  }
+  .nav-link:hover::after { transform: scaleX(1); transform-origin: left; }
 
-/* PRICING TABLE */
-.pricing-table { width: 100%; border-collapse: collapse; margin: 16px 0 8px; font-size: 0.9rem; }
-.pricing-table th { background: var(--blue); color: #fff; padding: 11px 14px; text-align: right; font-weight: 700; }
-.pricing-table td { padding: 11px 14px; border-bottom: 1px solid var(--border); vertical-align: top; color: var(--text-light); }
-.pricing-table tr:nth-child(even) td { background: #f9f9f9; }
-.pricing-table tr:hover td { background: var(--blue-light); }
-.price-col { font-weight: 700; color: var(--blue); white-space: nowrap; }
-.pricing-note { font-size: 0.82rem; color: #999; margin-top: 6px; font-style: italic; }
+  /* CTA button hover gloss */
+  .btn-gloss { position: relative; overflow: hidden; }
+  .btn-gloss::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.4) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 800ms cubic-bezier(0.22,1,0.36,1);
+  }
+  .btn-gloss:hover::before { transform: translateX(120%); }
 
-/* FAQ */
-.faq-item { border-bottom: 1px solid var(--border); }
-.faq-q {
-  width: 100%; text-align: right; background: none; border: none;
-  padding: 16px 0; font-family: 'Heebo', sans-serif; font-size: 1rem; font-weight: 700;
-  color: var(--text); cursor: pointer; display: flex; justify-content: space-between;
-  align-items: center; gap: 12px;
-}
-.faq-q:hover { color: var(--blue); }
-.faq-q::after { content: '+'; font-size: 1.4rem; color: var(--blue); flex-shrink: 0; transition: transform .25s; }
-.faq-item.open .faq-q::after { transform: rotate(45deg); }
-.faq-a { display: none; padding: 0 0 16px; color: var(--text-light); line-height: 1.8; }
-.faq-item.open .faq-a { display: block; }
+  /* WA pulse — slower & GPU-promoted */
+  @keyframes wa-pulse { 0% { transform: scale(1); opacity: 0.55; } 100% { transform: scale(1.55); opacity: 0; } }
+  .wa-pulse-ring { animation: wa-pulse 3s ease-out infinite; will-change: transform, opacity; transform: translateZ(0); }
 
-/* INFO BOX */
-.info-box { background: var(--bg-gray); border-radius: 6px; padding: 20px 24px; margin: 20px 0; }
-.info-box h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 10px; color: var(--text); }
+  /* Dark ticker (newidan-style) — only continuous animation on the page; GPU-promoted */
+  .ticker-wrapper {
+    overflow: hidden;
+    padding: 14px 0;
+    -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+    contain: paint;
+  }
+  .ticker-track {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    animation: ticker-scroll 38s linear infinite;
+    width: max-content;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  [dir="rtl"] .ticker-track { animation-direction: reverse; }
+  .marquee-section:hover .ticker-track { animation-play-state: paused; }
+  @keyframes ticker-scroll { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-50%,0,0); } }
+  @media (min-width: 640px) { .ticker-track { gap: 48px; } }
 
-/* SERVICES SECTION */
-.services-section { background: var(--bg-gray); padding: 60px 0; }
-.services-inner { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
-.section-heading { text-align: center; margin-bottom: 40px; }
-.section-heading h2 { font-size: 1.9rem; font-weight: 900; margin-bottom: 10px; border: none; padding: 0; }
-.section-heading h2::after { content: ''; display: block; width: 60px; height: 4px; background: var(--blue); margin: 12px auto 0; }
-.section-heading p { color: var(--text-light); max-width: 520px; margin: 0 auto; }
-.services-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; }
-.service-card { background: var(--white); border-radius: 6px; overflow: hidden; box-shadow: 0 2px 12px rgba(0,0,0,0.07); transition: transform .25s, box-shadow .25s; }
-.service-card:hover { transform: translateY(-4px); box-shadow: 0 8px 24px rgba(0,0,0,0.12); }
-.service-card img { width: 100%; height: 195px; object-fit: cover; }
-.service-card-body { padding: 18px; }
-.service-card-body h3 { font-size: 1.05rem; font-weight: 800; margin-bottom: 8px; color: var(--text); }
-.service-card-body p { font-size: 0.88rem; margin-bottom: 12px; }
-.price-tag { display: inline-block; background: var(--blue-light); color: var(--blue); font-weight: 700; padding: 4px 12px; border-radius: 20px; font-size: 0.88rem; }
+  /* ═══════ TESTIMONIAL CARDS — newidan style ═══════ */
+  .testi-card {
+    position: relative;
+    background: #fff;
+    border-radius: 24px;
+    padding: 48px 28px 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px -12px rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: transform 350ms cubic-bezier(0.22,1,0.36,1), box-shadow 350ms ease;
+    height: 100%;
+    display: flex; flex-direction: column;
+  }
+  .testi-card:hover { transform: translateY(-6px); box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 20px 40px -12px rgba(0,0,0,0.18); }
+  .testi-card .quote-mark {
+    position: absolute;
+    top: 22px;
+    inset-inline-start: 28px;
+    font-family: Georgia, serif;
+    font-size: 64px;
+    line-height: 0.6;
+    color: #3E92CC;
+    opacity: 0.2;
+    user-select: none;
+  }
+  .testi-card .stars {
+    position: absolute;
+    top: 28px;
+    inset-inline-end: 28px;
+    color: #F5A524;
+    font-size: 16px;
+    letter-spacing: 2px;
+  }
+  .testi-card .quote-text {
+    color: #2a2a2a;
+    font-size: 16px;
+    line-height: 1.65;
+    font-weight: 500;
+    flex: 1;
+    margin-top: 22px;
+    margin-bottom: 22px;
+  }
+  .testi-card .testi-foot {
+    display: flex; align-items: center; gap: 14px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+  }
+  .testi-card .avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: #3E92CC1a;
+    color: #2E7AB0;
+    display: grid; place-items: center;
+    font-family: 'Assistant','Heebo',sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .testi-card .name {
+    font-weight: 800;
+    font-size: 16px;
+    color: #1a1a1a;
+    line-height: 1.2;
+  }
+  .testi-card .meta {
+    font-size: 12px;
+    color: #7a7a7a;
+    margin-top: 3px;
+  }
 
-/* STEPS */
-.steps-section { padding: 60px 0; }
-.steps-inner { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
-.steps-grid { display: grid; grid-template-columns: repeat(4,1fr); gap: 20px; margin-top: 40px; text-align: center; }
-.step-box { padding: 20px 12px; }
-.step-num { width: 52px; height: 52px; border-radius: 50%; background: var(--blue); color: #fff; font-size: 1.3rem; font-weight: 900; display: flex; align-items: center; justify-content: center; margin: 0 auto 14px; }
-.step-box h3 { font-size: 1rem; font-weight: 800; margin-bottom: 8px; color: var(--text); }
-.step-box p { font-size: 0.86rem; color: var(--text-light); margin: 0; }
+  /* Testimonials — section heading underline */
+  .testi-heading-underline {
+    display: block;
+    width: 60px; height: 4px;
+    background: #3E92CC;
+    border-radius: 2px;
+    margin: 18px auto 0;
+  }
 
-/* WHY US */
-.why-section { background: var(--bg-gray); padding: 60px 0; }
-.why-inner { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
-.why-grid { display: grid; grid-template-columns: repeat(3,1fr); gap: 24px; margin-top: 40px; }
-.why-card { background: #fff; padding: 26px 22px; border-radius: 6px; border-top: 4px solid var(--blue); box-shadow: 0 2px 8px rgba(0,0,0,0.06); }
-.why-card .icon { font-size: 2rem; margin-bottom: 12px; }
-.why-card h3 { font-size: 1rem; font-weight: 800; margin-bottom: 8px; color: var(--text); }
-.why-card p { font-size: 0.88rem; margin: 0; color: var(--text-light); }
+  /* Swiper carousel customization */
+  .testi-swiper { padding-bottom: 8px; }
+  .testi-swiper .swiper-slide { height: auto; display: flex; }
+  .testi-swiper .swiper-slide > .testi-card { width: 100%; }
+  .swiper-pagination-bullet {
+    background: #d4d4d4 !important;
+    opacity: 0.6 !important;
+    width: 10px !important; height: 10px !important;
+    transition: all 250ms ease;
+  }
+  .swiper-pagination-bullet-active {
+    background: #3E92CC !important;
+    opacity: 1 !important;
+    width: 28px !important;
+    border-radius: 5px !important;
+  }
 
-/* BRANDS */
-.brands-section { padding: 48px 0; text-align: center; }
-.brands-inner { max-width: 1140px; margin: 0 auto; padding: 0 20px; }
-.brands-label { font-size: 0.82rem; color: var(--text-light); text-transform: uppercase; letter-spacing: 1.5px; margin-bottom: 24px; }
-.brands-list { display: flex; flex-wrap: wrap; gap: 10px; justify-content: center; }
-.brand-tag { background: #f0f0f0; color: var(--text-light); padding: 8px 20px; border-radius: 4px; font-weight: 600; font-size: 0.9rem; transition: background .2s, color .2s; }
-.brand-tag:hover { background: var(--blue); color: #fff; }
+  /* A11y modes */
+  body.hc { filter: contrast(1.25); }
+  body.no-motion *, body.no-motion *::before, body.no-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  body.ul-links a:not(.nav-cta):not(.btn-primary):not(.btn-wa) { text-decoration: underline; }
 
-/* CTA BAND */
-.cta-band { background: var(--blue); color: #fff; padding: 60px 20px; text-align: center; }
-.cta-band h2 { font-size: 2rem; font-weight: 900; margin-bottom: 12px; color: #fff; border: none; padding: 0; }
-.cta-band p { color: rgba(255,255,255,0.9); font-size: 1.05rem; margin-bottom: 28px; }
-.cta-buttons { display: flex; gap: 16px; justify-content: center; flex-wrap: wrap; }
-.btn-white { display: inline-flex; align-items: center; gap: 8px; background: #fff; color: var(--blue); font-weight: 800; padding: 13px 28px; border-radius: 4px; font-size: 1rem; transition: transform .2s; }
-.btn-white:hover { transform: translateY(-2px); color: var(--blue); }
-.btn-outline { display: inline-flex; align-items: center; gap: 8px; background: transparent; color: #fff; font-weight: 700; padding: 13px 28px; border-radius: 4px; font-size: 1rem; border: 2px solid rgba(255,255,255,0.6); transition: border-color .2s; }
-.btn-outline:hover { border-color: #fff; color: #fff; }
-
-/* SIDEBAR */
-.sidebar { display: flex; flex-direction: column; gap: 24px; align-self: start; position: sticky; top: 90px; }
-.widget { background: var(--white); border: 1px solid var(--border); border-radius: 6px; overflow: hidden; }
-.widget-title { background: var(--blue); color: #fff; font-size: 0.95rem; font-weight: 700; padding: 12px 16px; }
-.widget-body { padding: 18px 16px; }
-.contact-item { display: flex; align-items: flex-start; gap: 10px; margin-bottom: 14px; font-size: 0.92rem; color: var(--text-light); }
-.contact-item:last-child { margin: 0; }
-.contact-item .icon { font-size: 1.2rem; flex-shrink: 0; margin-top: 2px; }
-.call-btn { display: block; width: 100%; background: var(--blue); color: #fff; font-weight: 800; padding: 13px; border-radius: 4px; text-align: center; font-size: 1rem; margin-top: 14px; transition: background .2s; }
-.call-btn:hover { background: var(--blue-dark); color: #fff; }
-.wa-btn { display: block; width: 100%; background: #25d366; color: #fff; font-weight: 700; padding: 11px; border-radius: 4px; text-align: center; font-size: 0.92rem; margin-top: 8px; }
-.wa-btn:hover { background: #1da851; color: #fff; }
-.facts-list { list-style: none; }
-.facts-list li { padding: 9px 0; border-bottom: 1px solid var(--border); display: flex; align-items: center; gap: 8px; font-size: 0.88rem; color: var(--text-light); }
-.facts-list li:last-child { border: 0; }
-.facts-list li::before { content: '✓'; color: var(--blue); font-weight: 900; font-size: 1rem; }
-
-/* FOOTER */
-footer { background: var(--footer-bg); color: #aaa; padding: 40px 0 20px; }
-.footer-inner { max-width: 1140px; margin: 0 auto; padding: 0 20px 32px; display: grid; grid-template-columns: repeat(3,1fr); gap: 40px; }
-.footer-col h4 { color: #fff; font-size: 0.95rem; font-weight: 700; margin-bottom: 16px; }
-.footer-col p, .footer-col li { font-size: 0.84rem; margin-bottom: 6px; color: #aaa; }
-.footer-col ul { list-style: none; }
-.footer-col a { color: #aaa; }
-.footer-col a:hover { color: var(--blue); }
-.footer-bottom { border-top: 1px solid #333; max-width: 1140px; margin: 0 auto; padding: 16px 20px 0; display: flex; justify-content: space-between; font-size: 0.82rem; flex-wrap: wrap; gap: 8px; }
-
-/* RESPONSIVE */
-@media (max-width: 960px) {
-  .main-wrap { grid-template-columns: 1fr; }
-  .sidebar { position: static; order: -1; }
-  .services-grid { grid-template-columns: repeat(2,1fr); }
-  .steps-grid { grid-template-columns: repeat(2,1fr); }
-  .why-grid { grid-template-columns: repeat(2,1fr); }
-  .footer-inner { grid-template-columns: 1fr; gap: 24px; }
-  .trust-bar-inner { gap: 0; }
-  .trust-item { padding: 12px 0; }
-  #site-nav { display: none; }
-}
-@media (max-width: 580px) {
-  .services-grid, .why-grid { grid-template-columns: 1fr; }
-  .steps-grid { grid-template-columns: 1fr 1fr; }
-  .page-banner { height: 300px; }
-  .banner-content h1 { font-size: 1.8rem; }
-}
+  @media (prefers-reduced-motion: reduce) {
+    .wa-pulse-ring, .marquee-track { animation: none !important; }
+    [data-aos] { opacity: 1 !important; transform: none !important; }
+  }
 </style>
 </head>
-<body>
 
-<!-- TOP BAR -->
-<div id="top-bar">
-  <a href="tel:050-937-5678">📞 050-937-5678</a>
-  &nbsp;|&nbsp; תיקון והתקנת מזגנים – ראשון לציון, נס ציונה, רחובות וסביבה
-  &nbsp;|&nbsp; <a href="https://wa.me/972509375678">💬 וואטסאפ</a>
-</div>
+<body class="bg-white text-brand-dark antialiased overflow-x-hidden">
 
-<!-- HEADER -->
-<header id="site-header">
-  <div class="header-inner">
-    <div class="site-logo">
-      מרכז ה<span>מזגנים</span>
-      <small>תיקון · התקנה · ניקוי · ראשון לציון</small>
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ═══════ NAV ═══════ -->
+<nav class="sticky top-0 z-50 glass-nav transition-all duration-300" id="nav">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+    <a href="#hero" class="flex items-center gap-3 group" aria-label="דף הבית">
+      <div class="w-10 h-10 sm:w-11 sm:h-11 bg-brand-light border border-slate-200 rounded-xl flex items-center justify-center text-brand-primary shadow-sm group-hover:scale-110 group-hover:border-brand-primary transition-all duration-300">
+        <i data-lucide="wind" class="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]"></i>
+      </div>
+      <div class="flex flex-col">
+        <span class="font-black text-xl sm:text-2xl tracking-tight text-brand-dark leading-none">מרכז המזגנים</span>
+        <span class="text-[9px] sm:text-[11px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">מיזוג וקירור</span>
+      </div>
+    </a>
+
+    <div class="hidden lg:flex items-center gap-8 font-bold text-slate-600">
+      <a href="#about" class="nav-link hover:text-brand-primary transition-colors">עלינו</a>
+      <a href="#services" class="nav-link hover:text-brand-primary transition-colors">שירותים</a>
+      <a href="#testimonials" class="nav-link hover:text-brand-primary transition-colors">המלצות</a>
+      <a href="#contact" class="nav-link hover:text-brand-primary transition-colors">צרו קשר</a>
     </div>
-    <ul id="site-nav">
-      <li><a href="#services">שירותים</a></li>
-      <li><a href="#pricing">מחירון</a></li>
-      <li><a href="#faq">שאלות נפוצות</a></li>
-      <li><a href="#areas">אזורי שירות</a></li>
-    </ul>
-    <a href="tel:050-937-5678" class="header-cta">📞 חייגו עכשיו – 050-937-5678</a>
+
+    <a href="https://wa.me/972509375678" class="btn-gloss hidden lg:inline-flex items-center gap-2 bg-brand-primary text-white px-7 py-2.5 rounded-full shadow-glow hover:bg-brand-primaryDark hover:-translate-y-1 transition-all font-bold nav-cta" aria-label="דברו איתנו וואטסאפ">
+      דברו איתנו בוואטסאפ
+      <svg class="w-5 h-5 shrink-0 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/>
+      </svg>
+    </a>
+  </div>
+</nav>
+
+<!-- ═══════ HERO ═══════ -->
+<header id="hero" class="relative pt-12 pb-16 sm:pt-20 sm:pb-20 md:pt-24 md:pb-28 overflow-hidden border-b border-slate-100">
+  <div class="absolute inset-0 z-0 bg-slate-100"></div>
+  <div class="absolute inset-0 bg-white/72 z-[1]"></div>
+  <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[2]">
+    <div class="absolute top-[-10%] right-[-5%] w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-brand-primary/15 rounded-full blur-[60px] sm:blur-[80px]"></div>
+    <div class="absolute bottom-[-10%] left-[-5%] w-[300px] sm:w-[400px] h-[300px] sm:h-[400px] bg-slate-300/40 rounded-full blur-[60px] sm:blur-[70px]"></div>
+  </div>
+
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6 flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20 relative z-10">
+    <!-- TEXT (visual right in RTL) -->
+    <div class="lg:w-1/2 text-center lg:text-right">
+      <div class="inline-flex items-center gap-2 bg-white border border-slate-200 px-4 py-1.5 rounded-full mb-6 shadow-sm" data-aos="fade-up" data-aos-duration="600">
+        <span class="relative flex h-3 w-3">
+          <span class="absolute inline-flex h-full w-full rounded-full bg-brand-primary opacity-75 eyebrow-ping"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-brand-primary"></span>
+        </span>
+        <span class="text-xs sm:text-sm font-bold text-slate-600 tracking-wide">מזגן · ראשון לציון</span>
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-black text-brand-dark leading-[1.1] mb-4 sm:mb-6 hero-headline">
+        מזגן שהפסיק לקרר? רעש מוזר?<br>
+        <span class="text-brand-primary">טכנאי מורשה, הגעה ביום פנייה.</span>
+      </h1>
+
+      <p class="text-base sm:text-lg md:text-xl text-slate-600 mb-6 font-medium leading-relaxed max-w-lg mx-auto lg:mx-0 lg:mr-0 lg:ml-auto" data-aos="fade-up" data-aos-delay="400" data-aos-duration="700">
+        התקנה, תיקון וניקוי מזגנים — כל הדגמים, כל המותגים. שירות מהיר עם אחריות מלאה.
+      </p>
+
+      <ul class="text-slate-700 font-bold space-y-3 mb-8 sm:mb-10 text-base sm:text-lg max-w-lg mx-auto lg:mx-0 lg:mr-0 lg:ml-auto text-right" data-aos="fade-up" data-aos-delay="500" data-aos-duration="700">
+        <li class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-brand-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>הגעה ביום הפנייה</span>
+          </li><li class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-brand-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>מוסמך לכל דגמי המזגנים</span>
+          </li><li class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-brand-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>ניקוי ותחזוקה שנתית</span>
+          </li><li class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-brand-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>אחריות מלאה על כל עבודה</span>
+          </li>
+      </ul>
+
+      <div class="flex flex-wrap gap-3 justify-center lg:justify-start" data-aos="fade-up" data-aos-delay="600" data-aos-duration="700">
+        <a href="https://wa.me/972509375678" class="btn-gloss inline-flex items-center gap-2 bg-brand-whatsapp text-white px-7 py-3.5 rounded-full font-bold shadow-glow hover:-translate-y-1 hover:shadow-premium transition-all">
+          שלחו הודעה בוואטסאפ
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+        </a>
+        <a href="tel:0509375678" class="inline-flex items-center gap-2 bg-white text-brand-dark border-2 border-slate-200 px-7 py-3.5 rounded-full font-bold hover:border-brand-primary hover:-translate-y-1 transition-all">
+          <i data-lucide="phone" class="w-5 h-5"></i>
+          0509375678
+        </a>
+      </div>
+    </div>
+
+    <!-- IMAGE (visual left in RTL) -->
+    <div class="lg:w-1/2 relative w-full" data-aos="fade-right" data-aos-duration="900" data-aos-delay="200">
+      <div class="photo-card">
+        <div class="photo-frame-bg-1"></div>
+        <div class="photo-frame-bg-2"></div>
+        <div class="photo-inner">
+          <img src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1600&auto=format&fit=crop&q=85" alt="מרכז המזגנים — מזגן" loading="eager" fetchpriority="high">
+        </div>
+        <div class="photo-badge-overlay">
+          <span class="block text-3xl sm:text-4xl font-black text-brand-primary leading-none mb-1">+500</span>
+          <span class="font-bold text-sm text-slate-700">לקוחות מרוצים</span>
+        </div>
+      </div>
+    </div>
   </div>
 </header>
 
-<!-- HERO BANNER — AC unit image -->
-<div class="page-banner">
-  <img
-    src="https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=1400&q=80&auto=format&fit=crop&crop=center"
-    alt="תיקון והתקנת מזגנים ראשון לציון">
-  <div class="banner-content">
-    <h1>תיקון והתקנת מזגנים<br>בראשון לציון</h1>
-    <p>12 שנות ניסיון · מחיר שקוף · אחריות על כל עבודה</p>
-    <div class="breadcrumbs">
-      <a href="#">ראשי</a> &rsaquo; שירותי מזגנים &rsaquo; ראשון לציון
+<!-- ═══════ STATS ═══════ -->
+<section class="py-16 sm:py-20 bg-white border-b border-slate-100">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6">
+    <div class="text-center mb-12" data-aos="fade-up">
+      <span class="text-brand-primary font-black tracking-widest text-xs sm:text-sm uppercase mb-3 inline-block bg-brand-primary/10 px-3 py-1 rounded-full">המספרים מאחורינו</span>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-brand-dark leading-tight">בארץ <span class="text-brand-primary">ובעולם</span></h2>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+      <div class="text-center p-6 sm:p-8 bg-white rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-2 hover:shadow-premium transition-all duration-300" data-aos="flip-up" data-aos-delay="0" data-aos-duration="800">
+          <div class="text-5xl sm:text-6xl font-black text-brand-primary leading-none mb-2 tracking-tight">
+            <span data-counter="10">0</span><span class="text-3xl sm:text-4xl">+</span>
+          </div>
+          <div class="text-slate-600 font-bold text-sm sm:text-base">שנות ניסיון</div>
+        </div><div class="text-center p-6 sm:p-8 bg-white rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-2 hover:shadow-premium transition-all duration-300" data-aos="zoom-in" data-aos-delay="150" data-aos-duration="800">
+          <div class="text-5xl sm:text-6xl font-black text-brand-primary leading-none mb-2 tracking-tight">
+            <span data-counter="500">0</span><span class="text-3xl sm:text-4xl">+</span>
+          </div>
+          <div class="text-slate-600 font-bold text-sm sm:text-base">לקוחות מרוצים</div>
+        </div><div class="text-center p-6 sm:p-8 bg-white rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-2 hover:shadow-premium transition-all duration-300" data-aos="flip-up" data-aos-delay="300" data-aos-duration="800">
+          <div class="text-5xl sm:text-6xl font-black text-brand-primary leading-none mb-2 tracking-tight">
+            <span data-counter="98">0</span><span class="text-3xl sm:text-4xl">%</span>
+          </div>
+          <div class="text-slate-600 font-bold text-sm sm:text-base">ממליצים</div>
+        </div>
     </div>
   </div>
-</div>
+</section>
 
-<!-- TRUST BAR -->
-<div class="trust-bar">
-  <div class="trust-bar-inner">
-    <div class="trust-item"><span class="icon">🏆</span> 12 שנות ניסיון</div>
-    <div class="trust-item"><span class="icon">⚡</span> הגעה ביום הפנייה</div>
-    <div class="trust-item"><span class="icon">💰</span> מחיר ידוע מראש</div>
-    <div class="trust-item"><span class="icon">🛡️</span> אחריות בכתב</div>
-    <div class="trust-item"><span class="icon">🌡️</span> כל הדגמים</div>
+<!-- ═══════ DARK TICKER (promises strip) ═══════ -->
+<section class="marquee-section relative z-20 bg-brand-dark overflow-hidden border-y border-brand-primary/20 shadow-lg">
+  <div class="ticker-wrapper">
+    <div class="ticker-track">
+      <div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="heart-handshake" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ליווי אישי</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- יחס לכל לקוח</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">איכות מובטחת</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- אחריות מלאה</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="clock" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">זמינות אישית</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מענה מהיר</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="sparkles" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">שירות פרימיום</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- תוצאה אמיתית</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="award" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ניסיון של שנים</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- לקוחות מרוצים</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="heart-handshake" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ליווי אישי</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- יחס לכל לקוח</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="shield-check" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">איכות מובטחת</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- אחריות מלאה</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="clock" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">זמינות אישית</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מענה מהיר</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="sparkles" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">שירות פרימיום</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- תוצאה אמיתית</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="award" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ניסיון של שנים</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- לקוחות מרוצים</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div>
+    </div>
   </div>
-</div>
+</section>
 
-<!-- MAIN + SIDEBAR -->
-<div class="main-wrap">
-  <main class="content-area">
-
-    <!-- INTRO -->
-    <h2 class="section-title">מרכז המזגנים – נתנאל</h2>
-    <p>
-      מרכז המזגנים מספק את המעטפת המושלמת לצורך תיקון והתקנת מזגנים מכל הסוגים לכל בית או מבנה מסחרי. עם ניסיון רחב של <strong>12 שנה</strong> שנרכש מפרויקט אחד למשנהו, עברו תחת ידינו כל סוגי מערכות המיזוג – ממיזוג תעשייתי ועד מזגן עילי לחדר הקטן ביותר. אנחנו נותנים שירות בראשון לציון, נס ציונה, רחובות, חולון, בת ים ובכל אזור גוש דן.
-    </p>
-    <p>
-      הלקוחות שלנו מקבלים <strong>אחריות מלאה בכתב</strong> על כל עבודה, המקנה שקט נפשי חסר פשרות על מנת להשביע את רצונם עד תום.
-    </p>
-    <a href="tel:050-937-5678" class="phone-cta-btn">📞 חייגו עכשיו – 050-937-5678</a>
-
-    <!-- PRICING -->
-    <h2 class="section-title" id="pricing">מקצועיות. שקיפות. חיסכון.<br>מחירון שירות מזגנים 2025</h2>
-
-    <table class="pricing-table">
-      <thead>
-        <tr>
-          <th>סוג השירות</th>
-          <th>טווח מחיר משוער</th>
-          <th>פרטים / הערות</th>
-        </tr>
-      </thead>
-      <tbody>
-        <tr>
-          <td>התקנת מזגן עילי עד 1.5 כ"ס</td>
-          <td class="price-col">600 – 800 ₪</td>
-          <td>כולל תושבת וצנרת עד שני מטרים; תוספת קידוח בטון 200–300 ₪</td>
-        </tr>
-        <tr>
-          <td>התקנת מזגן עילי 2 – 3.5 כ"ס</td>
-          <td class="price-col">החל מ-900 ₪</td>
-          <td>התקנה כוללת 2–3 מטר צנרת; הארכת צנרת בתשלום נוסף</td>
-        </tr>
-        <tr>
-          <td>התקנת מזגן מיני מרכזי</td>
-          <td class="price-col">4,000 – 4,500 ₪</td>
-          <td>ללא עבודות גבס; זמן התקנה 4–6 שעות</td>
-        </tr>
-        <tr>
-          <td>התקנת מזגן מרכזי מעל 5 כ"ס</td>
-          <td class="price-col">4,200 – 5,000 ₪</td>
-          <td>כוללת חציבת פתחים; דורש תכנון מוקדם</td>
-        </tr>
-        <tr>
-          <td>תיקון מזגן</td>
-          <td class="price-col">200 – 400 ₪</td>
-          <td>לא כולל חלפים; כולל אבחון במקום</td>
-        </tr>
-        <tr>
-          <td>טעינת גז (R410A / R32)</td>
-          <td class="price-col">300 – 450 ₪</td>
-          <td>כולל בדיקת דליפות וסגירתן</td>
-        </tr>
-        <tr>
-          <td>ניקוי מזגן עילי</td>
-          <td class="price-col">180 – 250 ₪</td>
-          <td>כולל פילטרים, מאייד וחיטוי</td>
-        </tr>
-        <tr>
-          <td>תוספת נקודת חשמל</td>
-          <td class="price-col">300 – 400 ₪</td>
-          <td>נדרש למזגנים מעל 3 כ"ס; מבוצע ע"י חשמלאי מוסמך</td>
-        </tr>
-        <tr>
-          <td>צנרת נוספת / הארכה</td>
-          <td class="price-col">100 ₪ למטר</td>
-          <td>עלות למטר צנרת נחושת לפי עוצמת המזגן</td>
-        </tr>
-        <tr>
-          <td>קידוח בקיר בטון</td>
-          <td class="price-col">100 – 300 ₪</td>
-          <td>תלוי בגודל הפתח ומורכבות ההתקנה</td>
-        </tr>
-        <tr>
-          <td>שירות חירום (מחוץ לשעות)</td>
-          <td class="price-col">+ 150 ₪</td>
-          <td>תוספת על מחיר השירות הרגיל</td>
-        </tr>
-      </tbody>
-    </table>
-    <p class="pricing-note">המחירים המופיעים בטבלה משקפים טווחי עלויות מקובלים ואינם מהווים הצעת מחיר מחייבת. המחיר בפועל נקבע לאחר אבחון במקום, לפני תחילת עבודה. מה שסוכם – הוא מה שמשלמים.</p>
-
-    <a href="tel:050-937-5678" class="phone-cta-btn">📞 חייגו עכשיו – 050-937-5678</a>
-
-    <!-- WHAT'S INCLUDED -->
-    <h2 class="section-title">שירות מזגן בלי הפתעות – מה המחיר כולל?</h2>
-    <p>
-      כשאתם שואלים כמה יעלה השירות, חשוב להבין מה כלול בהצעת המחיר. אנחנו לא מסתפקים ב"טווח מחירים". כל הצעת מחיר שלנו כוללת שירות מקצועי עם חלקים תקניים, חציבה לקיר בלוקים או בטון, ועד שני מטרים של צנרת נחושת בהתקנה. אם נדרש צנרת נוספת, אנחנו מציינים מיד את התוספת למחיר לפי מטר. קידוח בקיר בטון מוסיף בין 100 ל-300 ₪, והוספת נקודת חשמל נעה בין 300 ל-400 ₪. בכל הצעה אנחנו מפרטים את כל הרכיבים מראש – ללא הפתעות.
-    </p>
-
-    <!-- TIME -->
-    <h3 class="sub-title">כמה זמן לוקח השירות?</h3>
-    <p>
-      התקנת מזגן עילי פשוטה לוקחת בין 45 דקות לשעה וחצי, תלוי במיקום ובנגישות. התקנת מערכת מיני מרכזית אורכת בדרך-כלל 4–6 שעות. תיקון רגיל נסגר לרוב בביקור אחד. אנחנו לא עוזבים לפני שמסיימים ניסוי הפעלה, מוודאים שהכול עובד ומנקים את אזור העבודה.
-    </p>
-
-    <!-- COMMON QUESTIONS INTRO -->
-    <h2 class="section-title" id="faq">שאלות נפוצות על שירות מזגנים</h2>
-    <p>כשלקוח מתקשר לגבי מזגן, הוא בדרך כלל שואל מספר שאלות קבועות שחוזרות כמעט בכל שיחה:</p>
-    <ul class="content-list">
-      <li>איזה שירות הכי מתאים לבעיה שלי?</li>
-      <li>כמה עולה התיקון/ההתקנה ומה בדיוק כלול במחיר?</li>
-      <li>כמה זמן לוקח ומתי אפשר לקבוע?</li>
-      <li>איזה מזגן הכי חסכוני בחשמל?</li>
-      <li>האם יש אחריות על העבודה?</li>
-      <li>האם ניתן לקבל שירות מיידי, במיוחד בגל חום?</li>
-    </ul>
-
-    <!-- FAQ -->
-    <div class="faq-wrap" style="margin-top:8px;">
-      <div class="faq-item">
-        <button class="faq-q">כמה עולה התקנת מזגן 1 כ"ס?</button>
-        <div class="faq-a">התקנה בסיסית של מזגן עילי עד 1.5 כ"ס נעה בין 600 ל-950 ₪. המחיר כולל תושבת וצנרת עד שני מטרים ואינו כולל את עלות המזגן עצמו. מחיר מזגן 1 כ"ס מתחיל בכ-1,000 ₪.</div>
+<!-- ═══════ ABOUT / PAIN POINTS ═══════ -->
+<section id="about" class="py-16 sm:py-24 bg-white overflow-hidden">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6">
+    <div class="flex flex-col lg:flex-row items-center gap-12 sm:gap-16">
+      <!-- LEFT (visual): polaroid-style photo card + badge -->
+      <div class="lg:w-1/2 relative w-full" data-aos="fade-left" data-aos-duration="900">
+        <div class="photo-card">
+          <div class="photo-frame-bg-1"></div>
+          <div class="photo-frame-bg-2"></div>
+          <div class="photo-inner">
+            <img src="https://images.unsplash.com/photo-1621905251189-08b45d6a269e?w=1600&auto=format&fit=crop&q=85" alt="מזגן" loading="lazy">
+          </div>
+          <div class="photo-badge-overlay">
+            <span class="block text-3xl sm:text-4xl font-black text-brand-primary leading-none mb-1">5.0★</span>
+            <span class="font-bold text-sm text-slate-700">— ביקורות</span>
+          </div>
+        </div>
       </div>
-      <div class="faq-item">
-        <button class="faq-q">מה משפיע על מחיר ההתקנה?</button>
-        <div class="faq-a">סוג וגודל המזגן, אורך הצנרת הנדרשת, הצורך בקידוח בטון, הוספת נקודת חשמל ונגישות למיקום ההתקנה. כל אלה מצוינים מראש בהצעת המחיר.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">כמה זמן לוקחת התקנה?</button>
-        <div class="faq-a">מזגן עילי: 45–90 דקות. מזגן מיני מרכזי: 4–6 שעות. התקנות מורכבות או בקומות גבוהות עשויות להאריך את הזמן. תיקון רגיל נסגר לרוב באותו ביקור.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">האם יש אחריות על העבודה?</button>
-        <div class="faq-a">כן. אנחנו מעניקים אחריות מלאה בכתב על כל עבודה. חזרה בגלל אותה בעיה? מגיעים שוב ללא עלות נוספת.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">מה לעשות עם המזגן הישן?</button>
-        <div class="faq-a">בעת הזמנת ההתקנה חשוב לעדכן אם מדובר בהחלפת מזגן. במידת הצורך אנחנו מפרקים את הישן, מפנים אותו או מתקינים אותו בחדר אחר, ומשתמשים בצנרת חדשה בלבד.</div>
-      </div>
-      <div class="faq-item">
-        <button class="faq-q">כמה עולה תיקון מזגן?</button>
-        <div class="faq-a">תיקון מזגן נע בין 200 ל-400 ₪ לא כולל חלפים, בהתאם לסוג התקלה. האבחון מתבצע לפני כל תיקון ומחיר הסופי מאושר לפני התחלת עבודה.</div>
+
+      <!-- RIGHT: text + bullets + callout + promise + 2 cards -->
+      <div class="lg:w-1/2 w-full" data-aos="fade-right">
+        <span class="text-brand-primary font-black tracking-widest text-xs sm:text-sm uppercase mb-3 bg-brand-primary/10 inline-block px-3 py-1 rounded-full">אתם מזהים את עצמכם?</span>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-brand-dark mb-4 sm:mb-6 leading-tight">
+          זה נשמע לכם <br class="hidden sm:block"><span class="text-brand-primary">מוכר?</span>
+        </h2>
+
+        <div class="text-slate-600 text-base sm:text-lg leading-relaxed mb-6 font-medium">
+          <ul class="pain-list mb-4">
+            <li>מזגן שנעצר באמצע הקיץ?</li><li>חשבון חשמל שקפץ בלי סיבה?</li><li>רעשים וריחות ממזגן ישן?</li><li>טכנאי שאמר &#x27;צריך לקנות חדש&#x27;?</li>
+          </ul>
+          <div class="bg-brand-primary/5 p-4 border-r-4 border-brand-primary mt-4 rounded-l-lg font-bold text-brand-dark">
+            ❄️ מזגן שלא מקוצר גוזל חשמל ולא מקרר. אנחנו בודקים לפני שמחליפים — ורוב הפעמים חוסכים לכם קנייה.
+          </div>
+        </div>
+
+        <h3 class="text-2xl font-black text-brand-dark mb-3 mt-8">התהליך שעושה את ההבדל</h3>
+        <p class="text-slate-600 text-base sm:text-lg leading-relaxed mb-6 font-medium">אנחנו לא מתחילים לפני שאנחנו מבינים בדיוק מה אתם צריכים. כל פרויקט מתחיל באבחון, ממשיך בתכנון, ומסתיים בתוצאה שמדברת בעד עצמה.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <div class="bg-brand-gray p-5 sm:p-6 rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+            <i data-lucide="sparkles" class="w-7 h-7 sm:w-8 sm:h-8 text-brand-primary mb-3"></i>
+            <h4 class="font-black text-brand-dark text-base sm:text-lg mb-1">מקצועיות ויחס אישי</h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">תשומת לב לכל פרט, ליווי ארוך טווח.</p>
+          </div><div class="bg-brand-gray p-5 sm:p-6 rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+            <i data-lucide="shield-check" class="w-7 h-7 sm:w-8 sm:h-8 text-brand-primary mb-3"></i>
+            <h4 class="font-black text-brand-dark text-base sm:text-lg mb-1">התחייבות לאיכות</h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">אחריות בכתב, מחיר הוגן, אפס הפתעות.</p>
+          </div>
+        </div>
       </div>
     </div>
+  </div>
+</section>
 
-    <!-- TIPS -->
-    <h2 class="section-title">4 דברים שחשוב לדעת לפני שירות מזגן</h2>
-
-    <div class="info-box">
-      <h3>1. הכנה נכונה חוסכת כסף</h3>
-      <p style="margin:0">לפני התקנה מומלץ לוודא שיש נקודת חשמל מתאימה; מזגנים מעל 3 כ"ס דורשים שקע תלת-פאזי. כדאי גם לתאם מראש אם יש מזגן ישן לפירוק. התקנה בעונת החורף יכולה לחסוך עד עשרות אחוזים מפני שהביקוש נמוך.</p>
+<!-- ═══════ SERVICES ═══════ -->
+<section id="services" class="py-16 sm:py-24 relative bg-white border-t border-slate-100">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6">
+    <div class="text-center mb-12 sm:mb-16" data-aos="fade-up">
+      <span class="text-brand-primary font-black tracking-widest text-xs sm:text-sm uppercase mb-3 inline-block bg-brand-primary/10 px-3 py-1 rounded-full">המומחיות שלנו</span>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-brand-dark mb-4 leading-tight">השירותים <span class="text-brand-primary">שלנו</span></h2>
+      <p class="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto font-medium">פתרונות מדויקים לכל צורך, בליווי אישי ובהתחייבות לתוצאה.</p>
     </div>
-    <div class="info-box">
-      <h3>2. איך לבחור מזגן שמתאים לחלל?</h3>
-      <p style="margin:0">בבחירת מזגן לוקחים בחשבון את גודל החלל, הבידוד, מספר השוהים והעדפות. מזגן 1 כ"ס מתאים לחדר עד 15 מ"ר, 1.5 כ"ס לסלון קטן, 2 כ"ס לחלל של 25 מ"ר, ו-2.5 כ"ס ל-30 מ"ר ומעלה. ממליצים על דירוג אנרגטי A ומעלה לחיסכון בחשמל.</p>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+      <div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-right" data-aos-delay="0" data-aos-duration="900">
+          <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+            <i data-lucide="sparkles" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">שירות מקצועי</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">ניסיון של שנים בתחום, גישה אישית לכל לקוח.</p>
+          <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
+            <li><span class="text-brand-primary font-bold">✓</span> יחס אישי</li><li><span class="text-brand-primary font-bold">✓</span> מקצועיות בכל שלב</li><li><span class="text-brand-primary font-bold">✓</span> שקיפות מלאה</li><li><span class="text-brand-primary font-bold">✓</span> אחריות</li>
+          </ul>
+          <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
+            👉 תוצאה: שירות שחוזרים אליו
+          </div>
+        </div><div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-left" data-aos-delay="150" data-aos-duration="900">
+          <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+            <i data-lucide="heart-handshake" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">ליווי אישי</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">תשומת לב לכל פרט, מהפנייה הראשונה ועד התוצאה.</p>
+          <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
+            <li><span class="text-brand-primary font-bold">✓</span> הקשבה אמיתית</li><li><span class="text-brand-primary font-bold">✓</span> פגישות תיאום</li><li><span class="text-brand-primary font-bold">✓</span> ליווי לאורך התהליך</li><li><span class="text-brand-primary font-bold">✓</span> זמינות בכל שאלה</li>
+          </ul>
+          <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
+            👉 תוצאה: לקוח שמרגיש מובן
+          </div>
+        </div><div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-right" data-aos-delay="0" data-aos-duration="900">
+          <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+            <i data-lucide="shield-check" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">איכות מובטחת</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">אנחנו לא מתפשרים — וגם לא נותנים לכם להתפשר.</p>
+          <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
+            <li><span class="text-brand-primary font-bold">✓</span> סטנדרטים גבוהים</li><li><span class="text-brand-primary font-bold">✓</span> חומרים מובחרים</li><li><span class="text-brand-primary font-bold">✓</span> ביצוע מדויק</li><li><span class="text-brand-primary font-bold">✓</span> אחריות בכתב</li>
+          </ul>
+          <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
+            👉 תוצאה: תוצאה שמחזיקה
+          </div>
+        </div><div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-left" data-aos-delay="150" data-aos-duration="900">
+          <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+            <i data-lucide="clock" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">זמינות אישית</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">מענה תוך זמן קצר, גם בשעות חריגות.</p>
+          <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
+            <li><span class="text-brand-primary font-bold">✓</span> מענה ב-WhatsApp</li><li><span class="text-brand-primary font-bold">✓</span> פגישה תוך 48 שעות</li><li><span class="text-brand-primary font-bold">✓</span> זמינות לשאלות</li><li><span class="text-brand-primary font-bold">✓</span> עדכונים שוטפים</li>
+          </ul>
+          <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
+            👉 תוצאה: לא נשארים תקועים
+          </div>
+        </div>
     </div>
-    <div class="info-box">
-      <h3>3. להיזהר מהצעות "זולות להפליא"</h3>
-      <p style="margin:0">יש נותני שירות המציעים הצעה זולה ואז גובים תוספות עבור כל פריט – מטר צנרת, נקודת חשמל, קידוח. הם גם עלולים להשתמש בצנרת לא תקנית. אנחנו משתמשים בציוד בעל תקן, מציינים מראש את כל התוספות ומעניקים אחריות בכתב.</p>
-    </div>
-    <div class="info-box">
-      <h3>4. אחריות ושירות אחרי העבודה</h3>
-      <p style="margin:0">כל עבודה מגיעה עם אחריות בכתב על הצנרת, התושבת וכל רכיב שהוחלף. בנוסף יש אחריות יצרן על המזגן עצמו. במקרה של תקלה – זמינים לטיפול מהיר ומספקים שירות תיקון.</p>
-    </div>
+  </div>
+</section>
 
-    <!-- SERVICE TYPES -->
-    <h2 class="section-title">סוגי שירות מזגנים</h2>
-
-    <h3 class="sub-title">תיקון ושירות מזגן עילי</h3>
-    <p>מזגן עילי הוא פתרון מצוין לקירור הבית בימי הקיץ החמים ולחימום בחורף הקר. תיקון נכון מאריך את חיי המזגן ומבטיח יעילות אנרגטית. אנחנו מטפלים בכל תקלה – קומפרסור, גז, מאוורר, לחות, ריחות – ומביאים את כל החלפים לשטח.</p>
-    <ul class="content-list">
-      <li><strong>שליטה מדויקת:</strong> ניתן לכוון טמפרטורה בכל חדר בנפרד</li>
-      <li><strong>יעילות אנרגטית:</strong> מזגנים עיליים מודרניים חסכוניים מאוד בחשמל</li>
-      <li><strong>התקנה מהירה:</strong> 45–90 דקות בלבד לביקור אחד</li>
-    </ul>
-
-    <h3 class="sub-title">התקנת מזגן מרכזי</h3>
-    <p>התקנת מערכת מזגן מרכזית מאפשרת שליטה בטמפרטורה של כל המבנה ממקום אחד. מתאים לבתים גדולים ומשרדים. דורש תכנון מוקדם, ולעתים הנמכת תקרה לתעלות המיזוג.</p>
-    <ul class="content-list">
-      <li>מיזוג אחיד בכל חלקי הבית</li>
-      <li>פחות יחידות גלויות לעין</li>
-      <li>בקשו פירוט מלא בכתב של כל מרכיבי ההתקנה לפני תחילת עבודה</li>
-    </ul>
-
-    <h3 class="sub-title">התקנת מזגן מיני מרכזי</h3>
-    <p>פתרון מיזוג מתקדם לבתים ומשרדים עם מספר חדרים. מספק אקלים נעים ואחיד בכל רחבי המבנה, תוך שמירה על אסתטיקה נקייה ומודרנית. היחידות הפנימיות משתלבות בתקרה ללא פגיעה בעיצוב.</p>
-
-    <h3 class="sub-title">מזגן אינוורטר – למה כדאי?</h3>
-    <p>מזגן אינוורטר משתמש בטכנולוגיה מתקדמת המאפשרת לווסת את תפוקת המדחס בהתאם לצורך. במקום לעבוד בעוצמה מלאה ולהפסיק כמו מזגן רגיל, הוא מתאים את עוצמתו לצורך הנוכחי – <strong>מפחית צריכת חשמל עד 50%</strong>, שקט יותר, ושומר על טמפרטורה יציבה. השקעה משתלמת לטווח הארוך.</p>
-
-    <!-- AREAS -->
-    <h2 class="section-title" id="areas">אזורי שירות</h2>
-
-    <h3 class="sub-title">שירות מזגנים בראשון לציון</h3>
-    <p>ראשון לציון היא העיר הראשית שלנו. מגיעים לכל שכונה בעיר – ביום הפנייה ברוב המקרים. התקנה, תיקון, ניקוי וטעינת גז – הכל במקצועיות ובמחיר שקוף.</p>
-
-    <h3 class="sub-title">שירות מזגנים בנס ציונה ורחובות</h3>
-    <p>אנחנו מכסים את כל נס ציונה, רחובות ויבנה. שירות זמין, הגעה מהירה, ואותו תקן מקצועיות שלקוחות ראשון לציון כבר מכירים.</p>
-
-    <h3 class="sub-title">שירות מזגנים בחולון ובת ים</h3>
-    <p>שירות מקצועי להתקנת ותיקון מזגנים בחולון ובת ים. המתקין יגיע, יאבחן ויציג מחיר מוסכם לפני תחילת כל עבודה.</p>
-
-    <div style="display:flex;flex-wrap:wrap;gap:10px;margin-top:16px;" id="areas-list">
-      <span style="background:#f0f0f0;padding:7px 16px;border-radius:20px;font-size:0.87rem;color:#666;">ראשון לציון</span>
-      <span style="background:#f0f0f0;padding:7px 16px;border-radius:20px;font-size:0.87rem;color:#666;">נס ציונה</span>
-      <span style="background:#f0f0f0;padding:7px 16px;border-radius:20px;font-size:0.87rem;color:#666;">רחובות</span>
-      <span style="background:#f0f0f0;padding:7px 16px;border-radius:20px;font-size:0.87rem;color:#666;">חולון</span>
-      <span style="background:#f0f0f0;padding:7px 16px;border-radius:20px;font-size:0.87rem;color:#666;">בת ים</span>
-      <span style="background:#f0f0f0;padding:7px 16px;border-radius:20px;font-size:0.87rem;color:#666;">אשדוד</span>
-      <span style="background:#f0f0f0;padding:7px 16px;border-radius:20px;font-size:0.87rem;color:#666;">יבנה</span>
-      <span style="background:#f0f0f0;padding:7px 16px;border-radius:20px;font-size:0.87rem;color:#666;">לוד</span>
-      <span style="background:#f0f0f0;padding:7px 16px;border-radius:20px;font-size:0.87rem;color:#666;">רמלה</span>
-      <span style="background:#f0f0f0;padding:7px 16px;border-radius:20px;font-size:0.87rem;color:#666;">גדרה</span>
+<!-- ═══════ TESTIMONIALS — Swiper carousel ═══════ -->
+<section id="testimonials" class="py-16 sm:py-24 bg-brand-light border-t border-slate-100 overflow-hidden">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6">
+    <div class="text-center mb-14 sm:mb-16" data-aos="fade-down" data-aos-duration="700">
+      <span class="text-brand-primary font-black tracking-widest text-xs sm:text-sm uppercase mb-4 inline-block bg-brand-primary/10 px-4 py-1.5 rounded-full">לקוחות ממליצים</span>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-brand-dark leading-tight">מה אומרים <span class="text-brand-primary">עלינו</span> הלקוחות?</h2>
+      <span class="testi-heading-underline"></span>
     </div>
 
-  </main>
-
-  <!-- SIDEBAR -->
-  <aside class="sidebar">
-    <div class="widget">
-      <div class="widget-title">📞 צרו קשר עכשיו</div>
-      <div class="widget-body">
-        <div class="contact-item"><span class="icon">📍</span><div>ראשון לציון והסביבה</div></div>
-        <div class="contact-item"><span class="icon">⏰</span><div>א'–ו' 8:00–21:00<br>שירות חירום 24/7</div></div>
-        <div class="contact-item"><span class="icon">✅</span><div>אבחון חינם · מחיר ידוע לפני עבודה</div></div>
-        <a href="tel:050-937-5678" class="call-btn">📞 050-937-5678</a>
-        <a href="https://wa.me/972509375678" class="wa-btn">💬 שלחו וואטסאפ</a>
+    <div class="swiper testi-swiper" data-aos="fade-up" data-aos-delay="200">
+      <div class="swiper-wrapper pb-12">
+        <div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">שירות מעולה ומקצועי, התרשמתי מהיחס האישי. ממליצה בחום לכל מי שמחפש איכות אמיתית.</p>
+            <div class="testi-foot">
+              <div class="avatar">נ</div>
+              <div>
+                <div class="name">נדב פ.</div>
+                <div class="meta">לפני 3 שבועות · Google</div>
+              </div>
+            </div>
+          </div>
+        </div><div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">מהיר, אדיב, מקצועי — בדיוק מה שחיפשתי. בלי ניסיונות לשכנע אותך לדברים מיותרים.</p>
+            <div class="testi-foot">
+              <div class="avatar">א</div>
+              <div>
+                <div class="name">אלינור ר.</div>
+                <div class="meta">לפני חודשיים · Google</div>
+              </div>
+            </div>
+          </div>
+        </div><div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">בלי ספק המקום המומלץ ביותר באזור. תכנון, ביצוע ושירות אחרי — הכל ברמה הגבוהה ביותר.</p>
+            <div class="testi-foot">
+              <div class="avatar">י</div>
+              <div>
+                <div class="name">יואב ק.</div>
+                <div class="meta">לפני שבוע · Google</div>
+              </div>
+            </div>
+          </div>
+        </div><div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">מקצועיות במיטבה. הסבירו הכל בצורה ברורה, עזרו בכל שלב, הרגשתי בידיים טובות.</p>
+            <div class="testi-foot">
+              <div class="avatar">א</div>
+              <div>
+                <div class="name">אלעד ק.</div>
+                <div class="meta">לפני 4 חודשים · Google</div>
+              </div>
+            </div>
+          </div>
+        </div><div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">כבר שנים אני מגיע ולא מתאכזב. אנשים רציניים, אכפתיות אמיתית, תוצאות שמדברות בעד עצמן.</p>
+            <div class="testi-foot">
+              <div class="avatar">ס</div>
+              <div>
+                <div class="name">סיון ר.</div>
+                <div class="meta">לפני שבועיים · Google</div>
+              </div>
+            </div>
+          </div>
+        </div><div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">מהיר, אדיב, מקצועי — בדיוק מה שחיפשתי. בלי ניסיונות לשכנע אותך לדברים מיותרים.</p>
+            <div class="testi-foot">
+              <div class="avatar">ת</div>
+              <div>
+                <div class="name">תמיר ב.</div>
+                <div class="meta">לפני חודש · Google</div>
+              </div>
+            </div>
+          </div>
+        </div><div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">מצאנו את המקום הזה במקרה ולא נחזור לאף מקום אחר. שירות ברמה אחרת לגמרי.</p>
+            <div class="testi-foot">
+              <div class="avatar">א</div>
+              <div>
+                <div class="name">אורי ת.</div>
+                <div class="meta">לפני שבוע · Google</div>
+              </div>
+            </div>
+          </div>
+        </div><div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">מקצועיות במיטבה. הסבירו הכל בצורה ברורה, עזרו בכל שלב, הרגשתי בידיים טובות.</p>
+            <div class="testi-foot">
+              <div class="avatar">ש</div>
+              <div>
+                <div class="name">שני א.</div>
+                <div class="meta">לפני שבוע · Google</div>
+              </div>
+            </div>
+          </div>
+        </div>
       </div>
+      <div class="swiper-pagination !bottom-0"></div>
     </div>
+  </div>
+</section>
 
-    <div class="widget">
-      <div class="widget-title">✅ למה מרכז המזגנים?</div>
-      <div class="widget-body">
-        <ul class="facts-list">
-          <li>12 שנות ניסיון מוכח</li>
-          <li>מחיר ידוע מראש – ללא הפתעות</li>
-          <li>הגעה ביום הפנייה</li>
-          <li>אחריות מלאה בכתב</li>
-          <li>כל הדגמים והמותגים</li>
-          <li>ציוד אבחון מקצועי</li>
-          <li>רכב עמוס חלפים</li>
-          <li>שירות חירום 24/7</li>
+<!-- ═══════ CONTACT / FINAL CTA ═══════ -->
+<section id="contact" class="py-20 sm:py-28 relative overflow-hidden bg-brand-dark">
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] bg-brand-primary/20 rounded-full blur-[70px]"></div>
+  </div>
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div data-aos="fade-left">
+        <span class="text-brand-primary font-black tracking-widest text-xs sm:text-sm uppercase mb-3 inline-block bg-white/5 border border-white/10 px-3 py-1 rounded-full">צרו קשר</span>
+        <h2 class="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight mb-6">
+          רוצים לדעת עוד?<br><span class="text-brand-primary">דברו איתנו.</span>
+        </h2>
+        <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 font-medium max-w-lg">נחזור אליכם תוך זמן קצר. ללא התחייבות, ללא הפתעות.</p>
+        <div class="flex flex-wrap gap-3">
+          <a href="https://wa.me/972509375678" class="inline-flex items-center gap-2 bg-brand-whatsapp text-white px-7 py-4 rounded-full font-bold shadow-glow hover:-translate-y-1 transition-all">
+            שלחו הודעה עכשיו
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+          </a>
+          <a href="tel:0509375678" class="inline-flex items-center gap-2 bg-white/5 text-white border border-white/20 px-7 py-4 rounded-full font-bold hover:bg-white/10 hover:-translate-y-1 transition-all">
+            <i data-lucide="phone" class="w-5 h-5"></i>
+            0509375678
+          </a>
+        </div>
+      </div>
+
+      <form class="bg-white rounded-3xl p-6 sm:p-8 shadow-premium space-y-3" onsubmit="handleSubmit(event)" data-aos="fade-right">
+        <div class="text-brand-primary font-black tracking-widest text-xs uppercase mb-1">השאירו פרטים</div>
+        <h3 class="text-xl sm:text-2xl font-black text-brand-dark mb-4">נחזור אליכם תוך 30 דקות</h3>
+        <input type="text" placeholder="שם מלא" required class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 font-medium focus:border-brand-primary focus:bg-white outline-none transition-colors">
+        <input type="tel" placeholder="מספר טלפון" required class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 font-medium focus:border-brand-primary focus:bg-white outline-none transition-colors">
+        <input type="email" placeholder="אימייל (אופציונלי)" class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 font-medium focus:border-brand-primary focus:bg-white outline-none transition-colors">
+        <textarea placeholder="איך נוכל לעזור?" rows="3" class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 font-medium focus:border-brand-primary focus:bg-white outline-none transition-colors resize-none"></textarea>
+        <button type="submit" class="w-full bg-brand-primary text-white py-4 rounded-xl font-black text-base shadow-glow hover:bg-brand-primaryDark hover:-translate-y-1 transition-all">שלחו פנייה</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="bg-brand-dark text-slate-300 border-t border-white/10">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center text-white">
+            <i data-lucide="wind" class="w-5 h-5"></i>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-black text-xl text-white leading-none">מרכז המזגנים</span>
+            <span class="text-[10px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">מיזוג וקירור</span>
+          </div>
+        </div>
+        <p class="text-sm text-slate-400 leading-relaxed">מזגן · ראשון לציון</p>
+      </div>
+      <div>
+        <h4 class="text-white font-black mb-3 text-sm tracking-widest uppercase">שעות פעילות</h4>
+        <ul class="space-y-2 text-sm"><li class="flex justify-between gap-4"><span class="text-slate-400 font-mono">ראשון-חמישי</span><span class="text-slate-700 font-bold">09:00–19:00</span></li><li class="flex justify-between gap-4"><span class="text-slate-400 font-mono">שישי</span><span class="text-slate-700 font-bold">09:00–13:00</span></li><li class="flex justify-between gap-4"><span class="text-slate-400 font-mono">שבת</span><span class="text-slate-700 font-bold">סגור</span></li></ul>
+      </div>
+      <div>
+        <h4 class="text-white font-black mb-3 text-sm tracking-widest uppercase">צרו קשר</h4>
+        <ul class="space-y-2 text-sm">
+          <li class="flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4 text-brand-primary"></i> <span class="text-slate-300">0509375678</span></li>
+          <li class="flex items-center gap-2"><i data-lucide="message-circle" class="w-4 h-4 text-brand-primary"></i> <a href="https://wa.me/972509375678" class="text-slate-300 hover:text-white">WhatsApp</a></li>
         </ul>
       </div>
     </div>
-
-    <!-- AC image in sidebar -->
-    <div class="widget" style="overflow:hidden;">
-      <img
-        src="https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=600&q=80&auto=format&fit=crop&crop=center"
-        alt="טכנאי מזגנים מקצועי"
-        style="width:100%;height:210px;object-fit:cover;">
-      <div class="widget-body" style="text-align:center;">
-        <p style="font-size:0.88rem;margin:0;"><strong>מגיעים מצוידים</strong><br>רכב עמוס חלפים לכל הדגמים</p>
-      </div>
+    <div class="border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+      <span>© 2026 מרכז המזגנים · כל הזכויות שמורות</span>
+      <span class="text-[11px] opacity-70">המלצות הלקוחות לדוגמה ולהמחשה בלבד</span>
     </div>
-
-    <div class="widget">
-      <div class="widget-title">⚡ שעות פעילות</div>
-      <div class="widget-body">
-        <ul class="facts-list">
-          <li>ראשון–חמישי: 8:00–20:00</li>
-          <li>שישי: 8:00–14:00</li>
-          <li>חירום: 24/7</li>
-        </ul>
-      </div>
-    </div>
-  </aside>
-</div>
-
-<!-- SERVICES GRID -->
-<section class="services-section" id="services">
-  <div class="services-inner">
-    <div class="section-heading">
-      <h2>השירותים שלנו</h2>
-      <p>שירות מקיף לכל סוגי המזגנים – מהאבחון ועד התיקון</p>
-    </div>
-    <div class="services-grid">
-      <div class="service-card">
-        <div class="card-img" style="background:#b8dff0 url('https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=600&h=400&q=80&auto=format&fit=crop&crop=center') center/cover no-repeat;height:195px;"></div>
-        <div class="service-card-body">
-          <h3>תיקון מזגן</h3>
-          <p>אבחון מדויק ותיקון מקצועי לכל תקלה – קומפרסור, גז, מאוורר, לחות, ריחות. מביאים חלפים לשטח.</p>
-          <span class="price-tag">מ-₪200</span>
-        </div>
-      </div>
-      <div class="service-card">
-        <div class="card-img" style="background:#b8dff0 url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&q=80&auto=format&fit=crop&crop=entropy') center/cover no-repeat;height:195px;"></div>
-        <div class="service-card-body">
-          <h3>התקנת מזגן עילי</h3>
-          <p>התקנה מלאה כולל קידוח, חיווט, חיבור ואיטום לפי תקן. אחריות שנה על ההתקנה.</p>
-          <span class="price-tag">מ-₪600</span>
-        </div>
-      </div>
-      <div class="service-card">
-        <div class="card-img" style="background:#b8dff0 url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&q=80&auto=format&fit=crop&crop=top') center/cover no-repeat;height:195px;"></div>
-        <div class="service-card-body">
-          <h3>ניקוי וחיטוי מזגן</h3>
-          <p>ניקוי עמוק של פילטרים, מאיידים ומאבקי עובש. מפחית חשמל, משפר קירור ומונע ריחות.</p>
-          <span class="price-tag">מ-₪180</span>
-        </div>
-      </div>
-      <div class="service-card">
-        <div class="card-img" style="background:#b8dff0 url('https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=600&h=400&q=80&auto=format&fit=crop&crop=top') center/cover no-repeat;height:195px;"></div>
-        <div class="service-card-body">
-          <h3>טעינת גז</h3>
-          <p>איתור דליפות וטעינת גז מקצועית – R410A, R32, R22. בדיקת לחצים וסגירת דליפות.</p>
-          <span class="price-tag">מ-₪300</span>
-        </div>
-      </div>
-      <div class="service-card">
-        <div class="card-img" style="background:#b8dff0 url('https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600&h=400&q=80&auto=format&fit=crop&crop=bottom') center/cover no-repeat;height:195px;"></div>
-        <div class="service-card-body">
-          <h3>שירות חירום 24/7</h3>
-          <p>גל חום? תקלה בלילה? זמינים 24/7. מגיעים תוך שעה לכל ראשון לציון והסביבה.</p>
-          <span class="price-tag">+ ₪150</span>
-        </div>
-      </div>
-      <div class="service-card">
-        <div class="card-img" style="background:#b8dff0 url('https://images.unsplash.com/photo-1621905251918-48416bd8575a?w=600&h=400&q=80&auto=format&fit=crop&crop=faces') center/cover no-repeat;height:195px;"></div>
-        <div class="service-card-body">
-          <h3>מיני מרכזי ומרכזי</h3>
-          <p>תכנון והתקנה של מערכות מיני מרכזי ומרכזי לבתים ומשרדים גדולים. תוך תיאום מלא מראש.</p>
-          <span class="price-tag">מ-₪4,000</span>
-        </div>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- STEPS -->
-<section class="steps-section">
-  <div class="steps-inner">
-    <div class="section-heading">
-      <h2>איך זה עובד?</h2>
-      <p>ארבעה צעדים פשוטים – מהשיחה ועד הפתרון</p>
-    </div>
-    <div class="steps-grid">
-      <div class="step-box">
-        <div class="step-num">1</div>
-        <h3>מתקשרים</h3>
-        <p>מסבירים מה הבעיה, קובעים זמן נוח – לרוב בו ביום</p>
-      </div>
-      <div class="step-box">
-        <div class="step-num">2</div>
-        <h3>מגיעים ומאבחנים</h3>
-        <p>הטכנאי מגיע עם ציוד מלא, מאבחן ומציג מחיר סופי מוסכם</p>
-      </div>
-      <div class="step-box">
-        <div class="step-num">3</div>
-        <h3>מטפלים מייד</h3>
-        <p>רוב התיקונים נסגרים בביקור הראשון – ללא ביקורים כפולים</p>
-      </div>
-      <div class="step-box">
-        <div class="step-num">4</div>
-        <h3>אחריות מלאה</h3>
-        <p>כל עבודה מגיעה עם אחריות בכתב. חזרה? אנחנו חוזרים</p>
-      </div>
-    </div>
-  </div>
-</section>
-
-<!-- WHY US -->
-<section class="why-section">
-  <div class="why-inner">
-    <div class="section-heading">
-      <h2>למה לבחור בנו?</h2>
-      <p>מקצועיות שמדברת בעצמה</p>
-    </div>
-    <div class="why-grid">
-      <div class="why-card"><div class="icon">🎯</div><h3>אבחון לפני עבודה</h3><p>לא מתחילים כלום לפני שאתם יודעים בדיוק מה הבעיה ומה המחיר. שקיפות מלאה.</p></div>
-      <div class="why-card"><div class="icon">💰</div><h3>מחיר שקוף</h3><p>מחיר קבוע לפני תחילת עבודה – ללא תוספות מפתיעות. מה שסוכם הוא מה שמשלמים.</p></div>
-      <div class="why-card"><div class="icon">🛡️</div><h3>אחריות בכתב</h3><p>כל עבודה מגיעה עם תעודת אחריות. בעיה חזרה? חוזרים ללא עלות נוספת.</p></div>
-      <div class="why-card"><div class="icon">⚡</div><h3>הגעה מהירה</h3><p>ביום הפנייה ברוב המקרים. שירות חירום 24/7 לקריאות דחופות.</p></div>
-      <div class="why-card"><div class="icon">🔧</div><h3>ציוד מקצועי</h3><p>רכב עמוס חלפים וכלי אבחון מתקדמים – אין ביקורים כפולים מיותרים.</p></div>
-      <div class="why-card"><div class="icon">🌡️</div><h3>כל הדגמים</h3><p>Tadiran, Electra, LG, Samsung, Mitsubishi, Daikin, Tornado ועוד.</p></div>
-    </div>
-  </div>
-</section>
-
-<!-- BRANDS -->
-<section class="brands-section">
-  <div class="brands-inner">
-    <div class="brands-label">מותגים שאנחנו מטפלים בהם</div>
-    <div class="brands-list">
-      <span class="brand-tag">Tadiran</span>
-      <span class="brand-tag">Electra</span>
-      <span class="brand-tag">LG</span>
-      <span class="brand-tag">Samsung</span>
-      <span class="brand-tag">Tornado</span>
-      <span class="brand-tag">Mitsubishi</span>
-      <span class="brand-tag">Daikin</span>
-      <span class="brand-tag">Gree</span>
-      <span class="brand-tag">Beko</span>
-      <span class="brand-tag">Bosch</span>
-    </div>
-  </div>
-</section>
-
-<!-- CTA -->
-<div class="cta-band">
-  <div style="max-width:680px;margin:0 auto;">
-    <h2>מוכנים לפתרון מהיר?</h2>
-    <p>מגיעים עוד היום לכל ראשון לציון והסביבה – תתקשרו ונקבע</p>
-    <div class="cta-buttons">
-      <a href="tel:050-937-5678" class="btn-white">📞 050-937-5678</a>
-      <a href="https://wa.me/972509375678" class="btn-outline">💬 וואטסאפ</a>
-    </div>
-  </div>
-</div>
-
-<!-- FOOTER -->
-<footer>
-  <div class="footer-inner">
-    <div class="footer-col">
-      <h4>מרכז המזגנים</h4>
-      <p>תיקון, התקנה וניקוי מזגנים בראשון לציון והסביבה. 12 שנות ניסיון, שירות מקצועי ומחירים שקופים.</p>
-      <p style="margin-top:10px;"><a href="tel:050-937-5678" style="color:var(--blue);font-weight:700;">📞 050-937-5678</a></p>
-    </div>
-    <div class="footer-col">
-      <h4>השירותים שלנו</h4>
-      <ul>
-        <li><a href="#services">תיקון מזגן</a></li>
-        <li><a href="#services">התקנת מזגן עילי</a></li>
-        <li><a href="#services">התקנת מיני מרכזי</a></li>
-        <li><a href="#services">ניקוי וחיטוי</a></li>
-        <li><a href="#services">טעינת גז</a></li>
-        <li><a href="#services">שירות חירום 24/7</a></li>
-      </ul>
-    </div>
-    <div class="footer-col">
-      <h4>אזורי שירות</h4>
-      <ul>
-        <li>ראשון לציון</li>
-        <li>נס ציונה</li>
-        <li>רחובות</li>
-        <li>חולון</li>
-        <li>בת ים</li>
-        <li>אשדוד ויבנה</li>
-      </ul>
-    </div>
-  </div>
-  <div class="footer-bottom">
-    <span>© 2025 מרכז המזגנים – כל הזכויות שמורות</span>
-    <span>ראשון לציון | 050-937-5678</span>
   </div>
 </footer>
 
-<script>
-// Sticky header
-const hdr = document.getElementById('site-header');
-window.addEventListener('scroll', () => {
-  hdr.style.boxShadow = window.scrollY > 10 ? '0 4px 16px rgba(0,0,0,0.1)' : '0 2px 8px rgba(0,0,0,0.06)';
-});
+<!-- ═══════ FLOATING — WhatsApp + scroll-top + a11y ═══════ -->
+<a href="https://wa.me/972509375678" class="fixed bottom-7 right-7 z-[60] w-16 h-16 bg-brand-whatsapp text-white rounded-full flex items-center justify-center shadow-glow hover:scale-110 transition-transform" aria-label="WhatsApp">
+  <span class="absolute inset-0 rounded-full bg-brand-whatsapp opacity-60 wa-pulse-ring -z-10"></span>
+  <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+</a>
 
-// FAQ
-document.querySelectorAll('.faq-q').forEach(btn => {
-  btn.addEventListener('click', () => {
-    const item = btn.parentElement;
-    const isOpen = item.classList.contains('open');
-    document.querySelectorAll('.faq-item').forEach(i => i.classList.remove('open'));
-    if (!isOpen) item.classList.add('open');
+<button id="fabTop" class="fixed bottom-28 right-7 z-[59] w-11 h-11 bg-white text-brand-dark border border-slate-200 rounded-full flex items-center justify-center shadow-md opacity-0 pointer-events-none transition-all hover:bg-brand-primary hover:text-white hover:border-brand-primary" aria-label="חזרה למעלה">
+  <i data-lucide="chevron-up" class="w-5 h-5"></i>
+</button>
+
+<button id="fabA11y" class="fixed bottom-7 left-7 z-[60] w-14 h-14 bg-white text-brand-dark border border-slate-200 rounded-full flex items-center justify-center shadow-md hover:bg-brand-primary hover:text-white hover:border-brand-primary hover:scale-110 transition-all" aria-label="תפריט נגישות" aria-expanded="false">
+  <i data-lucide="accessibility" class="w-7 h-7 stroke-[2]"></i>
+</button>
+
+<div id="a11yPanel" class="fixed bottom-24 left-7 z-[59] w-[320px] bg-white border border-slate-200 rounded-2xl shadow-premium p-6 transform translate-y-5 opacity-0 pointer-events-none transition-all duration-300">
+  <div class="font-black text-brand-dark text-base mb-1">הגדרות נגישות</div>
+  <div class="text-[11px] font-bold text-slate-400 tracking-[0.1em] uppercase mb-4">התאמה אישית</div>
+
+  <div class="flex justify-between items-center py-3 border-t border-slate-100">
+    <span class="font-bold text-sm text-brand-dark">גודל גופן</span>
+    <div class="flex gap-1.5">
+      <button class="a11y-fnt w-8 h-8 rounded-lg border border-slate-200 font-black text-xs hover:border-brand-primary hover:text-brand-primary" data-font="0.9">A−</button>
+      <button class="a11y-fnt w-8 h-8 rounded-lg border border-brand-primary bg-brand-primary text-white font-black text-xs" data-font="1">A</button>
+      <button class="a11y-fnt w-8 h-8 rounded-lg border border-slate-200 font-black text-xs hover:border-brand-primary hover:text-brand-primary" data-font="1.15">A+</button>
+      <button class="a11y-fnt w-8 h-8 rounded-lg border border-slate-200 font-black text-xs hover:border-brand-primary hover:text-brand-primary" data-font="1.3">A++</button>
+    </div>
+  </div>
+  <div class="flex justify-between items-center py-3 border-t border-slate-100">
+    <span class="font-bold text-sm text-brand-dark">ניגודיות גבוהה</span>
+    <button class="a11y-tgl w-11 h-6 bg-slate-200 rounded-full relative transition-colors" data-toggle="hc" aria-pressed="false">
+      <span class="absolute top-0.5 right-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"></span>
+    </button>
+  </div>
+  <div class="flex justify-between items-center py-3 border-t border-slate-100">
+    <span class="font-bold text-sm text-brand-dark">הדגשת קישורים</span>
+    <button class="a11y-tgl w-11 h-6 bg-slate-200 rounded-full relative transition-colors" data-toggle="ul-links" aria-pressed="false">
+      <span class="absolute top-0.5 right-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"></span>
+    </button>
+  </div>
+  <div class="flex justify-between items-center py-3 border-t border-slate-100">
+    <span class="font-bold text-sm text-brand-dark">הפסקת אנימציות</span>
+    <button class="a11y-tgl w-11 h-6 bg-slate-200 rounded-full relative transition-colors" data-toggle="no-motion" aria-pressed="false">
+      <span class="absolute top-0.5 right-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"></span>
+    </button>
+  </div>
+  <button id="a11yReset" class="w-full mt-3 py-2 text-sm font-bold text-slate-500 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100">איפוס</button>
+</div>
+
+<script>
+function bootApp() {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = window.matchMedia('(max-width: 640px)').matches;
+
+  // Init AOS — robust against slow CDN load. Disable on phone for perf if user prefers reduced motion.
+  function initAOS() {
+    if (window.AOS) {
+      AOS.init({
+        duration: 800, easing: 'ease-out-cubic', once: true, offset: 60, anchorPlacement: 'top-bottom',
+        disable: () => reduceMotion,
+      });
+    } else setTimeout(initAOS, 60);
+  }
+  initAOS();
+
+  // Lucide icons
+  function initLucide() {
+    if (window.lucide) lucide.createIcons();
+    else setTimeout(initLucide, 60);
+  }
+  initLucide();
+
+  // Swiper testimonials
+  function initSwiper() {
+    if (!window.Swiper) { setTimeout(initSwiper, 80); return; }
+    new Swiper('.testi-swiper', {
+      slidesPerView: 1,
+      spaceBetween: 20,
+      loop: true,
+      grabCursor: true,
+      autoplay: reduceMotion ? false : { delay: 4500, disableOnInteraction: false, pauseOnMouseEnter: true },
+      pagination: { el: '.testi-swiper .swiper-pagination', clickable: true, dynamicBullets: false },
+      breakpoints: {
+        640:  { slidesPerView: 2, spaceBetween: 22 },
+        1024: { slidesPerView: 3, spaceBetween: 24 },
+      },
+    });
+  }
+  initSwiper();
+
+  // Sticky nav shadow — single rAF-throttled handler
+  const nav = document.getElementById('nav');
+  const progressEl = document.getElementById('scrollProgress');
+  let scrollScheduled = false;
+  function onScroll() {
+    if (scrollScheduled) return;
+    scrollScheduled = true;
+    requestAnimationFrame(() => {
+      const y = window.scrollY;
+      nav.classList.toggle('nav-shadow', y > 20);
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progressEl.style.setProperty('--prog', (max > 0 ? (y / max * 100) : 0) + '%');
+      // Scroll-to-top FAB visibility
+      if (fabTop) {
+        const v = y > 600;
+        fabTop.classList.toggle('opacity-100', v);
+        fabTop.classList.toggle('pointer-events-auto', v);
+        fabTop.classList.toggle('opacity-0', !v);
+        fabTop.classList.toggle('pointer-events-none', !v);
+      }
+      scrollScheduled = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Hero headline word-by-word reveal
+  const headline = document.querySelector('.hero-headline');
+  if (headline) {
+    const original = headline.innerHTML;
+    const lines = original.split(/<br\s*\/?>/i);
+    headline.innerHTML = lines.map(line => {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = line;
+      function wrap(node) {
+        Array.from(node.childNodes).forEach(child => {
+          if (child.nodeType === 3) {
+            const words = child.textContent.split(/(\s+)/);
+            const frag = document.createDocumentFragment();
+            words.forEach(w => {
+              if (w.trim()) {
+                const ws = document.createElement('span'); ws.className = 'word-wrap';
+                const inner = document.createElement('span'); inner.className = 'word'; inner.textContent = w;
+                ws.appendChild(inner); frag.appendChild(ws);
+              } else frag.appendChild(document.createTextNode(w));
+            });
+            child.replaceWith(frag);
+          } else if (child.nodeType === 1) wrap(child);
+        });
+      }
+      wrap(tmp);
+      return tmp.innerHTML;
+    }).join('<br>');
+    // Stagger delays
+    headline.querySelectorAll('.word-wrap').forEach((w, i) => {
+      w.querySelector('.word').style.transitionDelay = (i * 70 + 150) + 'ms';
+    });
+    // Trigger after a tick
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        headline.querySelectorAll('.word-wrap').forEach(w => w.classList.add('reveal'));
+      });
+    });
+  }
+
+  // Counter animation
+  const counterIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const el = e.target;
+        const target = parseFloat(el.dataset.counter);
+        if (el.dataset.done) return;
+        el.dataset.done = '1';
+        const dur = 1800;
+        const start = performance.now();
+        const isFloat = String(target).includes('.');
+        function tick(t) {
+          const k = Math.min(1, (t - start) / dur);
+          const eased = 1 - Math.pow(1 - k, 3);
+          const v = target * eased;
+          el.textContent = isFloat ? v.toFixed(1) : Math.round(v).toLocaleString('he-IL');
+          if (k < 1) requestAnimationFrame(tick);
+          else el.textContent = isFloat ? target.toFixed(1) : Math.round(target).toLocaleString('he-IL');
+        }
+        requestAnimationFrame(tick);
+        counterIO.unobserve(el);
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('[data-counter]').forEach(el => counterIO.observe(el));
+
+  // Scroll-to-top FAB click handler (visibility handled in onScroll above)
+  const fabTop = document.getElementById('fabTop');
+  if (fabTop) fabTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // Accessibility menu
+  const STORAGE_KEY = 'a11y_v2';
+  let a11y; try { a11y = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (err) { a11y = {}; }
+  function saveA() { localStorage.setItem(STORAGE_KEY, JSON.stringify(a11y)); }
+  function applyA() {
+    document.documentElement.style.setProperty('font-size', `calc(16px * ${a11y.font || 1})`);
+    document.body.classList.toggle('hc', !!a11y.hc);
+    document.body.classList.toggle('ul-links', !!a11y['ul-links']);
+    document.body.classList.toggle('no-motion', !!a11y['no-motion']);
+    document.querySelectorAll('.a11y-fnt').forEach(b => {
+      const sel = parseFloat(b.dataset.font) === (a11y.font || 1);
+      b.classList.toggle('bg-brand-primary', sel); b.classList.toggle('text-white', sel); b.classList.toggle('border-brand-primary', sel);
+    });
+    document.querySelectorAll('.a11y-tgl').forEach(t => {
+      const on = !!a11y[t.dataset.toggle];
+      t.classList.toggle('bg-brand-primary', on); t.classList.toggle('bg-slate-200', !on);
+      t.setAttribute('aria-pressed', on ? 'true' : 'false');
+      t.querySelector('span').style.transform = on ? 'translateX(-20px)' : 'translateX(0)';
+    });
+  }
+  applyA();
+
+  const fabA11y = document.getElementById('fabA11y');
+  const panel = document.getElementById('a11yPanel');
+  function closePanel() {
+    panel.classList.add('opacity-0','pointer-events-none','translate-y-5');
+    panel.classList.remove('opacity-100','pointer-events-auto','translate-y-0');
+    fabA11y.setAttribute('aria-expanded','false');
+  }
+  function openPanel() {
+    panel.classList.remove('opacity-0','pointer-events-none','translate-y-5');
+    panel.classList.add('opacity-100','pointer-events-auto','translate-y-0');
+    fabA11y.setAttribute('aria-expanded','true');
+  }
+  fabA11y.addEventListener('click', e => {
+    e.stopPropagation();
+    if (panel.classList.contains('opacity-0')) openPanel(); else closePanel();
   });
-});
+  document.addEventListener('click', e => { if (!panel.contains(e.target) && e.target !== fabA11y) closePanel(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
+  document.querySelectorAll('.a11y-fnt').forEach(b => b.addEventListener('click', () => { a11y.font = parseFloat(b.dataset.font); saveA(); applyA(); }));
+  document.querySelectorAll('.a11y-tgl').forEach(t => t.addEventListener('click', () => { a11y[t.dataset.toggle] = !a11y[t.dataset.toggle]; saveA(); applyA(); }));
+  document.getElementById('a11yReset').addEventListener('click', () => { a11y = {}; saveA(); applyA(); });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootApp);
+} else {
+  bootApp();
+}
+
+function handleSubmit(e) {
+  e.preventDefault();
+  e.target.innerHTML = '<div class="text-center py-12 text-emerald-600 font-black text-lg">✓ הפנייה נשלחה — נחזור אליכם בהקדם</div>';
+}
 </script>
+
 </body>
 </html>

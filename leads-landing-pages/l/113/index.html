@@ -22,8 +22,8 @@
   theme: {
     extend: {
       colors: {
-        'brand-primary': '#E76F51',
-        'brand-primaryDark': '#C8553D',
+        'brand-primary': '#7BBFBF',
+        'brand-primaryDark': '#5F9E9E',
         'brand-dark': '#1A1A1A',
         'brand-light': '#FAFAF7',
         'brand-gray': '#F4F0EA',
@@ -33,7 +33,7 @@
         sans: ['Assistant','Heebo','ui-sans-serif','system-ui','sans-serif'],
       },
       boxShadow: {
-        'glow': '0 8px 24px #E76F5140',
+        'glow': '0 8px 24px #7BBFBF40',
         'premium': '0 12px 40px rgba(0,0,0,0.12)',
       },
     },
@@ -85,8 +85,8 @@
     inset-inline-start: 0; top: 0.55em;
     width: 8px; height: 8px;
     border-radius: 50%;
-    background: #E76F51;
-    box-shadow: 0 0 0 4px #E76F511a;
+    background: #7BBFBF;
+    box-shadow: 0 0 0 4px #7BBFBF1a;
   }
 
   /* ═══════ LOGOS STRIP — refined ═══════ */
@@ -106,12 +106,12 @@
   }
   .logo-badge:hover {
     transform: translateY(-2px);
-    border-color: #E76F5140;
+    border-color: #7BBFBF40;
     box-shadow: 0 6px 18px rgba(0,0,0,0.06);
   }
   .logo-dot {
     width: 6px; height: 6px; border-radius: 50%;
-    background: #E76F51;
+    background: #7BBFBF;
     flex-shrink: 0;
     opacity: 0.65;
     transition: opacity 250ms ease, transform 250ms ease;
@@ -127,7 +127,7 @@
     white-space: nowrap;
     transition: color 250ms ease;
   }
-  .logo-badge:hover .logo-text { color: #C8553D; }
+  .logo-badge:hover .logo-text { color: #5F9E9E; }
 
   /* ═══════ PHOTO FRAMES — premium polaroid effect ═══════ */
   .photo-card {
@@ -165,8 +165,8 @@
   .photo-frame-bg-1 {
     position: absolute;
     inset: -16px;
-    background: #E76F5114;
-    border: 1.5px solid #E76F5133;
+    background: #7BBFBF14;
+    border: 1.5px solid #7BBFBF33;
     border-radius: 40px;
     transform: rotate(-3deg);
     z-index: -1;
@@ -218,7 +218,7 @@
   /* Scroll progress bar */
   .scroll-progress {
     position: fixed; top: 0; left: 0; right: 0; height: 3px;
-    background: linear-gradient(90deg, #E76F51 var(--prog,0%), transparent var(--prog,0%));
+    background: linear-gradient(90deg, #7BBFBF var(--prog,0%), transparent var(--prog,0%));
     z-index: 100;
     pointer-events: none;
     transition: background 80ms linear;
@@ -232,7 +232,7 @@
   .nav-link { position: relative; }
   .nav-link::after {
     content: ""; position: absolute; left: 0; right: 0; bottom: -4px;
-    height: 2px; background: #E76F51;
+    height: 2px; background: #7BBFBF;
     transform: scaleX(0); transform-origin: right;
     transition: transform 300ms cubic-bezier(0.22,1,0.36,1);
   }
@@ -295,7 +295,7 @@
     font-family: Georgia, serif;
     font-size: 64px;
     line-height: 0.6;
-    color: #E76F51;
+    color: #7BBFBF;
     opacity: 0.2;
     user-select: none;
   }
@@ -324,8 +324,8 @@
   .testi-card .avatar {
     width: 44px; height: 44px;
     border-radius: 50%;
-    background: #E76F511a;
-    color: #C8553D;
+    background: #7BBFBF1a;
+    color: #5F9E9E;
     display: grid; place-items: center;
     font-family: 'Assistant','Heebo',sans-serif;
     font-weight: 800;
@@ -348,7 +348,7 @@
   .testi-heading-underline {
     display: block;
     width: 60px; height: 4px;
-    background: #E76F51;
+    background: #7BBFBF;
     border-radius: 2px;
     margin: 18px auto 0;
   }
@@ -364,7 +364,7 @@
     transition: all 250ms ease;
   }
   .swiper-pagination-bullet-active {
-    background: #E76F51 !important;
+    background: #7BBFBF !important;
     opacity: 1 !important;
     width: 28px !important;
     border-radius: 5px !important;
@@ -395,11 +395,11 @@
   <div class="container mx-auto max-w-7xl px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
     <a href="#hero" class="flex items-center gap-3 group" aria-label="דף הבית">
       <div class="w-10 h-10 sm:w-11 sm:h-11 bg-brand-light border border-slate-200 rounded-xl flex items-center justify-center text-brand-primary shadow-sm group-hover:scale-110 group-hover:border-brand-primary transition-all duration-300">
-        <i data-lucide="building-2" class="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]"></i>
+        <i data-lucide="leaf" class="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]"></i>
       </div>
       <div class="flex flex-col">
         <span class="font-black text-xl sm:text-2xl tracking-tight text-brand-dark leading-none">פיצ&#x27;רי עיסויים</span>
-        <span class="text-[9px] sm:text-[11px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">שירות מקצועי</span>
+        <span class="text-[9px] sm:text-[11px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">ספא ועיסויים</span>
       </div>
     </a>
 
@@ -861,11 +861,11 @@
       <div>
         <div class="flex items-center gap-3 mb-4">
           <div class="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center text-white">
-            <i data-lucide="building-2" class="w-5 h-5"></i>
+            <i data-lucide="leaf" class="w-5 h-5"></i>
           </div>
           <div class="flex flex-col">
             <span class="font-black text-xl text-white leading-none">פיצ&#x27;רי עיסויים</span>
-            <span class="text-[10px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">שירות מקצועי</span>
+            <span class="text-[10px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">ספא ועיסויים</span>
           </div>
         </div>
         <p class="text-sm text-slate-400 leading-relaxed">ספא · חיפה</p>
