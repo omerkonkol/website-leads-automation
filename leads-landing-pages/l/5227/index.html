@@ -1,0 +1,1133 @@
+<!DOCTYPE html>
+<html lang="he" dir="rtl">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
+<title>ניצן אנרג&#x27;י- מאמנת כושר — מאמן אישי בחיפה</title>
+<meta name="description" content="ניצן אנרג&#x27;י- מאמנת כושר — מאמן אישי מקצועי בחיפה. שירות אישי, ניסיון של שנים, מחיר הוגן.">
+<meta name="robots" content="noindex,nofollow,noarchive">
+<meta property="og:title" content="ניצן אנרג&#x27;י- מאמנת כושר — מאמן אישי בחיפה">
+<meta property="og:description" content="ניצן אנרג&#x27;י- מאמנת כושר — מאמן אישי מקצועי בחיפה. שירות אישי, ניסיון של שנים, מחיר הוגן.">
+<meta property="og:type" content="website">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="preconnect" href="https://images.unsplash.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Assistant:wght@400;500;600;700;800&family=Heebo:wght@400;500;600;700;800;900&display=swap">
+<link rel="preload" as="image" href="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1600&auto=format&fit=crop&q=85" fetchpriority="high">
+
+<!-- Tailwind CSS via CDN (Play CDN — fine for landing pages) -->
+<script src="https://cdn.tailwindcss.com"></script>
+<script>tailwind.config = {
+  theme: {
+    extend: {
+      colors: {
+        'brand-primary': '#E76F51',
+        'brand-primaryDark': '#C8553D',
+        'brand-dark': '#1A1A1A',
+        'brand-light': '#FAFAF7',
+        'brand-gray': '#F4F0EA',
+        'brand-whatsapp': '#25D366',
+      },
+      fontFamily: {
+        sans: ['Assistant','Heebo','ui-sans-serif','system-ui','sans-serif'],
+      },
+      boxShadow: {
+        'glow': '0 8px 24px #E76F5140',
+        'premium': '0 12px 40px rgba(0,0,0,0.12)',
+      },
+    },
+  },
+}</script>
+
+<!-- AOS — scroll animations -->
+<link href="https://unpkg.com/aos@2.3.4/dist/aos.css" rel="stylesheet">
+<script src="https://unpkg.com/aos@2.3.4/dist/aos.js"></script>
+
+<!-- Swiper — carousel for testimonials -->
+<link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.css">
+<script src="https://cdn.jsdelivr.net/npm/swiper@11/swiper-bundle.min.js"></script>
+
+<!-- Lucide icons -->
+<script src="https://unpkg.com/lucide@latest/dist/umd/lucide.js"></script>
+
+<style>
+  body { font-family: 'Assistant', 'Heebo', system-ui, sans-serif; }
+  /* Sections — paint containment so scroll repaint stays cheap */
+  section { contain: layout style paint; }
+  /* Hero must NOT contain because the floating blobs need to overflow into next section visually — but we set overflow:hidden so it's fine */
+  /* Images render hint */
+  img { image-rendering: auto; }
+  .glass-nav {
+    background: rgba(255,255,255,0.85);
+    backdrop-filter: blur(12px);
+    -webkit-backdrop-filter: blur(12px);
+    border-bottom: 1px solid rgba(0,0,0,0.04);
+  }
+  .nav-shadow { box-shadow: 0 2px 12px rgba(0,0,0,0.06); }
+
+  /* AOS RTL — flip fade-left/right */
+  [dir="rtl"] [data-aos="fade-left"] { transform: translate3d(-50px, 0, 0); }
+  [dir="rtl"] [data-aos="fade-right"] { transform: translate3d(50px, 0, 0); }
+  [dir="rtl"] [data-aos="fade-left"].aos-animate,
+  [dir="rtl"] [data-aos="fade-right"].aos-animate { transform: translate3d(0, 0, 0); }
+
+  /* Pain bullet list */
+  .pain-list { list-style: none; padding: 0; }
+  .pain-list li {
+    position: relative;
+    padding-inline-start: 1.5rem;
+    margin-bottom: 0.625rem;
+    line-height: 1.55;
+  }
+  .pain-list li::before {
+    content: ""; position: absolute;
+    inset-inline-start: 0; top: 0.55em;
+    width: 8px; height: 8px;
+    border-radius: 50%;
+    background: #E76F51;
+    box-shadow: 0 0 0 4px #E76F511a;
+  }
+
+  /* ═══════ LOGOS STRIP — refined ═══════ */
+  .logo-badge {
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    height: 56px;
+    padding: 0 22px;
+    background: #fff;
+    border: 1px solid rgba(0,0,0,0.06);
+    border-radius: 14px;
+    box-shadow: 0 1px 2px rgba(0,0,0,0.04);
+    flex-shrink: 0;
+    transition: all 250ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .logo-badge:hover {
+    transform: translateY(-2px);
+    border-color: #E76F5140;
+    box-shadow: 0 6px 18px rgba(0,0,0,0.06);
+  }
+  .logo-dot {
+    width: 6px; height: 6px; border-radius: 50%;
+    background: #E76F51;
+    flex-shrink: 0;
+    opacity: 0.65;
+    transition: opacity 250ms ease, transform 250ms ease;
+  }
+  .logo-badge:hover .logo-dot { opacity: 1; transform: scale(1.4); }
+  .logo-text {
+    font-family: 'Assistant', 'Heebo', sans-serif;
+    font-weight: 700;
+    font-size: 13px;
+    color: #4a4a4a;
+    letter-spacing: 0.04em;
+    line-height: 1.15;
+    white-space: nowrap;
+    transition: color 250ms ease;
+  }
+  .logo-badge:hover .logo-text { color: #C8553D; }
+
+  /* ═══════ PHOTO FRAMES — premium polaroid effect ═══════ */
+  .photo-card {
+    position: relative;
+    border-radius: 32px;
+    overflow: hidden;
+    background: #fff;
+    padding: 10px;
+    box-shadow: 0 24px 60px -20px rgba(0,0,0,0.25), 0 8px 20px -8px rgba(0,0,0,0.1);
+    transition: transform 600ms cubic-bezier(0.22, 1, 0.36, 1), box-shadow 600ms ease;
+  }
+  .photo-card:hover {
+    transform: translateY(-4px);
+    box-shadow: 0 32px 70px -20px rgba(0,0,0,0.28), 0 12px 24px -8px rgba(0,0,0,0.12);
+  }
+  .photo-inner {
+    position: relative;
+    width: 100%;
+    aspect-ratio: 4/5;
+    border-radius: 24px;
+    overflow: hidden;
+    background: #e5e7eb;
+  }
+  .photo-inner img {
+    width: 100%; height: 100%;
+    object-fit: cover;
+    transition: transform 1.2s cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .photo-card:hover .photo-inner img { transform: scale(1.04); }
+  .photo-inner::after {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(180deg, rgba(0,0,0,0) 60%, rgba(0,0,0,0.18) 100%);
+    pointer-events: none;
+  }
+  .photo-frame-bg-1 {
+    position: absolute;
+    inset: -16px;
+    background: #E76F5114;
+    border: 1.5px solid #E76F5133;
+    border-radius: 40px;
+    transform: rotate(-3deg);
+    z-index: -1;
+  }
+  .photo-frame-bg-2 {
+    position: absolute;
+    inset: -16px;
+    background: rgba(0,0,0,0.04);
+    border-radius: 40px;
+    transform: rotate(2deg);
+    z-index: -2;
+  }
+  .photo-badge-overlay {
+    position: absolute;
+    bottom: 24px;
+    inset-inline-start: -16px;
+    background: #fff;
+    padding: 16px 22px;
+    border-radius: 18px;
+    box-shadow: 0 12px 30px -8px rgba(0,0,0,0.2), 0 0 0 1px rgba(0,0,0,0.04);
+    z-index: 5;
+  }
+  @media (max-width: 768px) {
+    .photo-card { padding: 8px; border-radius: 24px; }
+    .photo-inner { border-radius: 18px; aspect-ratio: 4/3; }
+    .photo-frame-bg-1, .photo-frame-bg-2 { inset: -12px; border-radius: 32px; }
+    .photo-badge-overlay { padding: 12px 16px; bottom: 16px; inset-inline-start: -8px; }
+  }
+
+  /* ═══════ HERO — static blobs (drift removed for perf — animating blur() is very expensive) ═══════ */
+  .blob-drift-1, .blob-drift-2 { /* static — kept the class names for HTML compat */ will-change: auto; }
+
+  /* Headline word-reveal (split via JS) */
+  .word-wrap { display: inline-block; overflow: hidden; vertical-align: top; padding: 0 0.04em; }
+  .word-wrap > .word {
+    display: inline-block;
+    transform: translateY(110%);
+    transition: transform 800ms cubic-bezier(0.22, 1, 0.36, 1);
+  }
+  .word-wrap.reveal > .word { transform: translateY(0); }
+
+  /* Eyebrow pill — pulsing dot (slower for less GPU churn) */
+  @keyframes eyebrow-ping {
+    0% { transform: scale(1); opacity: 0.5; }
+    100% { transform: scale(2.4); opacity: 0; }
+  }
+  .eyebrow-ping { animation: eyebrow-ping 3s cubic-bezier(0,0,0.2,1) infinite; will-change: transform, opacity; }
+
+  /* Scroll progress bar */
+  .scroll-progress {
+    position: fixed; top: 0; left: 0; right: 0; height: 3px;
+    background: linear-gradient(90deg, #E76F51 var(--prog,0%), transparent var(--prog,0%));
+    z-index: 100;
+    pointer-events: none;
+    transition: background 80ms linear;
+  }
+
+  /* Card hover lift — universal */
+  .lift-card { transition: transform 350ms cubic-bezier(0.22,1,0.36,1), box-shadow 350ms ease, border-color 350ms ease; }
+  .lift-card:hover { transform: translateY(-6px); box-shadow: 0 20px 40px -12px rgba(0,0,0,0.15); }
+
+  /* Animated underline on nav links */
+  .nav-link { position: relative; }
+  .nav-link::after {
+    content: ""; position: absolute; left: 0; right: 0; bottom: -4px;
+    height: 2px; background: #E76F51;
+    transform: scaleX(0); transform-origin: right;
+    transition: transform 300ms cubic-bezier(0.22,1,0.36,1);
+  }
+  .nav-link:hover::after { transform: scaleX(1); transform-origin: left; }
+
+  /* CTA button hover gloss */
+  .btn-gloss { position: relative; overflow: hidden; }
+  .btn-gloss::before {
+    content: ""; position: absolute; inset: 0;
+    background: linear-gradient(110deg, transparent 30%, rgba(255,255,255,0.4) 50%, transparent 70%);
+    transform: translateX(-120%);
+    transition: transform 800ms cubic-bezier(0.22,1,0.36,1);
+  }
+  .btn-gloss:hover::before { transform: translateX(120%); }
+
+  /* WA pulse — slower & GPU-promoted */
+  @keyframes wa-pulse { 0% { transform: scale(1); opacity: 0.55; } 100% { transform: scale(1.55); opacity: 0; } }
+  .wa-pulse-ring { animation: wa-pulse 3s ease-out infinite; will-change: transform, opacity; transform: translateZ(0); }
+
+  /* Dark ticker (newidan-style) — only continuous animation on the page; GPU-promoted */
+  .ticker-wrapper {
+    overflow: hidden;
+    padding: 14px 0;
+    -webkit-mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+            mask-image: linear-gradient(to right, transparent, black 6%, black 94%, transparent);
+    contain: paint;
+  }
+  .ticker-track {
+    display: flex;
+    align-items: center;
+    gap: 32px;
+    animation: ticker-scroll 38s linear infinite;
+    width: max-content;
+    will-change: transform;
+    transform: translateZ(0);
+    backface-visibility: hidden;
+  }
+  [dir="rtl"] .ticker-track { animation-direction: reverse; }
+  .marquee-section:hover .ticker-track { animation-play-state: paused; }
+  @keyframes ticker-scroll { 0% { transform: translate3d(0,0,0); } 100% { transform: translate3d(-50%,0,0); } }
+  @media (min-width: 640px) { .ticker-track { gap: 48px; } }
+
+  /* ═══════ TESTIMONIAL CARDS — newidan style ═══════ */
+  .testi-card {
+    position: relative;
+    background: #fff;
+    border-radius: 24px;
+    padding: 48px 28px 24px;
+    box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 8px 24px -12px rgba(0,0,0,0.1);
+    border: 1px solid rgba(0,0,0,0.04);
+    transition: transform 350ms cubic-bezier(0.22,1,0.36,1), box-shadow 350ms ease;
+    height: 100%;
+    display: flex; flex-direction: column;
+  }
+  .testi-card:hover { transform: translateY(-6px); box-shadow: 0 1px 3px rgba(0,0,0,0.04), 0 20px 40px -12px rgba(0,0,0,0.18); }
+  .testi-card .quote-mark {
+    position: absolute;
+    top: 22px;
+    inset-inline-start: 28px;
+    font-family: Georgia, serif;
+    font-size: 64px;
+    line-height: 0.6;
+    color: #E76F51;
+    opacity: 0.2;
+    user-select: none;
+  }
+  .testi-card .stars {
+    position: absolute;
+    top: 28px;
+    inset-inline-end: 28px;
+    color: #F5A524;
+    font-size: 16px;
+    letter-spacing: 2px;
+  }
+  .testi-card .quote-text {
+    color: #2a2a2a;
+    font-size: 16px;
+    line-height: 1.65;
+    font-weight: 500;
+    flex: 1;
+    margin-top: 22px;
+    margin-bottom: 22px;
+  }
+  .testi-card .testi-foot {
+    display: flex; align-items: center; gap: 14px;
+    padding-top: 18px;
+    border-top: 1px solid rgba(0,0,0,0.06);
+  }
+  .testi-card .avatar {
+    width: 44px; height: 44px;
+    border-radius: 50%;
+    background: #E76F511a;
+    color: #C8553D;
+    display: grid; place-items: center;
+    font-family: 'Assistant','Heebo',sans-serif;
+    font-weight: 800;
+    font-size: 18px;
+    flex-shrink: 0;
+  }
+  .testi-card .name {
+    font-weight: 800;
+    font-size: 16px;
+    color: #1a1a1a;
+    line-height: 1.2;
+  }
+  .testi-card .meta {
+    font-size: 12px;
+    color: #7a7a7a;
+    margin-top: 3px;
+  }
+
+  /* Testimonials — section heading underline */
+  .testi-heading-underline {
+    display: block;
+    width: 60px; height: 4px;
+    background: #E76F51;
+    border-radius: 2px;
+    margin: 18px auto 0;
+  }
+
+  /* Swiper carousel customization */
+  .testi-swiper { padding-bottom: 8px; }
+  .testi-swiper .swiper-slide { height: auto; display: flex; }
+  .testi-swiper .swiper-slide > .testi-card { width: 100%; }
+  .swiper-pagination-bullet {
+    background: #d4d4d4 !important;
+    opacity: 0.6 !important;
+    width: 10px !important; height: 10px !important;
+    transition: all 250ms ease;
+  }
+  .swiper-pagination-bullet-active {
+    background: #E76F51 !important;
+    opacity: 1 !important;
+    width: 28px !important;
+    border-radius: 5px !important;
+  }
+
+  /* A11y modes */
+  body.hc { filter: contrast(1.25); }
+  body.no-motion *, body.no-motion *::before, body.no-motion *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+  body.ul-links a:not(.nav-cta):not(.btn-primary):not(.btn-wa) { text-decoration: underline; }
+
+  @media (prefers-reduced-motion: reduce) {
+    .wa-pulse-ring, .marquee-track { animation: none !important; }
+    [data-aos] { opacity: 1 !important; transform: none !important; }
+  }
+</style>
+</head>
+
+<body class="bg-white text-brand-dark antialiased overflow-x-hidden">
+
+<div class="scroll-progress" id="scrollProgress"></div>
+
+<!-- ═══════ NAV ═══════ -->
+<nav class="sticky top-0 z-50 glass-nav transition-all duration-300" id="nav">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6 py-3 sm:py-4 flex justify-between items-center">
+    <a href="#hero" class="flex items-center gap-3 group" aria-label="דף הבית">
+      <div class="w-10 h-10 sm:w-11 sm:h-11 bg-brand-light border border-slate-200 rounded-xl flex items-center justify-center text-brand-primary shadow-sm group-hover:scale-110 group-hover:border-brand-primary transition-all duration-300">
+        <i data-lucide="dumbbell" class="w-5 h-5 sm:w-6 sm:h-6 stroke-[2.5]"></i>
+      </div>
+      <div class="flex flex-col">
+        <span class="font-black text-xl sm:text-2xl tracking-tight text-brand-dark leading-none">ניצן אנרג&#x27;י- מאמנת כושר</span>
+        <span class="text-[9px] sm:text-[11px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">אימון אישי וליווי</span>
+      </div>
+    </a>
+
+    <div class="hidden lg:flex items-center gap-8 font-bold text-slate-600">
+      <a href="#about" class="nav-link hover:text-brand-primary transition-colors">עלינו</a>
+      <a href="#services" class="nav-link hover:text-brand-primary transition-colors">שירותים</a>
+      <a href="#testimonials" class="nav-link hover:text-brand-primary transition-colors">המלצות</a>
+      <a href="#contact" class="nav-link hover:text-brand-primary transition-colors">צרו קשר</a>
+    </div>
+
+    <a href="https://wa.me/972526606457" class="btn-gloss hidden lg:inline-flex items-center gap-2 bg-brand-primary text-white px-7 py-2.5 rounded-full shadow-glow hover:bg-brand-primaryDark hover:-translate-y-1 transition-all font-bold nav-cta" aria-label="דברו איתנו וואטסאפ">
+      דברו איתנו בוואטסאפ
+      <svg class="w-5 h-5 shrink-0 fill-current" viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg" aria-hidden="true">
+        <path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/>
+      </svg>
+    </a>
+  </div>
+</nav>
+
+<!-- ═══════ HERO ═══════ -->
+<header id="hero" class="relative pt-12 pb-16 sm:pt-20 sm:pb-20 md:pt-24 md:pb-28 overflow-hidden border-b border-slate-100">
+  <div class="absolute inset-0 z-0 bg-slate-100"></div>
+  <div class="absolute inset-0 bg-white/72 z-[1]"></div>
+  <div class="absolute top-0 left-0 w-full h-full overflow-hidden pointer-events-none z-[2]">
+    <div class="absolute top-[-10%] right-[-5%] w-[300px] sm:w-[500px] h-[300px] sm:h-[500px] bg-brand-primary/15 rounded-full blur-[60px] sm:blur-[80px]"></div>
+    <div class="absolute bottom-[-10%] left-[-5%] w-[300px] sm:w-[400px] h-[300px] sm:h-[400px] bg-slate-300/40 rounded-full blur-[60px] sm:blur-[70px]"></div>
+  </div>
+
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6 flex flex-col-reverse lg:flex-row items-center gap-12 lg:gap-20 relative z-10">
+    <!-- TEXT (visual right in RTL) -->
+    <div class="lg:w-1/2 text-center lg:text-right">
+      <div class="inline-flex items-center gap-2 bg-white border border-slate-200 px-4 py-1.5 rounded-full mb-6 shadow-sm" data-aos="fade-up" data-aos-duration="600">
+        <span class="relative flex h-3 w-3">
+          <span class="absolute inline-flex h-full w-full rounded-full bg-brand-primary opacity-75 eyebrow-ping"></span>
+          <span class="relative inline-flex rounded-full h-3 w-3 bg-brand-primary"></span>
+        </span>
+        <span class="text-xs sm:text-sm font-bold text-slate-600 tracking-wide">מאמן אישי · חיפה</span>
+      </div>
+
+      <h1 class="text-4xl sm:text-5xl md:text-6xl font-black text-brand-dark leading-[1.1] mb-4 sm:mb-6 hero-headline">
+        מתאמנים, מתאמנים, מתאמנים — ולא רואים תוצאות?<br>
+        <span class="text-brand-primary">הגיע הזמן לתכנית שמתאימה דווקא לך.</span>
+      </h1>
+
+      <p class="text-base sm:text-lg md:text-xl text-slate-600 mb-6 font-medium leading-relaxed max-w-lg mx-auto lg:mx-0 lg:mr-0 lg:ml-auto" data-aos="fade-up" data-aos-delay="400" data-aos-duration="700">
+        אימון אישי, ליווי תזונתי ובניית הרגלים — בקצב חיים שלך, אונליין או פיזית.
+      </p>
+
+      <ul class="text-slate-700 font-bold space-y-3 mb-8 sm:mb-10 text-base sm:text-lg max-w-lg mx-auto lg:mx-0 lg:mr-0 lg:ml-auto text-right" data-aos="fade-up" data-aos-delay="500" data-aos-duration="700">
+        <li class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-brand-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>תכנית מותאמת אישית לפי רמה ומטרות</span>
+          </li><li class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-brand-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>ליווי בוואטסאפ בין אימונים</span>
+          </li><li class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-brand-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>ליווי תזונתי מציאותי, בלי דיאטות קיצוניות</span>
+          </li><li class="flex items-start gap-3">
+            <svg class="w-6 h-6 text-brand-primary shrink-0 mt-0.5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="3" d="M5 13l4 4L19 7"/>
+            </svg>
+            <span>אימונים בזום מהבית, או פגישות פרונטליות</span>
+          </li>
+      </ul>
+
+      <div class="flex flex-wrap gap-3 justify-center lg:justify-start" data-aos="fade-up" data-aos-delay="600" data-aos-duration="700">
+        <a href="https://wa.me/972526606457" class="btn-gloss inline-flex items-center gap-2 bg-brand-whatsapp text-white px-7 py-3.5 rounded-full font-bold shadow-glow hover:-translate-y-1 hover:shadow-premium transition-all">
+          שלחו הודעה בוואטסאפ
+          <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+        </a>
+        <a href="tel:0526606457" class="inline-flex items-center gap-2 bg-white text-brand-dark border-2 border-slate-200 px-7 py-3.5 rounded-full font-bold hover:border-brand-primary hover:-translate-y-1 transition-all">
+          <i data-lucide="phone" class="w-5 h-5"></i>
+          0526606457
+        </a>
+      </div>
+    </div>
+
+    <!-- IMAGE (visual left in RTL) -->
+    <div class="lg:w-1/2 relative w-full" data-aos="fade-right" data-aos-duration="900" data-aos-delay="200">
+      <div class="photo-card">
+        <div class="photo-frame-bg-1"></div>
+        <div class="photo-frame-bg-2"></div>
+        <div class="photo-inner">
+          <img src="https://images.unsplash.com/photo-1517836357463-d25dfeac3438?w=1600&auto=format&fit=crop&q=85" alt="ניצן אנרג&#x27;י- מאמנת כושר — מאמן אישי" loading="eager" fetchpriority="high">
+        </div>
+        <div class="photo-badge-overlay">
+          <span class="block text-3xl sm:text-4xl font-black text-brand-primary leading-none mb-1">+250</span>
+          <span class="font-bold text-sm text-slate-700">מתאמנים מרוצים</span>
+        </div>
+      </div>
+    </div>
+  </div>
+</header>
+
+<!-- ═══════ STATS ═══════ -->
+<section class="py-16 sm:py-20 bg-white border-b border-slate-100">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6">
+    <div class="text-center mb-12" data-aos="fade-up">
+      <span class="text-brand-primary font-black tracking-widest text-xs sm:text-sm uppercase mb-3 inline-block bg-brand-primary/10 px-3 py-1 rounded-full">המספרים מאחורינו</span>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-brand-dark leading-tight">בארץ <span class="text-brand-primary">ובעולם</span></h2>
+    </div>
+    <div class="grid grid-cols-1 sm:grid-cols-3 gap-4 sm:gap-6">
+      <div class="text-center p-6 sm:p-8 bg-white rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-2 hover:shadow-premium transition-all duration-300" data-aos="flip-up" data-aos-delay="0" data-aos-duration="800">
+          <div class="text-5xl sm:text-6xl font-black text-brand-primary leading-none mb-2 tracking-tight">
+            <span data-counter="8">0</span><span class="text-3xl sm:text-4xl">+</span>
+          </div>
+          <div class="text-slate-600 font-bold text-sm sm:text-base">שנות ניסיון</div>
+        </div><div class="text-center p-6 sm:p-8 bg-white rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-2 hover:shadow-premium transition-all duration-300" data-aos="zoom-in" data-aos-delay="150" data-aos-duration="800">
+          <div class="text-5xl sm:text-6xl font-black text-brand-primary leading-none mb-2 tracking-tight">
+            <span data-counter="250">0</span><span class="text-3xl sm:text-4xl">+</span>
+          </div>
+          <div class="text-slate-600 font-bold text-sm sm:text-base">מתאמנים</div>
+        </div><div class="text-center p-6 sm:p-8 bg-white rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-2 hover:shadow-premium transition-all duration-300" data-aos="flip-up" data-aos-delay="300" data-aos-duration="800">
+          <div class="text-5xl sm:text-6xl font-black text-brand-primary leading-none mb-2 tracking-tight">
+            <span data-counter="96">0</span><span class="text-3xl sm:text-4xl">%</span>
+          </div>
+          <div class="text-slate-600 font-bold text-sm sm:text-base">שביעות רצון</div>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ DARK TICKER (promises strip) ═══════ -->
+<section class="marquee-section relative z-20 bg-brand-dark overflow-hidden border-y border-brand-primary/20 shadow-lg">
+  <div class="ticker-wrapper">
+    <div class="ticker-track">
+      <div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="heart-handshake" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ליווי אישי</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מאמן זמין בוואטסאפ</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="target" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">תכנית מותאמת</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- לרמה ולמטרות שלך</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="apple" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ליווי תזונתי</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מציאותי, לא קיצוני</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="video" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">אונליין מהבית</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- אימוני זום וצ&#x27;אט</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="trophy" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">+250 מתאמנים</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מרוצים שחזרו</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="heart-handshake" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ליווי אישי</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מאמן זמין בוואטסאפ</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="target" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">תכנית מותאמת</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- לרמה ולמטרות שלך</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="apple" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">ליווי תזונתי</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מציאותי, לא קיצוני</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="video" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">אונליין מהבית</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- אימוני זום וצ&#x27;אט</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div><div class="flex items-center gap-3 shrink-0">
+              <i data-lucide="trophy" class="w-5 h-5 sm:w-6 sm:h-6 text-brand-primary"></i>
+              <span class="font-black text-white text-base sm:text-xl whitespace-nowrap">+250 מתאמנים</span>
+              <span class="text-slate-300 text-sm sm:text-base hidden sm:inline-block whitespace-nowrap">- מרוצים שחזרו</span>
+            </div><div class="w-1.5 h-1.5 rounded-full bg-brand-primary/50 shrink-0"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ ABOUT / PAIN POINTS ═══════ -->
+<section id="about" class="py-16 sm:py-24 bg-white overflow-hidden">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6">
+    <div class="flex flex-col lg:flex-row items-center gap-12 sm:gap-16">
+      <!-- LEFT (visual): polaroid-style photo card + badge -->
+      <div class="lg:w-1/2 relative w-full" data-aos="fade-left" data-aos-duration="900">
+        <div class="photo-card">
+          <div class="photo-frame-bg-1"></div>
+          <div class="photo-frame-bg-2"></div>
+          <div class="photo-inner">
+            <img src="https://images.unsplash.com/photo-1581009146145-b5ef050c2e1e?w=1600&auto=format&fit=crop&q=85" alt="מאמן אישי" loading="lazy">
+          </div>
+          <div class="photo-badge-overlay">
+            <span class="block text-3xl sm:text-4xl font-black text-brand-primary leading-none mb-1">5.0★</span>
+            <span class="font-bold text-sm text-slate-700">— ביקורות</span>
+          </div>
+        </div>
+      </div>
+
+      <!-- RIGHT: text + bullets + callout + promise + 2 cards -->
+      <div class="lg:w-1/2 w-full" data-aos="fade-right">
+        <span class="text-brand-primary font-black tracking-widest text-xs sm:text-sm uppercase mb-3 bg-brand-primary/10 inline-block px-3 py-1 rounded-full">אתם מזהים את עצמכם?</span>
+        <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-brand-dark mb-4 sm:mb-6 leading-tight">
+          זה נשמע לכם <br class="hidden sm:block"><span class="text-brand-primary">מוכר?</span>
+        </h2>
+
+        <div class="text-slate-600 text-base sm:text-lg leading-relaxed mb-6 font-medium">
+          <ul class="pain-list mb-4">
+            <li>מתאמנים בלי תכנית סדורה ולא רואים תוצאות?</li><li>מתחילים דיאטה ועוזבים אחרי שבועיים?</li><li>מנסים להתאמן לבד ומאבדים מוטיבציה?</li><li>כאבי גב או ברכיים מאימונים שגויים?</li><li>אין לכם זמן או חשק לחדר כושר רועש?</li><li>מאוכזבים מתוצאות חצי-חצי שלא נשארות?</li>
+          </ul>
+          <div class="bg-brand-primary/5 p-4 border-r-4 border-brand-primary mt-4 rounded-l-lg font-bold text-brand-dark">
+            👉 הבעיה היא לא שאתם לא מתאמנים — היא שאף אחד לא בנה לכם תכנית שמתאימה דווקא לכם.
+          </div>
+        </div>
+
+        <h3 class="text-2xl font-black text-brand-dark mb-3 mt-8">לא כל אימון נותן תוצאות</h3>
+        <p class="text-slate-600 text-base sm:text-lg leading-relaxed mb-6 font-medium">אנחנו לא מאמינים בקטלוג של תכניות מוכנות. אנחנו בונים תכנית אישית לרמה, למטרות ולקצב חיים שלך — ומלווים בקפדנות עד שמגיעים.</p>
+
+        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4 sm:gap-6">
+          <div class="bg-brand-gray p-5 sm:p-6 rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+            <i data-lucide="sparkles" class="w-7 h-7 sm:w-8 sm:h-8 text-brand-primary mb-3"></i>
+            <h4 class="font-black text-brand-dark text-base sm:text-lg mb-1">תכנית מותאמת אישית</h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">בנויה לרמה, לזמן הפנוי ולמטרות שלך — לא תבנית מהמדף.</p>
+          </div><div class="bg-brand-gray p-5 sm:p-6 rounded-2xl border border-slate-200 hover:border-brand-primary hover:-translate-y-1 hover:shadow-md transition-all duration-300">
+            <i data-lucide="shield-check" class="w-7 h-7 sm:w-8 sm:h-8 text-brand-primary mb-3"></i>
+            <h4 class="font-black text-brand-dark text-base sm:text-lg mb-1">ליווי לאורך כל הדרך</h4>
+            <p class="text-xs sm:text-sm text-slate-500 leading-relaxed">ווצאפ פתוח, תיקון תרגילים בזמן אמת, התאמות שבועיות.</p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ SERVICES ═══════ -->
+<section id="services" class="py-16 sm:py-24 relative bg-white border-t border-slate-100">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6">
+    <div class="text-center mb-12 sm:mb-16" data-aos="fade-up">
+      <span class="text-brand-primary font-black tracking-widest text-xs sm:text-sm uppercase mb-3 inline-block bg-brand-primary/10 px-3 py-1 rounded-full">המומחיות שלנו</span>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-brand-dark mb-4 leading-tight">השירותים <span class="text-brand-primary">שלנו</span></h2>
+      <p class="text-slate-600 text-base sm:text-lg max-w-2xl mx-auto font-medium">פתרונות מדויקים לכל צורך, בליווי אישי ובהתחייבות לתוצאה.</p>
+    </div>
+    <div class="grid grid-cols-1 md:grid-cols-2 gap-6 sm:gap-8">
+      <div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-right" data-aos-delay="0" data-aos-duration="900">
+          <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+            <i data-lucide="dumbbell" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">אימון אישי 1-על-1</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">תכנית מותאמת אישית לכל מתאמן — לרמה, ליעדים ולקצב חיים שלך.</p>
+          <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
+            <li><span class="text-brand-primary font-bold">✓</span> אבחון רמה ויעדים</li><li><span class="text-brand-primary font-bold">✓</span> תכנית מותאמת אישית</li><li><span class="text-brand-primary font-bold">✓</span> תיקון תרגילים בזמן אמת</li><li><span class="text-brand-primary font-bold">✓</span> עלייה הדרגתית באתגר</li>
+          </ul>
+          <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
+            👉 תוצאה: גוף חזק יותר, פחות פציעות
+          </div>
+        </div><div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-left" data-aos-delay="150" data-aos-duration="900">
+          <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+            <i data-lucide="apple" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">ליווי תזונתי</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">תפריט מציאותי שאפשר להחזיק לאורך זמן — לא דיאטה של שבועיים.</p>
+          <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
+            <li><span class="text-brand-primary font-bold">✓</span> תפריט מותאם לאורח חיים</li><li><span class="text-brand-primary font-bold">✓</span> החלפות חכמות</li><li><span class="text-brand-primary font-bold">✓</span> ליווי שבועי בוואטסאפ</li><li><span class="text-brand-primary font-bold">✓</span> פגישות התאמה חודשיות</li>
+          </ul>
+          <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
+            👉 תוצאה: שינוי אמיתי של הרגלים
+          </div>
+        </div><div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-right" data-aos-delay="0" data-aos-duration="900">
+          <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+            <i data-lucide="video" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">אימונים אונליין</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">מהבית, בקצב שלך, עם ליווי מלא בזום ובוואטסאפ.</p>
+          <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
+            <li><span class="text-brand-primary font-bold">✓</span> אימוני זום בזמן אמת</li><li><span class="text-brand-primary font-bold">✓</span> תכניות וידאו לפי בקשה</li><li><span class="text-brand-primary font-bold">✓</span> תיקון תרגילים מהמסך</li><li><span class="text-brand-primary font-bold">✓</span> סדנאות קבוצתיות אונליין</li>
+          </ul>
+          <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
+            👉 תוצאה: כושר משובח גם מהבית
+          </div>
+        </div><div class="bg-brand-gray rounded-3xl p-6 sm:p-8 border border-slate-200 hover:shadow-premium hover:border-brand-primary hover:-translate-y-2 transition-all duration-300 group" data-aos="fade-left" data-aos-delay="150" data-aos-duration="900">
+          <div class="w-14 h-14 bg-white rounded-xl shadow-sm flex items-center justify-center mb-6 text-brand-primary group-hover:scale-110 group-hover:rotate-6 transition-all duration-300">
+            <i data-lucide="users" class="w-7 h-7"></i>
+          </div>
+          <h3 class="text-2xl font-black text-brand-dark mb-2">אימונים קבוצתיים</h3>
+          <p class="text-slate-600 font-medium mb-4 leading-relaxed">מסלול קבוצתי באנרגיה גבוהה — עם תוצאות אישיות בקבוצה.</p>
+          <ul class="space-y-2 mb-6 text-sm sm:text-base text-slate-700 font-medium">
+            <li><span class="text-brand-primary font-bold">✓</span> קבוצות קטנות (עד 6 משתתפים)</li><li><span class="text-brand-primary font-bold">✓</span> תכניות מתוכננות לחודש</li><li><span class="text-brand-primary font-bold">✓</span> אווירה תומכת ומדרבנת</li><li><span class="text-brand-primary font-bold">✓</span> מחיר נגיש פר אימון</li>
+          </ul>
+          <div class="bg-white p-3 rounded-xl border border-brand-primary/20 text-brand-dark font-bold text-sm text-center">
+            👉 תוצאה: מוטיבציה כפולה, מחיר חצי
+          </div>
+        </div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ TESTIMONIALS — Swiper carousel ═══════ -->
+<section id="testimonials" class="py-16 sm:py-24 bg-brand-light border-t border-slate-100 overflow-hidden">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6">
+    <div class="text-center mb-14 sm:mb-16" data-aos="fade-down" data-aos-duration="700">
+      <span class="text-brand-primary font-black tracking-widest text-xs sm:text-sm uppercase mb-4 inline-block bg-brand-primary/10 px-4 py-1.5 rounded-full">לקוחות ממליצים</span>
+      <h2 class="text-3xl sm:text-4xl md:text-5xl font-black text-brand-dark leading-tight">מה אומרים <span class="text-brand-primary">עלינו</span> הלקוחות?</h2>
+      <span class="testi-heading-underline"></span>
+    </div>
+
+    <div class="swiper testi-swiper" data-aos="fade-up" data-aos-delay="200">
+      <div class="swiper-wrapper pb-12">
+        <div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">אונליין מהבית — הצלחתי להתמיד פעם ראשונה בחיי. הוא הופך את האימון למשהו שאתה רוצה.</p>
+            <div class="testi-foot">
+              <div class="avatar">נ</div>
+              <div>
+                <div class="name">נועה ש.</div>
+                <div class="meta">לפני 4 חודשים · Google</div>
+              </div>
+            </div>
+          </div>
+        </div><div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">מצאנו את המקום הזה במקרה ולא נחזור לאף מקום אחר. שירות ברמה אחרת לגמרי.</p>
+            <div class="testi-foot">
+              <div class="avatar">א</div>
+              <div>
+                <div class="name">אלינור ר.</div>
+                <div class="meta">לפני 3 שבועות · Google</div>
+              </div>
+            </div>
+          </div>
+        </div><div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">התוכנית מותאמת בדיוק לי, לא לוקחים מטופס. מאמן שיודע להקשיב ולהוביל בעדינות.</p>
+            <div class="testi-foot">
+              <div class="avatar">ע</div>
+              <div>
+                <div class="name">עומר ל.</div>
+                <div class="meta">לפני שבועיים · Google</div>
+              </div>
+            </div>
+          </div>
+        </div><div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">התוכנית מותאמת בדיוק לי, לא לוקחים מטופס. מאמן שיודע להקשיב ולהוביל בעדינות.</p>
+            <div class="testi-foot">
+              <div class="avatar">ט</div>
+              <div>
+                <div class="name">טליה ש.</div>
+                <div class="meta">לפני חודשיים · Google</div>
+              </div>
+            </div>
+          </div>
+        </div><div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">ירדתי 12 ק&quot;ג בשישה חודשים, אבל הדבר הכי חשוב זה שלמדתי איך לחיות אחרת. ממליצה בחום!</p>
+            <div class="testi-foot">
+              <div class="avatar">ל</div>
+              <div>
+                <div class="name">ליאל ר.</div>
+                <div class="meta">לפני חודש · Google</div>
+              </div>
+            </div>
+          </div>
+        </div><div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">התחלתי בלי לחשוב שאני מסוגל ועכשיו אני רץ 10K. תודה על הסבלנות והגישה.</p>
+            <div class="testi-foot">
+              <div class="avatar">ס</div>
+              <div>
+                <div class="name">סיון ר.</div>
+                <div class="meta">לפני שבוע · Google</div>
+              </div>
+            </div>
+          </div>
+        </div><div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">התחלתי בלי לחשוב שאני מסוגל ועכשיו אני רץ 10K. תודה על הסבלנות והגישה.</p>
+            <div class="testi-foot">
+              <div class="avatar">ג</div>
+              <div>
+                <div class="name">גילי ש.</div>
+                <div class="meta">לפני שבוע · Google</div>
+              </div>
+            </div>
+          </div>
+        </div><div class="swiper-slide h-auto">
+          <div class="testi-card">
+            <span class="quote-mark">״</span>
+            <span class="stars">★★★★★</span>
+            <p class="quote-text">אימון פעם בשבוע + ליווי בוואטסאפ עשו את ההבדל. הוא באמת אכפת לו, לא רק עוד מאמן.</p>
+            <div class="testi-foot">
+              <div class="avatar">מ</div>
+              <div>
+                <div class="name">מורן ל.</div>
+                <div class="meta">לפני שבוע · Google</div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+      <div class="swiper-pagination !bottom-0"></div>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ CONTACT / FINAL CTA ═══════ -->
+<section id="contact" class="py-20 sm:py-28 relative overflow-hidden bg-brand-dark">
+  <div class="absolute inset-0 pointer-events-none">
+    <div class="absolute top-[-20%] right-[-10%] w-[400px] h-[400px] bg-brand-primary/20 rounded-full blur-[70px]"></div>
+  </div>
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6 relative z-10">
+    <div class="grid grid-cols-1 lg:grid-cols-2 gap-12 items-center">
+      <div data-aos="fade-left">
+        <span class="text-brand-primary font-black tracking-widest text-xs sm:text-sm uppercase mb-3 inline-block bg-white/5 border border-white/10 px-3 py-1 rounded-full">צרו קשר</span>
+        <h2 class="text-4xl sm:text-5xl md:text-6xl font-black text-white leading-tight mb-6">
+          מוכנים לשנות הרגלים?<br><span class="text-brand-primary">בואו נתחיל יחד.</span>
+        </h2>
+        <p class="text-slate-300 text-base sm:text-lg leading-relaxed mb-8 font-medium max-w-lg">נחזור אליכם תוך זמן קצר. ללא התחייבות, ללא הפתעות.</p>
+        <div class="flex flex-wrap gap-3">
+          <a href="https://wa.me/972526606457" class="inline-flex items-center gap-2 bg-brand-whatsapp text-white px-7 py-4 rounded-full font-bold shadow-glow hover:-translate-y-1 transition-all">
+            שלחו הודעה עכשיו
+            <svg class="w-5 h-5 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+          </a>
+          <a href="tel:0526606457" class="inline-flex items-center gap-2 bg-white/5 text-white border border-white/20 px-7 py-4 rounded-full font-bold hover:bg-white/10 hover:-translate-y-1 transition-all">
+            <i data-lucide="phone" class="w-5 h-5"></i>
+            0526606457
+          </a>
+        </div>
+      </div>
+
+      <form class="bg-white rounded-3xl p-6 sm:p-8 shadow-premium space-y-3" onsubmit="handleSubmit(event)" data-aos="fade-right">
+        <div class="text-brand-primary font-black tracking-widest text-xs uppercase mb-1">השאירו פרטים</div>
+        <h3 class="text-xl sm:text-2xl font-black text-brand-dark mb-4">נחזור אליכם תוך 30 דקות</h3>
+        <input type="text" placeholder="שם מלא" required class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 font-medium focus:border-brand-primary focus:bg-white outline-none transition-colors">
+        <input type="tel" placeholder="מספר טלפון" required class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 font-medium focus:border-brand-primary focus:bg-white outline-none transition-colors">
+        <input type="email" placeholder="אימייל (אופציונלי)" class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 font-medium focus:border-brand-primary focus:bg-white outline-none transition-colors">
+        <textarea placeholder="איך נוכל לעזור?" rows="3" class="w-full bg-slate-50 border-2 border-slate-200 rounded-xl px-4 py-3 font-medium focus:border-brand-primary focus:bg-white outline-none transition-colors resize-none"></textarea>
+        <button type="submit" class="w-full bg-brand-primary text-white py-4 rounded-xl font-black text-base shadow-glow hover:bg-brand-primaryDark hover:-translate-y-1 transition-all">שלחו פנייה</button>
+      </form>
+    </div>
+  </div>
+</section>
+
+<!-- ═══════ FOOTER ═══════ -->
+<footer class="bg-brand-dark text-slate-300 border-t border-white/10">
+  <div class="container mx-auto max-w-7xl px-4 sm:px-6 py-12">
+    <div class="grid grid-cols-1 md:grid-cols-3 gap-8">
+      <div>
+        <div class="flex items-center gap-3 mb-4">
+          <div class="w-10 h-10 bg-brand-primary rounded-xl flex items-center justify-center text-white">
+            <i data-lucide="dumbbell" class="w-5 h-5"></i>
+          </div>
+          <div class="flex flex-col">
+            <span class="font-black text-xl text-white leading-none">ניצן אנרג&#x27;י- מאמנת כושר</span>
+            <span class="text-[10px] font-bold text-brand-primary tracking-[0.2em] uppercase mt-1">אימון אישי וליווי</span>
+          </div>
+        </div>
+        <p class="text-sm text-slate-400 leading-relaxed">מאמן אישי · חיפה</p>
+      </div>
+      <div>
+        <h4 class="text-white font-black mb-3 text-sm tracking-widest uppercase">שעות פעילות</h4>
+        <ul class="space-y-2 text-sm"><li class="flex justify-between gap-4"><span class="text-slate-400 font-mono">ראשון-חמישי</span><span class="text-slate-700 font-bold">09:00–19:00</span></li><li class="flex justify-between gap-4"><span class="text-slate-400 font-mono">שישי</span><span class="text-slate-700 font-bold">09:00–13:00</span></li><li class="flex justify-between gap-4"><span class="text-slate-400 font-mono">שבת</span><span class="text-slate-700 font-bold">סגור</span></li></ul>
+      </div>
+      <div>
+        <h4 class="text-white font-black mb-3 text-sm tracking-widest uppercase">צרו קשר</h4>
+        <ul class="space-y-2 text-sm">
+          <li class="flex items-center gap-2"><i data-lucide="phone" class="w-4 h-4 text-brand-primary"></i> <span class="text-slate-300">0526606457</span></li>
+          <li class="flex items-center gap-2"><i data-lucide="message-circle" class="w-4 h-4 text-brand-primary"></i> <a href="https://wa.me/972526606457" class="text-slate-300 hover:text-white">WhatsApp</a></li>
+        </ul>
+      </div>
+    </div>
+    <div class="border-t border-white/10 mt-10 pt-6 flex flex-col sm:flex-row justify-between items-center gap-4 text-xs text-slate-500">
+      <span>© 2026 ניצן אנרג&#x27;י- מאמנת כושר · כל הזכויות שמורות</span>
+      <span class="text-[11px] opacity-70">המלצות הלקוחות לדוגמה ולהמחשה בלבד</span>
+    </div>
+  </div>
+</footer>
+
+<!-- ═══════ FLOATING — WhatsApp + scroll-top + a11y ═══════ -->
+<a href="https://wa.me/972526606457" class="fixed bottom-7 right-7 z-[60] w-16 h-16 bg-brand-whatsapp text-white rounded-full flex items-center justify-center shadow-glow hover:scale-110 transition-transform" aria-label="WhatsApp">
+  <span class="absolute inset-0 rounded-full bg-brand-whatsapp opacity-60 wa-pulse-ring -z-10"></span>
+  <svg class="w-8 h-8 fill-current" viewBox="0 0 24 24"><path d="M.057 24l1.687-6.163c-1.041-1.804-1.588-3.849-1.587-5.946.003-6.556 5.338-11.891 11.893-11.891 3.181.001 6.167 1.24 8.413 3.488 2.245 2.248 3.481 5.236 3.48 8.414-.003 6.557-5.338 11.892-11.893 11.892-1.99-.001-3.951-.5-5.688-1.448l-6.305 1.654zm6.597-3.807c1.676.995 3.276 1.591 5.392 1.592 5.448 0 9.886-4.434 9.889-9.885.002-5.462-4.415-9.89-9.881-9.892-5.452 0-9.887 4.434-9.889 9.884-.001 2.225.651 3.891 1.746 5.634l-.999 3.648 3.742-.981zm11.387-5.464c-.074-.124-.272-.198-.57-.347-.297-.149-1.758-.868-2.031-.967-.272-.099-.47-.149-.669.149-.198.297-.768.967-.941 1.165-.173.198-.347.223-.644.074-.297-.149-1.255-.462-2.39-1.475-.883-.788-1.48-1.761-1.653-2.059-.173-.297-.018-.458.13-.606.134-.133.297-.347.446-.521.151-.172.2-.296.3-.495.099-.198.05-.372-.025-.521-.075-.148-.669-1.611-.916-2.206-.242-.579-.487-.501-.669-.51l-.57-.01c-.198 0-.52.074-.792.372s-1.04 1.016-1.04 2.479 1.065 2.876 1.213 3.074c.149.198 2.095 3.2 5.076 4.487.709.306 1.263.489 1.694.626.712.226 1.36.194 1.872.118.571-.085 1.758-.719 2.006-1.413.248-.694.248-1.289.173-1.413z"/></svg>
+</a>
+
+<button id="fabTop" class="fixed bottom-28 right-7 z-[59] w-11 h-11 bg-white text-brand-dark border border-slate-200 rounded-full flex items-center justify-center shadow-md opacity-0 pointer-events-none transition-all hover:bg-brand-primary hover:text-white hover:border-brand-primary" aria-label="חזרה למעלה">
+  <i data-lucide="chevron-up" class="w-5 h-5"></i>
+</button>
+
+<button id="fabA11y" class="fixed bottom-7 left-7 z-[60] w-14 h-14 bg-white text-brand-dark border border-slate-200 rounded-full flex items-center justify-center shadow-md hover:bg-brand-primary hover:text-white hover:border-brand-primary hover:scale-110 transition-all" aria-label="תפריט נגישות" aria-expanded="false">
+  <i data-lucide="accessibility" class="w-7 h-7 stroke-[2]"></i>
+</button>
+
+<div id="a11yPanel" class="fixed bottom-24 left-7 z-[59] w-[320px] bg-white border border-slate-200 rounded-2xl shadow-premium p-6 transform translate-y-5 opacity-0 pointer-events-none transition-all duration-300">
+  <div class="font-black text-brand-dark text-base mb-1">הגדרות נגישות</div>
+  <div class="text-[11px] font-bold text-slate-400 tracking-[0.1em] uppercase mb-4">התאמה אישית</div>
+
+  <div class="flex justify-between items-center py-3 border-t border-slate-100">
+    <span class="font-bold text-sm text-brand-dark">גודל גופן</span>
+    <div class="flex gap-1.5">
+      <button class="a11y-fnt w-8 h-8 rounded-lg border border-slate-200 font-black text-xs hover:border-brand-primary hover:text-brand-primary" data-font="0.9">A−</button>
+      <button class="a11y-fnt w-8 h-8 rounded-lg border border-brand-primary bg-brand-primary text-white font-black text-xs" data-font="1">A</button>
+      <button class="a11y-fnt w-8 h-8 rounded-lg border border-slate-200 font-black text-xs hover:border-brand-primary hover:text-brand-primary" data-font="1.15">A+</button>
+      <button class="a11y-fnt w-8 h-8 rounded-lg border border-slate-200 font-black text-xs hover:border-brand-primary hover:text-brand-primary" data-font="1.3">A++</button>
+    </div>
+  </div>
+  <div class="flex justify-between items-center py-3 border-t border-slate-100">
+    <span class="font-bold text-sm text-brand-dark">ניגודיות גבוהה</span>
+    <button class="a11y-tgl w-11 h-6 bg-slate-200 rounded-full relative transition-colors" data-toggle="hc" aria-pressed="false">
+      <span class="absolute top-0.5 right-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"></span>
+    </button>
+  </div>
+  <div class="flex justify-between items-center py-3 border-t border-slate-100">
+    <span class="font-bold text-sm text-brand-dark">הדגשת קישורים</span>
+    <button class="a11y-tgl w-11 h-6 bg-slate-200 rounded-full relative transition-colors" data-toggle="ul-links" aria-pressed="false">
+      <span class="absolute top-0.5 right-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"></span>
+    </button>
+  </div>
+  <div class="flex justify-between items-center py-3 border-t border-slate-100">
+    <span class="font-bold text-sm text-brand-dark">הפסקת אנימציות</span>
+    <button class="a11y-tgl w-11 h-6 bg-slate-200 rounded-full relative transition-colors" data-toggle="no-motion" aria-pressed="false">
+      <span class="absolute top-0.5 right-0.5 w-5 h-5 bg-white rounded-full shadow transition-transform"></span>
+    </button>
+  </div>
+  <button id="a11yReset" class="w-full mt-3 py-2 text-sm font-bold text-slate-500 bg-slate-50 border border-slate-200 rounded-lg hover:bg-slate-100">איפוס</button>
+</div>
+
+<script>
+function bootApp() {
+  const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  const isMobile = window.matchMedia('(max-width: 640px)').matches;
+
+  // Init AOS — robust against slow CDN load. Disable on phone for perf if user prefers reduced motion.
+  function initAOS() {
+    if (window.AOS) {
+      AOS.init({
+        duration: 800, easing: 'ease-out-cubic', once: true, offset: 60, anchorPlacement: 'top-bottom',
+        disable: () => reduceMotion,
+      });
+    } else setTimeout(initAOS, 60);
+  }
+  initAOS();
+
+  // Lucide icons
+  function initLucide() {
+    if (window.lucide) lucide.createIcons();
+    else setTimeout(initLucide, 60);
+  }
+  initLucide();
+
+  // Swiper testimonials
+  function initSwiper() {
+    if (!window.Swiper) { setTimeout(initSwiper, 80); return; }
+    new Swiper('.testi-swiper', {
+      slidesPerView: 1,
+      spaceBetween: 20,
+      loop: true,
+      grabCursor: true,
+      autoplay: reduceMotion ? false : { delay: 4500, disableOnInteraction: false, pauseOnMouseEnter: true },
+      pagination: { el: '.testi-swiper .swiper-pagination', clickable: true, dynamicBullets: false },
+      breakpoints: {
+        640:  { slidesPerView: 2, spaceBetween: 22 },
+        1024: { slidesPerView: 3, spaceBetween: 24 },
+      },
+    });
+  }
+  initSwiper();
+
+  // Sticky nav shadow — single rAF-throttled handler
+  const nav = document.getElementById('nav');
+  const progressEl = document.getElementById('scrollProgress');
+  let scrollScheduled = false;
+  function onScroll() {
+    if (scrollScheduled) return;
+    scrollScheduled = true;
+    requestAnimationFrame(() => {
+      const y = window.scrollY;
+      nav.classList.toggle('nav-shadow', y > 20);
+      const max = document.documentElement.scrollHeight - window.innerHeight;
+      progressEl.style.setProperty('--prog', (max > 0 ? (y / max * 100) : 0) + '%');
+      // Scroll-to-top FAB visibility
+      if (fabTop) {
+        const v = y > 600;
+        fabTop.classList.toggle('opacity-100', v);
+        fabTop.classList.toggle('pointer-events-auto', v);
+        fabTop.classList.toggle('opacity-0', !v);
+        fabTop.classList.toggle('pointer-events-none', !v);
+      }
+      scrollScheduled = false;
+    });
+  }
+  window.addEventListener('scroll', onScroll, { passive: true });
+
+  // Hero headline word-by-word reveal
+  const headline = document.querySelector('.hero-headline');
+  if (headline) {
+    const original = headline.innerHTML;
+    const lines = original.split(/<br\s*\/?>/i);
+    headline.innerHTML = lines.map(line => {
+      const tmp = document.createElement('div');
+      tmp.innerHTML = line;
+      function wrap(node) {
+        Array.from(node.childNodes).forEach(child => {
+          if (child.nodeType === 3) {
+            const words = child.textContent.split(/(\s+)/);
+            const frag = document.createDocumentFragment();
+            words.forEach(w => {
+              if (w.trim()) {
+                const ws = document.createElement('span'); ws.className = 'word-wrap';
+                const inner = document.createElement('span'); inner.className = 'word'; inner.textContent = w;
+                ws.appendChild(inner); frag.appendChild(ws);
+              } else frag.appendChild(document.createTextNode(w));
+            });
+            child.replaceWith(frag);
+          } else if (child.nodeType === 1) wrap(child);
+        });
+      }
+      wrap(tmp);
+      return tmp.innerHTML;
+    }).join('<br>');
+    // Stagger delays
+    headline.querySelectorAll('.word-wrap').forEach((w, i) => {
+      w.querySelector('.word').style.transitionDelay = (i * 70 + 150) + 'ms';
+    });
+    // Trigger after a tick
+    requestAnimationFrame(() => {
+      requestAnimationFrame(() => {
+        headline.querySelectorAll('.word-wrap').forEach(w => w.classList.add('reveal'));
+      });
+    });
+  }
+
+  // Counter animation
+  const counterIO = new IntersectionObserver(entries => {
+    entries.forEach(e => {
+      if (e.isIntersecting) {
+        const el = e.target;
+        const target = parseFloat(el.dataset.counter);
+        if (el.dataset.done) return;
+        el.dataset.done = '1';
+        const dur = 1800;
+        const start = performance.now();
+        const isFloat = String(target).includes('.');
+        function tick(t) {
+          const k = Math.min(1, (t - start) / dur);
+          const eased = 1 - Math.pow(1 - k, 3);
+          const v = target * eased;
+          el.textContent = isFloat ? v.toFixed(1) : Math.round(v).toLocaleString('he-IL');
+          if (k < 1) requestAnimationFrame(tick);
+          else el.textContent = isFloat ? target.toFixed(1) : Math.round(target).toLocaleString('he-IL');
+        }
+        requestAnimationFrame(tick);
+        counterIO.unobserve(el);
+      }
+    });
+  }, { threshold: 0.4 });
+  document.querySelectorAll('[data-counter]').forEach(el => counterIO.observe(el));
+
+  // Scroll-to-top FAB click handler (visibility handled in onScroll above)
+  const fabTop = document.getElementById('fabTop');
+  if (fabTop) fabTop.addEventListener('click', () => window.scrollTo({ top: 0, behavior: 'smooth' }));
+
+  // Accessibility menu
+  const STORAGE_KEY = 'a11y_v2';
+  let a11y; try { a11y = JSON.parse(localStorage.getItem(STORAGE_KEY) || '{}'); } catch (err) { a11y = {}; }
+  function saveA() { localStorage.setItem(STORAGE_KEY, JSON.stringify(a11y)); }
+  function applyA() {
+    document.documentElement.style.setProperty('font-size', `calc(16px * ${a11y.font || 1})`);
+    document.body.classList.toggle('hc', !!a11y.hc);
+    document.body.classList.toggle('ul-links', !!a11y['ul-links']);
+    document.body.classList.toggle('no-motion', !!a11y['no-motion']);
+    document.querySelectorAll('.a11y-fnt').forEach(b => {
+      const sel = parseFloat(b.dataset.font) === (a11y.font || 1);
+      b.classList.toggle('bg-brand-primary', sel); b.classList.toggle('text-white', sel); b.classList.toggle('border-brand-primary', sel);
+    });
+    document.querySelectorAll('.a11y-tgl').forEach(t => {
+      const on = !!a11y[t.dataset.toggle];
+      t.classList.toggle('bg-brand-primary', on); t.classList.toggle('bg-slate-200', !on);
+      t.setAttribute('aria-pressed', on ? 'true' : 'false');
+      t.querySelector('span').style.transform = on ? 'translateX(-20px)' : 'translateX(0)';
+    });
+  }
+  applyA();
+
+  const fabA11y = document.getElementById('fabA11y');
+  const panel = document.getElementById('a11yPanel');
+  function closePanel() {
+    panel.classList.add('opacity-0','pointer-events-none','translate-y-5');
+    panel.classList.remove('opacity-100','pointer-events-auto','translate-y-0');
+    fabA11y.setAttribute('aria-expanded','false');
+  }
+  function openPanel() {
+    panel.classList.remove('opacity-0','pointer-events-none','translate-y-5');
+    panel.classList.add('opacity-100','pointer-events-auto','translate-y-0');
+    fabA11y.setAttribute('aria-expanded','true');
+  }
+  fabA11y.addEventListener('click', e => {
+    e.stopPropagation();
+    if (panel.classList.contains('opacity-0')) openPanel(); else closePanel();
+  });
+  document.addEventListener('click', e => { if (!panel.contains(e.target) && e.target !== fabA11y) closePanel(); });
+  document.addEventListener('keydown', e => { if (e.key === 'Escape') closePanel(); });
+  document.querySelectorAll('.a11y-fnt').forEach(b => b.addEventListener('click', () => { a11y.font = parseFloat(b.dataset.font); saveA(); applyA(); }));
+  document.querySelectorAll('.a11y-tgl').forEach(t => t.addEventListener('click', () => { a11y[t.dataset.toggle] = !a11y[t.dataset.toggle]; saveA(); applyA(); }));
+  document.getElementById('a11yReset').addEventListener('click', () => { a11y = {}; saveA(); applyA(); });
+}
+
+if (document.readyState === 'loading') {
+  document.addEventListener('DOMContentLoaded', bootApp);
+} else {
+  bootApp();
+}
+
+function handleSubmit(e) {
+  e.preventDefault();
+  e.target.innerHTML = '<div class="text-center py-12 text-emerald-600 font-black text-lg">✓ הפנייה נשלחה — נחזור אליכם בהקדם</div>';
+}
+</script>
+
+</body>
+</html>
